@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= yield "#{:title} | " if content_for? :title %>LSS-USDL editor</title>
+  <%= stylesheet_link_tag    "application", :media => "all" %>
+  <%= javascript_include_tag "application" %>
+  <%= csrf_meta_tags %>
+  <%= yield :head %>
+</head>
+<body>
+
+  <div class="navbar navbar-static-top">
+    <div class="navbar-inner">
+      <ul class="nav">
+        <li><%= link_to "LSS-USDL", root_path, class: "brand" %></li>
+        <% if @service.present? and @navbar.present? %>
+          <% for navbar_item in @navbar %>
+            <li><%= link_to navbar_item.capitalize, "/#{navbar_item}", class: "navbar-link" %></li>
+          <% end %>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+
+  <p class="notice"><%= notice %></p>
+  <p class="alert"><%= alert %></p>
+
+  <%= yield %>
+
+</body>
+</html>
