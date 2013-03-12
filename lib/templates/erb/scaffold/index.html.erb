@@ -1,0 +1,30 @@
+<h3><%= plural_table_name %></h3>
+
+<table class="table table-striped">
+  
+  <thead>
+     <tr>
+    <%= attributes.each do |attribute| %>
+      <th><%= attribute.human_name %></th>
+    <% end %>
+    </tr>
+  </thead>
+
+  <tbody>
+  <%% @<%= plural_table_name %>.each do |<%= singular_table_name %>| %>
+    <tr>
+    <% attributes.each do |attribute| %>
+      <td><%%= <%= singular_table_name %>.<%= attribute.name %> %></td>
+    <% end %>
+      <td><%%= link_to '<i class="icon-eye-open"></i>', <%= singular_table_name %>, title: "Show" %></td>
+      <td><%%= link_to '<i class="icon-pencil"></i>', edit_<%= singular_table_name %>_path(<%= singular_table_name %>), title: "Edit" %></td>
+      <td><%%= link_to '<i class="icon-remove"></i>', <%= singular_table_name %>, method: :delete, data: { confirm: 'Are you sure you want to delete this?' }, title: "Delete" %></td>
+    </tr>
+  <%% end %>
+  </tbody>
+
+</table>
+
+<br />
+
+<%%= link_to "<i class='icon-plus'></i> New <%= human_name %>", new_<%= singular_table_name %>_path, class: "btn btn-success" %>
