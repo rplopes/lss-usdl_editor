@@ -15,7 +15,7 @@
   <% attributes.each do |attribute| %>
     <tr>
       <td><%%= f.label :<%= attribute.name %></td>
-      <td><%%= f.<%= attribute_field_type %> :<%= attribute.name %> %></td>
+      <td><%%= f.<%= attribute.field_type %> :<%= attribute.name %> %></td>
     </tr>
   <% end %>
   </table>
