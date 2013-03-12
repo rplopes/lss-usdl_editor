@@ -11,7 +11,16 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130312211638) do
+ActiveRecord::Schema.define(:version => 20130312235619) do
+
+  create_table "service_systems", :force => true do |t|
+    t.string   "uri"
+    t.string   "prefix"
+    t.string   "label"
+    t.string   "comment"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
 
   create_table "users", :force => true do |t|
     t.string   "email",                  :default => "", :null => false

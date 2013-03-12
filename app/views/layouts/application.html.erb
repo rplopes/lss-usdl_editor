@@ -22,10 +22,26 @@
     </div>
   </div>
 
-  <% if notice.present? %><p class="notice"><%= notice %></p><% end %>
-  <% if alert.present? %><p class="alert"><%= alert %></p><% end %>
+  <% if notice.present? %>
+    <div class="alert alert-success">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      <%= notice %>
+    </div>
+  <% end %>
+  <% if alert.present? %>
+    <p class="alert">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      <%= alert %>
+    </p>
+  <% end %>
 
+  <div class="container">
+    <div class="row">
+      <div class="span12">
   <%= yield %>
+      </div>
+    </div>
+  </div>
 
 </body>
 </html>

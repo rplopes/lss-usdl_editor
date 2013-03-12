@@ -4,7 +4,7 @@ class CreateServiceSystems < ActiveRecord::Migration
       t.string :uri
       t.string :prefix
       t.string :label
-      t.text :comment
+      t.string :comment
 
       t.timestamps
     end

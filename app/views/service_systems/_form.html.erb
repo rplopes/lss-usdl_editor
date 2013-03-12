@@ -14,30 +14,30 @@
   <table>
   
     <tr>
-      <td><%= f.label :uri</td>
+      <td><%= f.label :uri %></td>
       <td><%= f.text_field :uri %></td>
     </tr>
   
     <tr>
-      <td><%= f.label :prefix</td>
+      <td><%= f.label :prefix %></td>
       <td><%= f.text_field :prefix %></td>
     </tr>
   
     <tr>
-      <td><%= f.label :label</td>
+      <td><%= f.label :label %></td>
       <td><%= f.text_field :label %></td>
     </tr>
   
     <tr>
-      <td><%= f.label :comment</td>
-      <td><%= f.text_area :comment %></td>
+      <td><%= f.label :comment %></td>
+      <td><%= f.text_field :comment %></td>
     </tr>
   
   </table>
   
   <div class="actions">
-    <%= link_to "Back to list", service_systems_path, class: "btn btn-label" %>
-    <%= f.submit, class: "btn btn-success" %>
+    <%= link_to "Back to list", service_systems_path, class: "btn btn-link" %>
+    <%= f.submit "Save", class: "btn btn-success" %>
   </div>
 
 <% end %>

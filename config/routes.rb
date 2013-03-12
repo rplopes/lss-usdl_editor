@@ -1,6 +1,6 @@
 LssUsdlEditor::Application.routes.draw do
-
   resources :service_systems
+
 
   devise_for :users
 

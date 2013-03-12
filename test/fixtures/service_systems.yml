@@ -4,10 +4,10 @@ one:
   uri: MyString
   prefix: MyString
   label: MyString
-  comment: MyText
+  comment: MyString
 
 two:
   uri: MyString
   prefix: MyString
   label: MyString
-  comment: MyText
+  comment: MyString

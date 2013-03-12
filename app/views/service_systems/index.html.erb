@@ -4,39 +4,21 @@
   
   <thead>
     <tr>
-    
-      <th>Uri</th>
-    
-      <th>Prefix</th>
-    
-      <th>Label</th>
-    
-      <th>Comment</th>
-    
+      <th>Uri</th><th>Prefix</th><th>Label</th><th>Comment</th>
     </tr>
   </thead>
 
-  <tbody>
-  <% @service_systems.each do |service_system| %>
+  <tbody><% @service_systems.each do |service_system| %>
     <tr>
-    
-      <td><%= service_system.uri %></td>
-    
-      <td><%= service_system.prefix %></td>
-    
-      <td><%= service_system.label %></td>
-    
-      <td><%= service_system.comment %></td>
-    
-      <td><%= link_to '<i class="icon-eye-open"></i>', service_system, title: "Show" %></td>
-      <td><%= link_to '<i class="icon-pencil"></i>', edit_service_system_path(service_system), title: "Edit" %></td>
-      <td><%= link_to '<i class="icon-remove"></i>', service_system, method: :delete, data: { confirm: 'Are you sure you want to delete this?' }, title: "Delete" %></td>
+    <td><%= service_system.uri %></td><td><%= service_system.prefix %></td><td><%= service_system.label %></td><td><%= service_system.comment %></td>
+      <td><%= link_to service_system, title: "Show" do %><i class="icon-eye-open"></i><% end %></td>
+      <td><%= link_to edit_service_system_path(service_system), title: "Edit" do %><i class="icon-pencil"></i><% end %></td>
+      <td><%= link_to service_system, method: :delete, data: { confirm: 'Are you sure you want to delete this?' }, title: "Delete" do %><i class="icon-remove"></i><% end %></td>
     </tr>
-  <% end %>
-  </tbody>
+  <% end %></tbody>
 
 </table>
 
 <br />
 
-<%= link_to "<i class='icon-plus'></i> New Service system", new_service_system_path, class: "btn btn-success" %>
+<%= link_to "New Service system", new_service_system_path, class: "btn btn-success" %>
