@@ -1,7 +1,10 @@
-<h3>service_systems</h3>
+<h3>Service systems</h3>
+
+<%= link_to "New Service system", new_service_system_path, class: "btn btn-success" %>
 
 <% @service_systems.each do |service_system| %>
 
+<hr />
 <h4><%= link_to service_system.label, service_system %></h4>
 
 <p>
@@ -31,7 +34,4 @@
 </p>
 <% end %>
 
-<hr />
 <% end %>
-
-<%= link_to "New Service system", new_service_system_path, class: "btn btn-success" %>
