@@ -1,38 +1,24 @@
-<h3>service_system</h3>
+<h3><%= @service_system.label %></h3>
 
-<table>
 
-  <tr>
-    <td><strong>Uri</strong></td>
-    <td><%= @service_system.uri %></td>
-  </tr>
-
-  <tr>
-    <td><strong>Prefix</strong></td>
-    <td><%= @service_system.prefix %></td>
-  </tr>
-
-  <tr>
-    <td><strong>Label</strong></td>
-    <td><%= @service_system.label %></td>
-  </tr>
-
-  <tr>
-    <td><strong>Author</strong></td>
-    <td><%= @service_system.user.email %></td>
-  </tr>
-
-  <tr>
-    <td><strong>Comment</strong></td>
-    <td><%= @service_system.comment %></td>
-  </tr>
-
-</table>
-
-<br />
-
-<%= link_to 'Back to list', service_systems_path, class: "btn btn-link" %>
-
-<% if @service_system.user == current_user %>
-<%= link_to 'Edit', edit_service_system_path(@service_system), class: "btn btn-success" %>
-<% end %>
+<p>
+  <strong>URI:</strong>
+  <%= @service_system.uri %>
+</p>
+<p>
+  <strong>Prefix:</strong>
+  <%= @service_system.prefix %>
+</p>
+<p>
+  <strong>Author:</strong>
+  <%= @service_system.user %>
+</p>
+<p>
+  <strong>Comment:</strong><br />
+  <%= @service_system.comment %>
+</p>
+<p>
+  <%= link_to 'Back to list', service_systems_path, class: "btn btn-link" %>
+  <%= link_to "Delete", service_systems_path(@service_system), method: :delete, class: "btn btn-danger", data: { confirm: "Are you sure you want to delete this?" } %>
+  <%= link_to 'Edit', edit_service_system_path(@service_system), class: "btn btn-success" %>
+</p>

@@ -3,8 +3,9 @@ class CreateServiceSystems < ActiveRecord::Migration
     create_table :service_systems do |t|
       t.string :uri
       t.string :prefix
+      t.integer :user_id
       t.string :label
-      t.string :comment
+      t.text :comment
 
       t.timestamps
     end

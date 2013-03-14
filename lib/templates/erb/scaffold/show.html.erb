@@ -1,15 +1,13 @@
-<h3><%= singular_table_name %></h3>
+<h3><%%= @<%= singular_table_name %>.label %></h3>
 
-<table>
-<% attributes.each do |attribute| %>
-  <tr>
-    <td><strong><%= attribute.human_name %></strong></td>
-    <td><%%= @<%= singular_table_name %>.<%= attribute.name %> %></td>
-  </tr>
-<% end %>
-</table>
-
-<br />
-
-<%%= link_to 'Back to list', <%= index_helper %>_path, class: "btn btn-link" %>
-<%%= link_to 'Edit', edit_<%= singular_table_name %>_path(@<%= singular_table_name %>), class: "btn btn-success" %>
+<% attributes.each do |attribute| %><% if attribute.name != "label" %>
+<p>
+  <strong><%= attribute.human_name.gsub /_id$/, "" %>:</strong><% if attribute.name == "comment" %><br /><% end %>
+  <%%= @<%= singular_table_name %>.<%= attribute.name.gsub /_id$/, "" %> %>
+</p>
+<% end %><% end %>
+<p>
+  <%%= link_to 'Back to list', <%= index_helper %>_path, class: "btn btn-link" %>
+  <%%= link_to "Delete", <%= index_helper %>_path(@<%= singular_table_name %>), method: :delete, class: "btn btn-danger", data: { confirm: "Are you sure you want to delete this?" } %>
+  <%%= link_to 'Edit', edit_<%= singular_table_name %>_path(@<%= singular_table_name %>), class: "btn btn-success" %>
+</p>

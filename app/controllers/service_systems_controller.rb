@@ -61,7 +61,7 @@ class ServiceSystemsController < ApplicationController
     @service_system = ServiceSystem.find(params[:id])
 
     respond_to do |format|
-      if current_user == @service_system.user and @service_system.update_attributes(params[:service_system]) # update only by author
+      if @service_system.user == current_user and @service_system.update_attributes(params[:service_system])
         format.html { redirect_to @service_system, notice: 'Service system was successfully updated.' }
         format.json { head :no_content }
       else

@@ -11,19 +11,17 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130314153352) do
+ActiveRecord::Schema.define(:version => 20130314173717) do
 
   create_table "service_systems", :force => true do |t|
     t.string   "uri"
     t.string   "prefix"
+    t.integer  "user_id"
     t.string   "label"
-    t.string   "comment"
+    t.text     "comment"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
-    t.integer  "user_id"
   end
-
-  add_index "service_systems", ["user_id"], :name => "index_service_systems_on_user_id"
 
   create_table "users", :force => true do |t|
     t.string   "email",                  :default => "", :null => false

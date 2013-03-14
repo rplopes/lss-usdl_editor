@@ -18,7 +18,7 @@ class ServiceSystemsControllerTest < ActionController::TestCase
 
   test "should create service_system" do
     assert_difference('ServiceSystem.count') do
-      post :create, service_system: { comment: @service_system.comment, label: @service_system.label, prefix: @service_system.prefix, uri: @service_system.uri }
+      post :create, service_system: { comment: @service_system.comment, label: @service_system.label, prefix: @service_system.prefix, uri: @service_system.uri, user_id: @service_system.user_id }
     end
 
     assert_redirected_to service_system_path(assigns(:service_system))
@@ -35,7 +35,7 @@ class ServiceSystemsControllerTest < ActionController::TestCase
   end
 
   test "should update service_system" do
-    put :update, id: @service_system, service_system: { comment: @service_system.comment, label: @service_system.label, prefix: @service_system.prefix, uri: @service_system.uri }
+    put :update, id: @service_system, service_system: { comment: @service_system.comment, label: @service_system.label, prefix: @service_system.prefix, uri: @service_system.uri, user_id: @service_system.user_id }
     assert_redirected_to service_system_path(assigns(:service_system))
   end
 

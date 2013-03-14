@@ -3,11 +3,13 @@
 one:
   uri: MyString
   prefix: MyString
+  user_id: 1
   label: MyString
-  comment: MyString
+  comment: MyText
 
 two:
   uri: MyString
   prefix: MyString
+  user_id: 1
   label: MyString
-  comment: MyString
+  comment: MyText

@@ -15,22 +15,22 @@
   
     <tr>
       <td><%= f.label :uri %></td>
-      <td><%= f.text_field :uri %></td>
+      <td><%= f.text_field :uri, class: "span5" %></td>
     </tr>
   
     <tr>
       <td><%= f.label :prefix %></td>
-      <td><%= f.text_field :prefix %></td>
+      <td><%= f.text_field :prefix, class: "span5" %></td>
     </tr>
   
     <tr>
       <td><%= f.label :label %></td>
-      <td><%= f.text_field :label %></td>
+      <td><%= f.text_field :label, class: "span5" %></td>
     </tr>
   
     <tr>
       <td><%= f.label :comment %></td>
-      <td><%= f.text_field :comment %></td>
+      <td><%= f.text_area :comment, class: "span5", rows: 3 %></td>
     </tr>
   
   </table>
