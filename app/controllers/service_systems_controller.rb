@@ -75,6 +75,7 @@ class ServiceSystemsController < ApplicationController
   # DELETE /service_systems/1.json
   def destroy
     @service_system = ServiceSystem.find(params[:id])
+    redirect_to action: :show and return if current_user != @service_system.user
     @service_system.destroy
 
     respond_to do |format|
