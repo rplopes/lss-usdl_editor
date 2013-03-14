@@ -35,12 +35,14 @@ class ServiceSystemsController < ApplicationController
   # GET /service_systems/1/edit
   def edit
     @service_system = ServiceSystem.find(params[:id])
+    redirect_to action: :show if current_user != @service_system.user
   end
 
   # POST /service_systems
   # POST /service_systems.json
   def create
     @service_system = ServiceSystem.new(params[:service_system])
+    @service_system.user = current_user # add creator
 
     respond_to do |format|
       if @service_system.save
@@ -59,7 +61,7 @@ class ServiceSystemsController < ApplicationController
     @service_system = ServiceSystem.find(params[:id])
 
     respond_to do |format|
-      if @service_system.update_attributes(params[:service_system])
+      if current_user == @service_system.user and @service_system.update_attributes(params[:service_system]) # update only by author
         format.html { redirect_to @service_system, notice: 'Service system was successfully updated.' }
         format.json { head :no_content }
       else

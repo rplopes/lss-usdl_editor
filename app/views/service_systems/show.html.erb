@@ -18,6 +18,11 @@
   </tr>
 
   <tr>
+    <td><strong>Author</strong></td>
+    <td><%= @service_system.user.email %></td>
+  </tr>
+
+  <tr>
     <td><strong>Comment</strong></td>
     <td><%= @service_system.comment %></td>
   </tr>
@@ -27,4 +32,7 @@
 <br />
 
 <%= link_to 'Back to list', service_systems_path, class: "btn btn-link" %>
+
+<% if @service_system.user == current_user %>
 <%= link_to 'Edit', edit_service_system_path(@service_system), class: "btn btn-success" %>
+<% end %>
