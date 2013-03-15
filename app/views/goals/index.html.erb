@@ -1,0 +1,20 @@
+<h3>goals</h3>
+
+<%= link_to "New Goal", new_service_system_goal_path, class: "btn btn-success" %>
+
+<% @goals.each do |goal| %>
+
+<hr />
+<h4><%= link_to goal.label, goal %></h4>
+
+<p>
+  <strong>Comment:</strong><br />
+  <%= goal.comment %>
+</p>
+
+<p>
+  <%= link_to "Edit", edit_service_system_goal_path(goal) %> |
+  <%= link_to "Delete", goal, method: :delete, data: { confirm: "Are you sure you want to delete this?" } %>
+</p>
+
+<% end %>

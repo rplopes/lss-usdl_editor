@@ -21,6 +21,6 @@ form td:first-child {
   text-align: right;
 }
 
-form label {
+form td label {
   line-height: 2.5;
 }
