@@ -13,4 +13,12 @@ class ApplicationController < ActionController::Base
       @service_system = nil
     end
   end
+
+  def camel_case(label)
+    str = ""
+    label.split(" ").each do |word|
+      str += word.capitalize
+    end
+    return str
+  end
 end

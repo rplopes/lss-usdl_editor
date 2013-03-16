@@ -12,7 +12,7 @@
 </p>
 
 <p>
-  <%= link_to 'Back to list', goals_path, class: "btn btn-link" %>
-  <%= link_to "Delete", goals_path(@goal), method: :delete, class: "btn btn-danger", data: { confirm: "Are you sure you want to delete this?" } %>
-  <%= link_to 'Edit', edit_goal_path(@goal), class: "btn btn-success" %>
+  <%= link_to 'Back to list', service_system_goals_path, class: "btn btn-link" %>
+  <%= link_to "Delete", service_system_goal_path(@service_system.id, @goal.id), method: :delete, class: "btn btn-danger", data: { confirm: "Are you sure you want to delete this?" } %>
+  <%= link_to 'Edit', edit_service_system_goal_path(@service_system.id, @goal.id), class: "btn btn-success" %>
 </p>

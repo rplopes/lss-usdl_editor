@@ -3,8 +3,7 @@ class GoalsController < ApplicationController
   # GET /goals.json
   def index
     if @service_system.present?
-      @goals = Goal.find_by_service_system_id @service_system.id
-      @goals = [] if @goals.blank?
+      @goals = Goal.where "service_system_id = ?", @service_system.id
     else
       @goals = Goal.all
     end
@@ -29,7 +28,7 @@ class GoalsController < ApplicationController
   # GET /goals/new
   # GET /goals/new.json
   def new
-    @goal = Goal.new
+    @goal = @service_system.goals.build
 
     respond_to do |format|
       format.html # new.html.erb
@@ -46,11 +45,12 @@ class GoalsController < ApplicationController
   # POST /goals.json
   def create
     @goal = Goal.new(params[:goal])
+    @goal.sid = camel_case @goal.label
     @goal.service_system = @service_system if @service_system.present?
 
     respond_to do |format|
       if @goal.save
-        format.html { redirect_to @goal, notice: 'Goal was successfully created.' }
+        format.html { redirect_to service_system_goals_url, notice: 'Goal was successfully created.' }
         format.json { render json: @goal, status: :created, location: @goal }
       else
         format.html { render action: "new" }
@@ -63,10 +63,11 @@ class GoalsController < ApplicationController
   # PUT /goals/1.json
   def update
     @goal = Goal.find(params[:id])
+    @goal.sid = camel_case @goal.label
 
     respond_to do |format|
       if @goal.update_attributes(params[:goal])
-        format.html { redirect_to @goal, notice: 'Goal was successfully updated.' }
+        format.html { redirect_to service_system_goal_url, notice: 'Goal was successfully updated.' }
         format.json { head :no_content }
       else
         format.html { render action: "edit" }
@@ -82,7 +83,7 @@ class GoalsController < ApplicationController
     @goal.destroy
 
     respond_to do |format|
-      format.html { redirect_to goals_url }
+      format.html { redirect_to service_system_goals_url }
       format.json { head :no_content }
     end
   end
