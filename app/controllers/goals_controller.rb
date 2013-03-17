@@ -63,7 +63,7 @@ class GoalsController < ApplicationController
   # PUT /goals/1.json
   def update
     @goal = Goal.find(params[:id])
-    @goal.sid = camel_case @goal.label
+    params[:goal][:sid] = camel_case params[:goal][:label]
 
     respond_to do |format|
       if @goal.update_attributes(params[:goal])

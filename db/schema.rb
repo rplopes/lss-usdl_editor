@@ -11,9 +11,18 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130315115513) do
+ActiveRecord::Schema.define(:version => 20130317160817) do
 
   create_table "goals", :force => true do |t|
+    t.string   "sid"
+    t.integer  "service_system_id"
+    t.string   "label"
+    t.text     "comment"
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
+  end
+
+  create_table "process_entities", :force => true do |t|
     t.string   "sid"
     t.integer  "service_system_id"
     t.string   "label"

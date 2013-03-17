@@ -1,0 +1,18 @@
+<h3><%= @process_entity.label %></h3>
+
+
+<p>
+  <strong>Semantic ID:</strong>
+  <%= @process_entity.sid %>
+</p>
+
+<p>
+  <strong>Comment:</strong><br />
+  <%= @process_entity.comment %>
+</p>
+
+<p>
+  <%= link_to 'Back to list', service_system_process_entities_path, class: "btn btn-link" %>
+  <%= link_to "Delete", service_system_process_entity_path(@service_system.id, @process_entity.id), method: :delete, class: "btn btn-danger", data: { confirm: "Are you sure you want to delete this?" } %>
+  <%= link_to 'Edit', edit_service_system_process_entity_path(@service_system.id, @process_entity.id), class: "btn btn-success" %>
+</p>

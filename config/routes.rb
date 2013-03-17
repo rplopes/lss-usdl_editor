@@ -2,6 +2,7 @@ LssUsdlEditor::Application.routes.draw do
 
   resources :service_systems do
     resources :goals
+    resources :process_entities, path: "processes"
   end
 
   devise_for :users
