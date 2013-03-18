@@ -11,7 +11,20 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130317160817) do
+ActiveRecord::Schema.define(:version => 20130318113158) do
+
+  create_table "business_entities", :force => true do |t|
+    t.string   "sid"
+    t.integer  "service_system_id"
+    t.string   "foaf_name"
+    t.string   "foaf_page"
+    t.string   "foaf_logo"
+    t.string   "s_telephone"
+    t.string   "s_email"
+    t.text     "gr_description"
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
+  end
 
   create_table "goals", :force => true do |t|
     t.string   "sid"

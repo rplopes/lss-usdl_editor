@@ -1,0 +1,40 @@
+<h3>Business entities</h3>
+
+<%= link_to "New Business entity", new_service_system_business_entity_path, class: "btn btn-success" %>
+
+<% @business_entities.each do |business_entity| %>
+
+<hr />
+<h4><%= link_to business_entity.foaf_name, service_system_business_entity_path(@service_system.id, business_entity.id) %></h4>
+
+<p>
+  <strong>Webpage:</strong>
+  <%= business_entity.foaf_page %>
+</p>
+
+<p>
+  <strong>Logo:</strong>
+  <%= business_entity.foaf_logo %>
+</p>
+
+<p>
+  <strong>Telephone:</strong>
+  <%= business_entity.s_telephone %>
+</p>
+
+<p>
+  <strong>Email:</strong>
+  <%= business_entity.s_email %>
+</p>
+
+<p>
+  <strong>Description:</strong><br />
+  <%= business_entity.gr_description %>
+</p>
+
+<p>
+  <%= link_to "Edit", edit_service_system_business_entity_path(@service_system.id, business_entity.id) %> |
+  <%= link_to "Delete", service_system_business_entity_path(@service_system.id, business_entity.id), method: :delete, data: { confirm: "Are you sure you want to delete this?" } %>
+</p>
+
+<% end %>

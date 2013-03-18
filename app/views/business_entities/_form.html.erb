@@ -1,0 +1,53 @@
+<%= form_for [@service_system, @business_entity] do |f| %>
+
+  <% if @business_entity.errors.any? %>
+    <div id="error-explanation">
+      <h4><%= pluralize @business_entity.errors.count, "error" %> prevented this business_entity from being saved:</h4>
+      <ul>
+      <% @business_entity.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  
+  <table>
+  
+    <tr>
+      <td><%= f.label :foaf_name, "Name" %></td>
+      <td><%= f.text_field :foaf_name, class: "span5" %></td>
+    </tr>
+  
+    <tr>
+      <td><%= f.label :foaf_page, "Webpage" %></td>
+      <td><%= f.text_field :foaf_page, class: "span5" %></td>
+    </tr>
+  
+    <tr>
+      <td><%= f.label :foaf_logo, "Logo" %></td>
+      <td><%= f.text_field :foaf_logo, class: "span5", placeholder: "Insert URL of the logo image" %></td>
+    </tr>
+  
+    <tr>
+      <td><%= f.label :s_telephone, "Telephone" %></td>
+      <td><%= f.text_field :s_telephone, class: "span5" %></td>
+    </tr>
+  
+    <tr>
+      <td><%= f.label :s_email, "Email" %></td>
+      <td><%= f.text_field :s_email, class: "span5" %></td>
+    </tr>
+  
+    <tr>
+      <td><%= f.label :gr_description, "Description" %></td>
+      <td><%= f.text_area :gr_description, class: "span5", rows: "3" %></td>
+    </tr>
+  
+  </table>
+  
+  <div class="actions">
+    <%= link_to "Back to list", service_system_business_entities_path, class: "btn btn-link" %>
+    <%= f.submit "Save", class: "btn btn-success" %>
+  </div>
+
+<% end %>

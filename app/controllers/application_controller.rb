@@ -3,7 +3,7 @@ class ApplicationController < ActionController::Base
   before_filter :authenticate_user!, :load_navbar, :load_service_system
 
   def load_navbar
-    @navbar = [ "goals", "processes" ]
+    @navbar = [ "business_entities", "goals", "processes" ]
   end
 
   def load_service_system

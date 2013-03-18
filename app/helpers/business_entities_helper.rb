@@ -1,0 +1,2 @@
+module BusinessEntitiesHelper
+end
