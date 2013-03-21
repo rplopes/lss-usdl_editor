@@ -9,6 +9,8 @@ LssUsdlEditor::Application.routes.draw do
 
     resources :process_entities, path: "processes"
 
+    resources :resources
+
   end
 
   devise_for :users

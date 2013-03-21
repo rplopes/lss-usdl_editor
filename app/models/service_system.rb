@@ -8,4 +8,6 @@ class ServiceSystem < ActiveRecord::Base
   has_many :goals
 
   has_many :process_entities
+
+  has_many :resources
 end

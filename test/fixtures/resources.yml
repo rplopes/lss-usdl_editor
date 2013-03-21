@@ -1,0 +1,23 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  sid: MyString
+  service_system_id: 1
+  label: MyString
+  value: 1.5
+  max_value: 1.5
+  min_value: 1.5
+  unit_of_measurement: MyString
+  resource_type: MyString
+  comment: MyText
+
+two:
+  sid: MyString
+  service_system_id: 1
+  label: MyString
+  value: 1.5
+  max_value: 1.5
+  min_value: 1.5
+  unit_of_measurement: MyString
+  resource_type: MyString
+  comment: MyText

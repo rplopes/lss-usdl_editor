@@ -1,0 +1,40 @@
+<h3>Resources</h3>
+
+<%= link_to "New Resource", new_service_system_resource_path, class: "btn btn-success" %>
+
+<% @resources.each do |resource| %>
+
+<hr />
+<h4><%= link_to resource.label, service_system_resource_path(@service_system.id, resource.id) %></h4>
+
+<p>
+  <strong>Value:</strong>
+  <%= resource.value %> <%= resource.unit_of_measurement %>
+</p>
+
+<p>
+  <strong>Max value:</strong>
+  <%= resource.max_value %> <%= resource.unit_of_measurement %>
+</p>
+
+<p>
+  <strong>Min value:</strong>
+  <%= resource.min_value %> <%= resource.unit_of_measurement %>
+</p>
+
+<p>
+  <strong>Resource type:</strong>
+  <%= resource.resource_type.gsub(/Resource/, " resource") %>
+</p>
+
+<p>
+  <strong>Comment:</strong><br />
+  <%= resource.comment %>
+</p>
+
+<p>
+  <%= link_to "Edit", edit_service_system_resource_path(@service_system.id, resource.id) %> |
+  <%= link_to "Delete", service_system_resource_path(@service_system.id, resource.id), method: :delete, data: { confirm: "Are you sure you want to delete this?" } %>
+</p>
+
+<% end %>
