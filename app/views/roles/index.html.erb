@@ -1,0 +1,25 @@
+<h3>Roles</h3>
+
+<%= link_to "New Role", new_service_system_role_path, class: "btn btn-success" %>
+
+<% @roles.each do |role| %>
+
+<hr />
+<h4><%= link_to role.label, service_system_role_path(@service_system.id, role.id) %></h4>
+
+<p>
+  <strong>Business entity:</strong>
+  <%= link_to role.business_entity, service_system_business_entity_path(@service_system.id, role.business_entity.id) %>
+</p>
+
+<p>
+  <strong>Comment:</strong><br />
+  <%= role.comment %>
+</p>
+
+<p>
+  <%= link_to "Edit", edit_service_system_role_path(@service_system.id, role.id) %> |
+  <%= link_to "Delete", service_system_role_path(@service_system.id, role.id), method: :delete, data: { confirm: "Are you sure you want to delete this?" } %>
+</p>
+
+<% end %>

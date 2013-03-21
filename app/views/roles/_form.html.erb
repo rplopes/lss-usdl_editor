@@ -1,0 +1,38 @@
+<%= form_for [@service_system, @role] do |f| %>
+
+  <% if @role.errors.any? %>
+    <div id="error-explanation">
+      <h4><%= pluralize @role.errors.count, "error" %> prevented this role from being saved:</h4>
+      <ul>
+      <% @role.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  
+  <table>
+  
+    <tr>
+      <td><%= f.label :label %></td>
+      <td><%= f.text_field :label, class: "span5" %></td>
+    </tr>
+
+    <tr>
+      <td><%= f.label :business_entity_id, "Business entity" %></td>
+      <td><%= f.select :business_entity_id, @business_entities.map{ |be| [be.foaf_name, be.id] } %></td>
+    </tr>
+  
+    <tr>
+      <td><%= f.label :comment %></td>
+      <td><%= f.text_area :comment, class: "span5", rows: "3" %></td>
+    </tr>
+  
+  </table>
+  
+  <div class="actions">
+    <%= link_to "Back to list", service_system_roles_path, class: "btn btn-link" %>
+    <%= f.submit "Save", class: "btn btn-success" %>
+  </div>
+
+<% end %>
