@@ -25,7 +25,11 @@
   
     <tr>
       <td><%= f.label :gn_feature, "Is location from" %></td>
-      <td><%= f.text_field :gn_feature, class: "span5" %></td>
+      <td>
+        <%= f.hidden_field :gn_feature %>
+        <p id="gn-name">&nbsp;</p>
+        <div id="debug" style="overflow: auto; height: 200px; margin-left: 0; padding: 0" class="well span5"></div>
+      </td>
     </tr>
   
     <tr>
@@ -41,3 +45,80 @@
   </div>
 
 <% end %>
+
+<!--<div id="gn-modal" class="modal hide fade">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>Search for Geonames Feature</h3>
+  </div>
+  <div class="modal-body">
+    <p><div id="debug"></div></p>
+  </div>
+</div>-->
+
+<script type="text/javascript" src="http://tompi.github.com/jeoquery/jeoquery.js"></script>
+<script type="text/javascript" src="http://tompi.github.com/jeoquery/jstree/jquery.jstree.js"></script>
+<script type="text/javascript">
+  /* This script in an adaptation of Thomas Haukland's work found in http://tompi.github.com/jeoquery/earth.html */
+  $(function () {
+    // Set geonames user
+    jeoquery.userName = 'tompi';
+    // Create tree with "Earth" node
+    var earth = {
+      data: 'Earth',
+      state: 'closed',
+      attr: {
+        id: 6295630
+      }
+    };
+    var tree = $("#debug").jstree({
+      "plugins": ["themes", "ui", "json_data", "types"],
+      "json_data": {
+        data: earth
+      },
+      "types": {
+        "types": {
+          "max_children": -2,
+          "max_depth": -2,
+          "default": {
+            "valid_children": ["default"],
+            "select_node": function (e) {
+              this.toggle_node(e);
+              return false;
+            }
+          }
+        }
+      }
+    });
+    // Bind function to lookup children to open-event
+    tree.bind("open_node.jstree", function (e, data) {
+      var node = data.args[0];
+      if (!node.data('openedbefore')) {
+        node.data('openedbefore', 'true');
+        var geoId = node.attr('id');
+        // Actual geonames lookup
+        jeoquery.children(function (obj) {
+          if (obj && obj.geonames) {
+            // Loop over results(children) and add them as nodes
+            for (var i = 0; i < obj.geonames.length; i++) {
+              var gn = obj.geonames[i];
+              var data = {
+                data: gn.name,
+                attr: {
+                  id: gn.geonameId
+                }
+              };
+              if (gn.numberOfChildren) data.state = 'closed';
+              tree.jstree('create_node', node, 'last', data, function () {
+                $('#' + gn.geonameId + ' a').click(function(){
+                  $('#gn-name').html($(this).context.innerText+" <a href='#' onclick=\"$('#gn-name').html('&nbsp;'); $('#location_gn_feature').val(''); return false;\"><i class='icon-remove'></i></a>");
+                  $('#location_gn_feature').val("http://sws.geonames.org/"+$(this).context.parentNode.getAttribute("id"));
+                });
+              });
+            }
+          }
+        }, geoId);
+      }
+    });
+  });
+</script>

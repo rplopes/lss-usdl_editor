@@ -24,3 +24,7 @@ form td:first-child {
 form td label {
   line-height: 2.5;
 }
+
+form td a.btn {
+  margin-bottom: 10px;
+}
