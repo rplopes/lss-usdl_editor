@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  sid: MyString
+  service_system_id: 1
+  label: MyString
+  location_id: 1
+  gn_feature: MyString
+  comment: MyText
+
+two:
+  sid: MyString
+  service_system_id: 1
+  label: MyString
+  location_id: 1
+  gn_feature: MyString
+  comment: MyText

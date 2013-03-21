@@ -4,10 +4,8 @@ class ServiceSystem < ActiveRecord::Base
 
   has_many :business_entities
   has_many :roles
-
   has_many :goals
-
+  has_many :locations
   has_many :process_entities
-
   has_many :resources
 end

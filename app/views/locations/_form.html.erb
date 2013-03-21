@@ -1,0 +1,43 @@
+<%= form_for [@service_system, @location] do |f| %>
+
+  <% if @location.errors.any? %>
+    <div id="error-explanation">
+      <h4><%= pluralize @location.errors.count, "error" %> prevented this location from being saved:</h4>
+      <ul>
+      <% @location.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  
+  <table>
+  
+    <tr>
+      <td><%= f.label :label %></td>
+      <td><%= f.text_field :label, class: "span5" %></td>
+    </tr>
+  
+    <tr>
+      <td><%= f.label :location_id, "Belongs to" %></td>
+      <td><%= f.select :location_id, @locations.map{ |l| [l, l.id] }.prepend(['--', nil]) %></td>
+    </tr>
+  
+    <tr>
+      <td><%= f.label :gn_feature, "Is location from" %></td>
+      <td><%= f.text_field :gn_feature, class: "span5" %></td>
+    </tr>
+  
+    <tr>
+      <td><%= f.label :comment %></td>
+      <td><%= f.text_area :comment, class: "span5", rows: "3" %></td>
+    </tr>
+  
+  </table>
+  
+  <div class="actions">
+    <%= link_to "Back to list", service_system_locations_path, class: "btn btn-link" %>
+    <%= f.submit "Save", class: "btn btn-success" %>
+  </div>
+
+<% end %>
