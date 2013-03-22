@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130321181940) do
+ActiveRecord::Schema.define(:version => 20130322180639) do
 
   create_table "business_entities", :force => true do |t|
     t.string   "sid"
@@ -29,6 +29,16 @@ ActiveRecord::Schema.define(:version => 20130321181940) do
   create_table "goals", :force => true do |t|
     t.string   "sid"
     t.integer  "service_system_id"
+    t.string   "label"
+    t.text     "comment"
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
+  end
+
+  create_table "interactions", :force => true do |t|
+    t.string   "sid"
+    t.integer  "service_system_id"
+    t.string   "interaction_type"
     t.string   "label"
     t.text     "comment"
     t.datetime "created_at",        :null => false

@@ -8,4 +8,6 @@ class ServiceSystem < ActiveRecord::Base
   has_many :locations
   has_many :process_entities
   has_many :resources
+
+  has_many :interactions
 end

@@ -1,0 +1,25 @@
+<br />
+
+<%= link_to "New Interaction", new_service_system_interaction_path, class: "btn btn-success" %>
+
+<% @interactions.each do |interaction| %>
+
+<hr />
+<h4><%= link_to interaction.label, service_system_interaction_path(@service_system.id, interaction.id) %></h4>
+
+<p>
+  <strong>Interaction type:</strong>
+  <%= interaction.interaction_type %>
+</p>
+
+<p>
+  <strong>Comment:</strong><br />
+  <%= interaction.comment %>
+</p>
+
+<p>
+  <%= link_to "Edit", edit_service_system_interaction_path(@service_system.id, interaction.id) %> |
+  <%= link_to "Delete", service_system_interaction_path(@service_system.id, interaction.id), method: :delete, data: { confirm: "Are you sure you want to delete this?" } %>
+</p>
+
+<% end %>

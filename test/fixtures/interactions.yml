@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  sid: MyString
+  service_system_id: 1
+  interaction_type: MyString
+  label: MyString
+  comment: MyText
+
+two:
+  sid: MyString
+  service_system_id: 1
+  interaction_type: MyString
+  label: MyString
+  comment: MyText
