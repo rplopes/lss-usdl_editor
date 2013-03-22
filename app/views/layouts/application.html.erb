@@ -23,6 +23,7 @@
           </a>
           <ul class="dropdown-menu">
             <li><%= link_to "Service system", service_system_path(@service_system.id) %></li>
+            <li class="divider"></li>
           <% for navbar_item in @navbar %>
             <li><%= link_to navbar_item.humanize, "/service_systems/#{@service_system.id}/#{navbar_item}" %></li>
           <% end %>
