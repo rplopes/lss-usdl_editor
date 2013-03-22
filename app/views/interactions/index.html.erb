@@ -1,25 +1,47 @@
-<br />
+<% if true %>
 
-<%= link_to "New Interaction", new_service_system_interaction_path, class: "btn btn-success" %>
+<table id="interactions-table">
+  <tr>
+    <td><p class="subtitle">Line of interaction</p></td>
+    <td><div class="well well-small span3" style="height: 120px"><h4>Interaction</h4><p>A placeholder interaction.</p></div></td>
+    <td><div class="well well-small span3" style="height: 120px"><h4>Interaction</h4><p>A placeholder interaction.</p></div></td>
+  </tr>
+  <tr>
+    <td><p class="subtitle">Line of visibility</p></td>
+    <td><div class="well well-small span3" style="height: 120px"><h4>Interaction</h4><p>A placeholder interaction.</p></div></td>
+    <td><div class="well well-small span3" style="height: 120px"><h4>Interaction</h4><p>A placeholder interaction.</p></div></td>
+  </tr>
+  <tr>
+    <td><p class="subtitle">Line of internal interaction</p></td>
+    <td><div class="well well-small span3" style="height: 120px"><h4>Interaction</h4><p>A placeholder interaction.</p></div></td>
+    <td><div class="well well-small span3" style="height: 120px"><h4>Interaction</h4><p>A placeholder interaction.</p></div></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><div class="well well-small span3" style="height: 120px"><h4>Interaction</h4><p>A placeholder interaction.</p></div></td>
+    <td><div class="well well-small span3" style="height: 120px"><h4>Interaction</h4><p>A placeholder interaction.</p></div></td>
+  </tr>
+</table>
+
+<% else %>
+<br />
+<p><%= link_to "New Interaction", new_service_system_interaction_path, class: "btn btn-success" %></p>
 
 <% @interactions.each do |interaction| %>
 
-<hr />
-<h4><%= link_to interaction.label, service_system_interaction_path(@service_system.id, interaction.id) %></h4>
+<div class="well span4">
+  <h4><%= link_to interaction.label, service_system_interaction_path(@service_system.id, interaction.id) %></h4>
 
-<p>
-  <strong>Interaction type:</strong>
-  <%= interaction.interaction_type %>
-</p>
+  <p>
+    <strong>Interaction type:</strong>
+    <%= interaction.interaction_type %>
+  </p>
 
-<p>
-  <strong>Comment:</strong><br />
-  <%= interaction.comment %>
-</p>
-
-<p>
-  <%= link_to "Edit", edit_service_system_interaction_path(@service_system.id, interaction.id) %> |
-  <%= link_to "Delete", service_system_interaction_path(@service_system.id, interaction.id), method: :delete, data: { confirm: "Are you sure you want to delete this?" } %>
-</p>
+  <p>
+    <strong>Comment:</strong><br />
+    <%= interaction.comment %>
+  </p>
+</div>
+<% end %>
 
 <% end %>

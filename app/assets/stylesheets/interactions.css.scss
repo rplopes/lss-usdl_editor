@@ -1,3 +1,30 @@
 // Place all the styles related to the Interactions controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+table#interactions-table tr:not(:last-child) {
+  border-bottom: 1px solid #999;
+}
+
+table#interactions-table tr td {
+  height: 150px;
+  width: 280px;
+  padding: 10px;
+  vertical-align: middle;
+
+  .well {
+    margin: 0;
+  }
+}
+
+table#interactions-table tr td:first-child {
+  vertical-align: bottom;
+  width: 130px;
+
+  p.subtitle {
+    font-size: 90%;
+    color: #666;
+    max-width: 110px;
+    margin: 0;
+  }
+}
