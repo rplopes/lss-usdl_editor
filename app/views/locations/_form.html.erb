@@ -27,7 +27,13 @@
       <td><%= f.label :gn_feature, "Is location from" %></td>
       <td>
         <%= f.hidden_field :gn_feature %>
-        <p id="gn-name">&nbsp;</p>
+        <p id="gn-name">
+          &nbsp;
+          <% if @location.gn_feature %>
+            <span class="gn-id"><%= @location.gn_feature %></span>
+            <a href='#' onclick="$('#gn-name').html('&nbsp;'); $('#location_gn_feature').val(''); return false;"><i class='icon-remove'></i></a>
+          <% end %>
+        </p>
         <div id="debug" style="overflow: auto; height: 200px; margin-left: 0; padding: 0" class="well span5"></div>
       </td>
     </tr>
@@ -62,7 +68,7 @@
   /* This script in an adaptation of Thomas Haukland's work found in http://tompi.github.com/jeoquery/earth.html */
   $(function () {
     // Set geonames user
-    jeoquery.userName = 'tompi';
+    jeoquery.userName = 'lss_usdl';
     // Create tree with "Earth" node
     var earth = {
       data: 'Earth',
