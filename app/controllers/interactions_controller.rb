@@ -1,4 +1,6 @@
 class InteractionsController < ApplicationController
+  before_filter :select_interactions_tab
+
   # GET /interactions
   # GET /interactions.json
   def index
@@ -87,5 +89,11 @@ class InteractionsController < ApplicationController
       format.html { redirect_to service_system_interactions_url }
       format.json { head :no_content }
     end
+  end
+
+  private
+
+  def select_interactions_tab
+    @interactions_tab = true
   end
 end

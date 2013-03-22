@@ -1,4 +1,6 @@
 class ServiceSystemsController < ApplicationController
+  before_filter :select_metadata_tab
+
   # GET /service_systems
   # GET /service_systems.json
   def index
@@ -82,5 +84,11 @@ class ServiceSystemsController < ApplicationController
       format.html { redirect_to service_systems_url }
       format.json { head :no_content }
     end
+  end
+
+  private
+
+  def select_metadata_tab
+    @metadata_tab = true
   end
 end

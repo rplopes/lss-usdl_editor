@@ -18,7 +18,6 @@
   <%= @service_system.comment %>
 </p>
 <p>
-  <%= link_to 'Back to list', service_systems_path, class: "btn btn-link" %>
   <% if @service_system.user == current_user %>
   <%= link_to "Delete", service_systems_path(@service_system), method: :delete, class: "btn btn-danger", data: { confirm: "Are you sure you want to delete this?" } %>
   <%= link_to 'Edit', edit_service_system_path(@service_system), class: "btn btn-success" %>

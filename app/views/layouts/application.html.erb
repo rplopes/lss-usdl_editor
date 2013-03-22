@@ -18,9 +18,13 @@
         </li>
 
         <% if @service_system and @service_system.id and @navbar %>
-          <li><%= link_to @service_system.label, service_system_interactions_path(@service_system.id) %></li>
+          <li<% if @interactions_tab %> class="active"<% end %>>
+            <%= link_to @service_system.label, service_system_interactions_path(@service_system.id) %>
+          </li>
           <li class="divider-vertical"></li>
-          <li><%= link_to "Metadata", service_system_path(@service_system.id) %></li>
+          <li<% if @metadata_tab %> class="active"<% end %>>
+            <%= link_to "Metadata", service_system_path(@service_system.id) %>
+          </li>
           <li class="divider-vertical"></li>
 
           <li class="dropdown">
