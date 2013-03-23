@@ -4,11 +4,7 @@ class InteractionsController < ApplicationController
   # GET /interactions
   # GET /interactions.json
   def index
-    if @service_system.present?
-      @interactions = Interaction.where "service_system_id = ?", @service_system.id
-    else
-      @interactions = Interaction.all
-    end
+    @interactions = Interaction.build_interactions_blueprint(@service_system.id)
     @full_width = true
 
     respond_to do |format|
