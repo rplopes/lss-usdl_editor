@@ -20,7 +20,7 @@
   
     <tr>
       <td><%= f.label :resource_type %></td>
-      <td><%= f.select :resource_type, @resource.subclasses.prepend(["--", "--"]) %></td>
+      <td><%= f.select :resource_type, Resource.subclasses.map{ |sc| ["#{sc} resource", "#{sc}Resource"] }.prepend(["--", "--"]) %></td>
     </tr>
   
     <tr>

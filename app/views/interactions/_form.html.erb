@@ -15,7 +15,7 @@
   
     <tr>
       <td><%= f.label :interaction_type %></td>
-      <td><%= f.text_field :interaction_type, class: "span5" %></td>
+      <td><%= f.select :interaction_type, Interaction.subclasses.map{ |sc| ["#{sc} interaction", "#{sc}Interaction"] }.prepend(["--", nil]) %></td>
     </tr>
   
     <tr>

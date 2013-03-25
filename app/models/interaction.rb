@@ -13,7 +13,7 @@ class Interaction < ActiveRecord::Base
   has_many :interactions_after, class_name: "Interaction", foreign_key: "after_interaction_id"
 
   def self.subclasses
-    [ "Customer", "Onstage", "Backstage", "Support" ].map { |sc| ["#{sc} interaction", "#{sc}Interaction"] }
+    ["Customer", "Onstage", "Backstage", "Support"]
   end
 
   def self.build_interactions_blueprint(ss_id)
@@ -22,7 +22,7 @@ class Interaction < ActiveRecord::Base
 
     interactions.each do |interaction|
       (0..3).each do |i|
-        if interaction.interaction_type == subclasses[i][1]
+        if interaction.interaction_type == "#{subclasses[i]}Interaction"
           blueprint[i].append interaction
         else
           blueprint[i].append nil
