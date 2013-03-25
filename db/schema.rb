@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130322180639) do
+ActiveRecord::Schema.define(:version => 20130325152544) do
 
   create_table "business_entities", :force => true do |t|
     t.string   "sid"
@@ -41,8 +41,11 @@ ActiveRecord::Schema.define(:version => 20130322180639) do
     t.string   "interaction_type"
     t.string   "label"
     t.text     "comment"
-    t.datetime "created_at",        :null => false
-    t.datetime "updated_at",        :null => false
+    t.datetime "created_at",            :null => false
+    t.datetime "updated_at",            :null => false
+    t.integer  "before_interaction_id"
+    t.integer  "during_interaction_id"
+    t.integer  "after_interaction_id"
   end
 
   create_table "locations", :force => true do |t|

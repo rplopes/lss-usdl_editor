@@ -6,24 +6,28 @@
     <% for interaction in @interactions[0] %>
       <td><%= render 'blueprint_node', :interaction => interaction %></td>
     <% end %>
+    <td><%= render 'blueprint_node', :interaction => nil %></td>
   </tr>
   <tr>
     <td><p class="subtitle">Line of visibility</p></td>
     <% for interaction in @interactions[1] %>
       <td><%= render 'blueprint_node', :interaction => interaction %></td>
     <% end %>
+    <td><%= render 'blueprint_node', :interaction => nil %></td>
   </tr>
   <tr>
     <td><p class="subtitle">Line of internal interaction</p></td>
     <% for interaction in @interactions[2] %>
       <td><%= render 'blueprint_node', :interaction => interaction %></td>
     <% end %>
+    <td><%= render 'blueprint_node', :interaction => nil %></td>
   </tr>
   <tr>
     <td></td>
     <% for interaction in @interactions[3] %>
       <td><%= render 'blueprint_node', :interaction => interaction %></td>
     <% end %>
+    <td><%= render 'blueprint_node', :interaction => nil %></td>
   </tr>
 </table>
 

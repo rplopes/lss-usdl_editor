@@ -22,6 +22,21 @@
       <td><%= f.label :label %></td>
       <td><%= f.text_field :label, class: "span5" %></td>
     </tr>
+
+    <tr>
+      <td><%= f.label :after_interaction_id, "Happens after" %></td>
+      <td><%= f.select :after_interaction_id, @interactions_before_after.map{ |i| [i.label, i.id] }.prepend(["--", nil]) %></td>
+    </tr>
+
+    <tr>
+      <td><%= f.label :during_interaction_id, "Happens during" %></td>
+      <td><%= f.select :during_interaction_id, @interactions_during.map{ |i| [i.label, i.id] }.prepend(["--", nil]) %></td>
+    </tr>
+
+    <tr>
+      <td><%= f.label :before_interaction_id, "Happens before" %></td>
+      <td><%= f.select :before_interaction_id, @interactions_before_after.map{ |i| [i.label, i.id] }.prepend(["--", nil]) %></td>
+    </tr>
   
     <tr>
       <td><%= f.label :comment %></td>

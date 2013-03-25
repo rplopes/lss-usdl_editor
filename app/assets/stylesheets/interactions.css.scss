@@ -8,14 +8,17 @@ table#interactions-table tr:not(:last-child) {
 
 table#interactions-table tr td {
   height: 150px;
-  width: 280px;
+  min-width: 240px;
+  width: 240px;
   padding: 10px;
   vertical-align: middle;
   text-align: center;
 
   .well {
-    margin: 0;
+    margin: 0px;
     text-align: left;
+    height: 120px;
+    width: 230px;
   }
 
   .btn {
@@ -31,7 +34,8 @@ table#interactions-table tr td {
 table#interactions-table tr td:first-child {
   vertical-align: bottom;
   text-align: left;
-  width: 130px;
+  min-width: 120px;
+  width: 120px;
 
   p.subtitle {
     font-size: 90%;

@@ -28,6 +28,8 @@ class InteractionsController < ApplicationController
   # GET /interactions/new.json
   def new
     @interaction = @service_system.interactions.build
+    @interactions_before_after = Interaction.where "service_system_id = ?", @service_system.id
+    @interactions_during = @interactions_before_after
 
     respond_to do |format|
       format.html # new.html.erb
@@ -38,6 +40,8 @@ class InteractionsController < ApplicationController
   # GET /interactions/1/edit
   def edit
     @interaction = Interaction.find(params[:id])
+    @interactions_before_after = Interaction.where "id != ? and service_system_id = ?", @interaction.id, @service_system.id
+    @interactions_during = Interaction.where "id != ? and service_system_id = ? and interaction_type != ?", @interaction.id, @service_system.id, @interaction.interaction_type
   end
 
   # POST /interactions
