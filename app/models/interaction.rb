@@ -7,10 +7,19 @@ class Interaction < ActiveRecord::Base
   end
 
   def self.build_interactions_blueprint(ss_id)
-    interactions = []
-    Interaction.subclasses.each do |subclass|
-      interactions.append Interaction.where "service_system_id = ? and interaction_type = ?", ss_id, subclass[1]
+    interactions = Interaction.where "service_system_id = ?", ss_id
+    blueprint = Array.new(4) { Array.new }
+
+    interactions.each do |interaction|
+      (0..3).each do |i|
+        if interaction.interaction_type == subclasses[i][1]
+          blueprint[i].append interaction
+        else
+          blueprint[i].append nil
+        end
+      end
     end
-    return interactions
+
+    return blueprint
   end
 end

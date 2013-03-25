@@ -1,0 +1,12 @@
+<% if interaction %>
+
+  <div class="well well-small span3" style="height: 120px">
+    <h4><%= link_to interaction.label, service_system_interaction_path(@service_system.id, interaction.id) %></h4>
+    <p><%= interaction.comment %></p>
+  </div>
+
+<% else %>
+
+  <%= link_to "New interaction here", new_service_system_interaction_path(@service_system.id), class: "btn" %>
+
+<% end %>

@@ -4,37 +4,25 @@
   <tr>
     <td><p class="subtitle">Line of interaction</p></td>
     <% for interaction in @interactions[0] %>
-      <td><div class="well well-small span3" style="height: 120px">
-        <h4><%= link_to interaction.label, service_system_interaction_path(@service_system.id, interaction.id) %></h4>
-        <p><%= interaction.comment %></p>
-      </div></td>
+      <td><%= render 'blueprint_node', :interaction => interaction %></td>
     <% end %>
   </tr>
   <tr>
     <td><p class="subtitle">Line of visibility</p></td>
     <% for interaction in @interactions[1] %>
-      <td><div class="well well-small span3" style="height: 120px">
-        <h4><%= link_to interaction.label, service_system_interaction_path(@service_system.id, interaction.id) %></h4>
-        <p><%= interaction.comment %></p>
-      </div></td>
+      <td><%= render 'blueprint_node', :interaction => interaction %></td>
     <% end %>
   </tr>
   <tr>
     <td><p class="subtitle">Line of internal interaction</p></td>
     <% for interaction in @interactions[2] %>
-      <td><div class="well well-small span3" style="height: 120px">
-        <h4><%= link_to interaction.label, service_system_interaction_path(@service_system.id, interaction.id) %></h4>
-        <p><%= interaction.comment %></p>
-      </div></td>
+      <td><%= render 'blueprint_node', :interaction => interaction %></td>
     <% end %>
   </tr>
   <tr>
     <td></td>
     <% for interaction in @interactions[3] %>
-      <td><div class="well well-small span3" style="height: 120px">
-        <h4><%= link_to interaction.label, service_system_interaction_path(@service_system.id, interaction.id) %></h4>
-        <p><%= interaction.comment %></p>
-      </div></td>
+      <td><%= render 'blueprint_node', :interaction => interaction %></td>
     <% end %>
   </tr>
 </table>

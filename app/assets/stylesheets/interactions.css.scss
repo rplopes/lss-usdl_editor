@@ -11,14 +11,26 @@ table#interactions-table tr td {
   width: 280px;
   padding: 10px;
   vertical-align: middle;
+  text-align: center;
 
   .well {
     margin: 0;
+    text-align: left;
+  }
+
+  .btn {
+    display: none;
+    opacity: 0.5;
+  }
+
+  .btn:hover {
+    opacity: 1;
   }
 }
 
 table#interactions-table tr td:first-child {
   vertical-align: bottom;
+  text-align: left;
   width: 130px;
 
   p.subtitle {
