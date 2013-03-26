@@ -1,23 +1,86 @@
 <h3><%= @interaction.label %></h3>
 
+<div class="tabbable"> <!-- Only required for left/right tabs -->
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#tab1" data-toggle="tab">Metadata</a></li>
+    <li><a href="#tab2" data-toggle="tab">Roles</a></li>
+    <li><a href="#tab3" data-toggle="tab">Time</a></li>
+    <li><a href="#tab4" data-toggle="tab">Goals</a></li>
+    <li><a href="#tab5" data-toggle="tab">Locations</a></li>
+    <li><a href="#tab6" data-toggle="tab">Processes</a></li>
+    <li><a href="#tab7" data-toggle="tab">Resources</a></li>
+  </ul>
+  <div class="tab-content">
 
-<p>
-  <strong>Semantic ID:</strong>
-  <%= @interaction.sid %>
-</p>
+    <%# Metadata %>
+    <div class="tab-pane active" id="tab1">
+      <p>
+        <strong>Semantic ID:</strong>
+        <%= @interaction.sid %>
+      </p>
 
-<p>
-  <strong>Interaction type:</strong>
-  <%= @interaction.interaction_type %>
-</p>
+      <p>
+        <strong>Interaction type:</strong>
+        <%= @interaction.interaction_type.gsub /Interaction/, " interaction" %>
+      </p>
 
-<p>
-  <strong>Comment:</strong><br />
-  <%= @interaction.comment %>
-</p>
+      <p>
+        <strong>Comment:</strong><br />
+        <%= @interaction.comment %>
+      </p>
+      <p>
+        <%= link_to 'Back to list', service_system_interactions_path, class: "btn btn-link" %>
+        <%= link_to "Delete", service_system_interaction_path(@service_system.id, @interaction.id), method: :delete, class: "btn btn-danger", data: { confirm: "Are you sure you want to delete this?" } %>
+        <%= link_to 'Edit', edit_service_system_interaction_path(@service_system.id, @interaction.id), class: "btn btn-success" %>
+      </p>
 
-<p>
-  <%= link_to 'Back to list', service_system_interactions_path, class: "btn btn-link" %>
-  <%= link_to "Delete", service_system_interaction_path(@service_system.id, @interaction.id), method: :delete, class: "btn btn-danger", data: { confirm: "Are you sure you want to delete this?" } %>
-  <%= link_to 'Edit', edit_service_system_interaction_path(@service_system.id, @interaction.id), class: "btn btn-success" %>
-</p>
+    </div>
+
+    <%# Roles %>
+    <div class="tab-pane" id="tab2">
+      <% if @interaction.roles.size > 0 %>
+      <table class="table table-striped">
+        <% for role in @interaction.roles %>
+          <tr><td>
+            <%= form_tag(service_system_interaction_delete_roles_path(@service_system.id, @interaction.id), method: :delete, style: "margin: 0") do %>
+              <%= link_to role.label, service_system_role_path(@service_system.id, role.id) %>
+              <%= hidden_field_tag "role", role.id %>
+              (<%= submit_tag "Remove", class: "btn btn-link" %>)
+            <% end %>
+          </td></tr>
+        <% end %>
+      </table>
+      <% end %>
+      <%= form_tag(service_system_interaction_update_roles_path(@service_system.id, @interaction.id), method: :put) do %>
+        <%= select_tag "role", options_from_collection_for_select(@roles, "id", "label"), include_blank: true %>
+        <%= submit_tag "Add a role to this interaction", class: "btn btn-success" %>
+      <% end %>
+    </div>
+
+    <%# Time %>
+    <div class="tab-pane" id="tab3">
+      <p>Time.</p>
+    </div>
+
+    <%# Goals %>
+    <div class="tab-pane" id="tab4">
+      <p>Goals.</p>
+    </div>
+
+    <%# Locations %>
+    <div class="tab-pane" id="tab5">
+      <p>Locations.</p>
+    </div>
+
+    <%# Processes %>
+    <div class="tab-pane" id="tab6">
+      <p>Processes.</p>
+    </div>
+
+    <%# Resources %>
+    <div class="tab-pane" id="tab7">
+      <p>Resources.</p>
+    </div>
+
+  </div>
+</div>

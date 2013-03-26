@@ -28,3 +28,7 @@ form td label {
 form td a.btn {
   margin-bottom: 10px;
 }
+
+form select {
+  margin-bottom: 0;
+}

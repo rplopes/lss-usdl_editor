@@ -18,6 +18,11 @@ class InteractionsController < ApplicationController
   def show
     @interaction = Interaction.find(params[:id])
 
+    @roles = []
+    Role.where("service_system_id = ?", @service_system.id).each do |role|
+      @roles.append role unless @interaction.roles.index(role)
+    end
+
     respond_to do |format|
       format.html # show.html.erb
       format.json { render json: @interaction }
@@ -79,6 +84,24 @@ class InteractionsController < ApplicationController
     end
   end
 
+  def update_roles
+    @interaction = Interaction.find(params[:interaction_id])
+    if params[:role].present?
+      role = Role.find(params[:role])
+      @interaction.roles << role
+    end
+
+    respond_to do |format|
+      if @interaction.save
+        format.html { redirect_to service_system_interaction_url(@service_system.id, @interaction.id), notice: 'Interaction was successfully updated.' }
+        format.json { head :no_content }
+      else
+        format.html { render action: "edit" }
+        format.json { render json: @interaction.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
   # DELETE /interactions/1
   # DELETE /interactions/1.json
   def destroy
@@ -87,6 +110,19 @@ class InteractionsController < ApplicationController
 
     respond_to do |format|
       format.html { redirect_to service_system_interactions_url }
+      format.json { head :no_content }
+    end
+  end
+
+  def delete_roles
+    @interaction = Interaction.find(params[:interaction_id])
+    if params[:role].present?
+      role = Role.find(params[:role])
+      @interaction.roles.delete(role)
+    end
+
+    respond_to do |format|
+      format.html { redirect_to service_system_interaction_url(@service_system.id, @interaction.id), notice: 'Interaction was successfully updated.' }
       format.json { head :no_content }
     end
   end

@@ -12,6 +12,9 @@ class Interaction < ActiveRecord::Base
   has_many :interactions_during, class_name: "Interaction", foreign_key: "during_interaction_id"
   has_many :interactions_after, class_name: "Interaction", foreign_key: "after_interaction_id"
 
+  # Connections to the other elements
+  has_and_belongs_to_many :roles
+
   def self.subclasses
     ["Customer", "Onstage", "Backstage", "Support"]
   end
