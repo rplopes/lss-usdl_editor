@@ -19,8 +19,12 @@ class InteractionsController < ApplicationController
     @interaction = Interaction.find(params[:id])
 
     @roles = []
-    Role.where("service_system_id = ?", @service_system.id).each do |role|
-      @roles.append role unless @interaction.roles.index(role)
+    Role.where("service_system_id = ?", @service_system.id).each do |obj|
+      @roles.append obj unless @interaction.roles.index(obj)
+    end
+    @goals = []
+    Goal.where("service_system_id = ?", @service_system.id).each do |obj|
+      @goals.append obj unless @interaction.goals.index(obj)
     end
 
     respond_to do |format|
@@ -87,8 +91,9 @@ class InteractionsController < ApplicationController
   def add_entity
     @interaction = Interaction.find(params[:interaction_id])
     if params[:role].present?
-      role = Role.find(params[:role])
-      @interaction.roles << role
+      @interaction.roles << Role.find(params[:role])
+    elsif params[:goal].present?
+      @interaction.goals << Goal.find(params[:goal])
     end
 
     respond_to do |format|
@@ -117,8 +122,9 @@ class InteractionsController < ApplicationController
   def delete_entity
     @interaction = Interaction.find(params[:interaction_id])
     if params[:role].present?
-      role = Role.find(params[:role])
-      @interaction.roles.delete(role)
+      @interaction.roles.delete(Role.find(params[:role]))
+    elsif params[:goal].present?
+      @interaction.goals.delete(Goal.find(params[:goal]))
     end
 
     respond_to do |format|

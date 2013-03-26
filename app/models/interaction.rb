@@ -14,6 +14,7 @@ class Interaction < ActiveRecord::Base
 
   # Connections to the other elements
   has_and_belongs_to_many :roles
+  has_and_belongs_to_many :goals
 
   def self.subclasses
     ["Customer", "Onstage", "Backstage", "Support"]

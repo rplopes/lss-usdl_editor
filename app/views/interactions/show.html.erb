@@ -5,7 +5,7 @@
     <li class="active"><a href="#tab1" data-toggle="tab">Metadata</a></li>
     <li><a href="#tab2" data-toggle="tab">Roles<% if @interaction.roles.size > 0 %> (<%= @interaction.roles.size %>)<% end %></a></li>
     <li><a href="#tab3" data-toggle="tab">Time</a></li>
-    <li><a href="#tab4" data-toggle="tab">Goals</a></li>
+    <li><a href="#tab4" data-toggle="tab">Goals<% if @interaction.goals.size > 0 %> (<%= @interaction.goals.size %>)<% end %></a></li>
     <li><a href="#tab5" data-toggle="tab">Locations</a></li>
     <li><a href="#tab6" data-toggle="tab">Processes</a></li>
     <li><a href="#tab7" data-toggle="tab">Resources</a></li>
@@ -62,7 +62,21 @@
 
     <%# Goals %>
     <div class="tab-pane" id="tab4">
-      <p>Goals.</p>
+      <table class="table table-striped">
+        <% for goal in @interaction.goals %>
+          <tr><td>
+            <%= form_tag(service_system_interaction_delete_entity_path(@service_system.id, @interaction.id), method: :delete, style: "margin: 0") do %>
+              <%= link_to goal.label, service_system_goal_path(@service_system.id, goal.id) %>
+              <%= hidden_field_tag "goal", goal.id %>
+              (<%= submit_tag "Remove", class: "btn btn-link" %>)
+            <% end %>
+          </td></tr>
+        <% end %>
+      </table>
+      <%= form_tag(service_system_interaction_add_entity_path(@service_system.id, @interaction.id), method: :put) do %>
+        <%= select_tag "goal", options_from_collection_for_select(@goals, "id", "label"), include_blank: true %>
+        <%= submit_tag "Add a goal to this interaction", class: "btn btn-success" %>
+      <% end %>
     </div>
 
     <%# Locations %>
