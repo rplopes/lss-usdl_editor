@@ -34,6 +34,10 @@ class InteractionsController < ApplicationController
     ProcessEntity.where("service_system_id = ?", @service_system.id).each do |obj|
       @processes.append obj unless @interaction.processes.index(obj)
     end
+    @resources = []
+    Resource.where("service_system_id = ?", @service_system.id).each do |obj|
+      @resources.append obj unless @interaction.resources.index(obj)
+    end
 
     respond_to do |format|
       format.html # show.html.erb
@@ -106,6 +110,11 @@ class InteractionsController < ApplicationController
       @interaction.locations << Location.find(params[:location])
     elsif params[:process].present?
       @interaction.processes << ProcessEntity.find(params[:process])
+    elsif params[:resource].present?
+      @interaction.received_resources << Resource.find(params[:resource]) if params[:relation] == "Receives"
+      @interaction.created_resources << Resource.find(params[:resource]) if params[:relation] == "Creates"
+      @interaction.consumed_resources << Resource.find(params[:resource]) if params[:relation] == "Consumes"
+      @interaction.returned_resources << Resource.find(params[:resource]) if params[:relation] == "Returns"
     end
 
     respond_to do |format|
@@ -141,6 +150,14 @@ class InteractionsController < ApplicationController
       @interaction.locations.delete(Location.find(params[:location]))
     elsif params[:process].present?
       @interaction.processes.delete(ProcessEntity.find(params[:process]))
+    elsif params[:received_resource].present?
+      @interaction.received_resources.delete(Resource.find(params[:received_resource]))
+    elsif params[:created_resource].present?
+      @interaction.created_resources.delete(Resource.find(params[:created_resource]))
+    elsif params[:consumed_resource].present?
+      @interaction.consumed_resources.delete(Resource.find(params[:consumed_resource]))
+    elsif params[:returned_resource].present?
+      @interaction.returned_resources.delete(Resource.find(params[:returned_resource]))
     end
 
     respond_to do |format|

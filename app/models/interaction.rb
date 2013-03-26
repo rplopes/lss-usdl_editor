@@ -17,6 +17,14 @@ class Interaction < ActiveRecord::Base
   has_and_belongs_to_many :goals
   has_and_belongs_to_many :locations
   has_and_belongs_to_many :processes, class_name: "ProcessEntity", join_table: "interactions_processes"
+  has_and_belongs_to_many :received_resources, class_name: "Resource", join_table: "interactions_receives_resources"
+  has_and_belongs_to_many :created_resources, class_name: "Resource", join_table: "interactions_creates_resources"
+  has_and_belongs_to_many :consumed_resources, class_name: "Resource", join_table: "interactions_consumes_resources"
+  has_and_belongs_to_many :returned_resources, class_name: "Resource", join_table: "interactions_returns_resources"
+
+  def resources
+    received_resources | created_resources | consumed_resources | returned_resources
+  end
 
   def self.subclasses
     ["Customer", "Onstage", "Backstage", "Support"]

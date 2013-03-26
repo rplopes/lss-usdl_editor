@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130326172541) do
+ActiveRecord::Schema.define(:version => 20130326175236) do
 
   create_table "business_entities", :force => true do |t|
     t.string   "sid"
@@ -55,6 +55,16 @@ ActiveRecord::Schema.define(:version => 20130326172541) do
     t.integer  "after_interaction_id"
   end
 
+  create_table "interactions_consumes_resources", :id => false, :force => true do |t|
+    t.integer "interaction_id"
+    t.integer "resource_id"
+  end
+
+  create_table "interactions_creates_resources", :id => false, :force => true do |t|
+    t.integer "interaction_id"
+    t.integer "resource_id"
+  end
+
   create_table "interactions_locations", :id => false, :force => true do |t|
     t.integer "interaction_id"
     t.integer "location_id"
@@ -65,6 +75,16 @@ ActiveRecord::Schema.define(:version => 20130326172541) do
   create_table "interactions_processes", :id => false, :force => true do |t|
     t.integer "interaction_id"
     t.integer "process_entity_id"
+  end
+
+  create_table "interactions_receives_resources", :id => false, :force => true do |t|
+    t.integer "interaction_id"
+    t.integer "resource_id"
+  end
+
+  create_table "interactions_returns_resources", :id => false, :force => true do |t|
+    t.integer "interaction_id"
+    t.integer "resource_id"
   end
 
   create_table "interactions_roles", :id => false, :force => true do |t|
