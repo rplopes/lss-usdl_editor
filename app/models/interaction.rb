@@ -16,6 +16,7 @@ class Interaction < ActiveRecord::Base
   has_and_belongs_to_many :roles
   has_and_belongs_to_many :goals
   has_and_belongs_to_many :locations
+  has_and_belongs_to_many :processes, class_name: "ProcessEntity", join_table: "interactions_processes"
 
   def self.subclasses
     ["Customer", "Onstage", "Backstage", "Support"]

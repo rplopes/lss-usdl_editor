@@ -7,7 +7,7 @@
     <li><a href="#tab3" data-toggle="tab">Time</a></li>
     <li><a href="#tab4" data-toggle="tab">Goals<% if @interaction.goals.size > 0 %> (<%= @interaction.goals.size %>)<% end %></a></li>
     <li><a href="#tab5" data-toggle="tab">Locations<% if @interaction.locations.size > 0 %> (<%= @interaction.locations.size %>)<% end %></a></li>
-    <li><a href="#tab6" data-toggle="tab">Processes</a></li>
+    <li><a href="#tab6" data-toggle="tab">Processes<% if @interaction.processes.size > 0 %> (<%= @interaction.processes.size %>)<% end %></a></li>
     <li><a href="#tab7" data-toggle="tab">Resources</a></li>
   </ul>
   <div class="tab-content">
@@ -95,11 +95,26 @@
       <%= form_tag(service_system_interaction_add_entity_path(@service_system.id, @interaction.id), method: :put) do %>
         <%= select_tag "location", options_from_collection_for_select(@locations, "id", "label"), include_blank: true %>
         <%= submit_tag "Add a location to this interaction", class: "btn btn-success" %>
-      <% end %>    </div>
+      <% end %>
+    </div>
 
     <%# Processes %>
     <div class="tab-pane" id="tab6">
-      <p>Processes.</p>
+      <table class="table table-striped">
+        <% for process in @interaction.processes %>
+          <tr><td>
+            <%= form_tag(service_system_interaction_delete_entity_path(@service_system.id, @interaction.id), method: :delete, style: "margin: 0") do %>
+              <%= link_to process.label, service_system_process_entity_path(@service_system.id, process.id) %>
+              <%= hidden_field_tag "process", process.id %>
+              (<%= submit_tag "Remove", class: "btn btn-link" %>)
+            <% end %>
+          </td></tr>
+        <% end %>
+      </table>
+      <%= form_tag(service_system_interaction_add_entity_path(@service_system.id, @interaction.id), method: :put) do %>
+        <%= select_tag "process", options_from_collection_for_select(@processes, "id", "label"), include_blank: true %>
+        <%= submit_tag "Add a process to this interaction", class: "btn btn-success" %>
+      <% end %>
     </div>
 
     <%# Resources %>

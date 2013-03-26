@@ -30,6 +30,10 @@ class InteractionsController < ApplicationController
     Location.where("service_system_id = ?", @service_system.id).each do |obj|
       @locations.append obj unless @interaction.locations.index(obj)
     end
+    @processes = []
+    ProcessEntity.where("service_system_id = ?", @service_system.id).each do |obj|
+      @processes.append obj unless @interaction.processes.index(obj)
+    end
 
     respond_to do |format|
       format.html # show.html.erb
@@ -100,6 +104,8 @@ class InteractionsController < ApplicationController
       @interaction.goals << Goal.find(params[:goal])
     elsif params[:location].present?
       @interaction.locations << Location.find(params[:location])
+    elsif params[:process].present?
+      @interaction.processes << ProcessEntity.find(params[:process])
     end
 
     respond_to do |format|
@@ -133,6 +139,8 @@ class InteractionsController < ApplicationController
       @interaction.goals.delete(Goal.find(params[:goal]))
     elsif params[:location].present?
       @interaction.locations.delete(Location.find(params[:location]))
+    elsif params[:process].present?
+      @interaction.processes.delete(ProcessEntity.find(params[:process]))
     end
 
     respond_to do |format|

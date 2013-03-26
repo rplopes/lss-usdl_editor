@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130326170754) do
+ActiveRecord::Schema.define(:version => 20130326172541) do
 
   create_table "business_entities", :force => true do |t|
     t.string   "sid"
@@ -61,6 +61,11 @@ ActiveRecord::Schema.define(:version => 20130326170754) do
   end
 
   add_index "interactions_locations", ["interaction_id", "location_id"], :name => "index_interactions_locations_on_interaction_id_and_location_id"
+
+  create_table "interactions_processes", :id => false, :force => true do |t|
+    t.integer "interaction_id"
+    t.integer "process_entity_id"
+  end
 
   create_table "interactions_roles", :id => false, :force => true do |t|
     t.integer "interaction_id"
