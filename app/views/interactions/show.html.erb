@@ -2,13 +2,27 @@
 
 <div class="tabbable"> <!-- Only required for left/right tabs -->
   <ul class="nav nav-tabs">
-    <li class="active"><a href="#tab1" data-toggle="tab">Metadata</a></li>
-    <li><a href="#tab2" data-toggle="tab">Roles<% if @interaction.roles.size > 0 %> (<%= @interaction.roles.size %>)<% end %></a></li>
-    <li><a href="#tab3" data-toggle="tab">Time</a></li>
-    <li><a href="#tab4" data-toggle="tab">Goals<% if @interaction.goals.size > 0 %> (<%= @interaction.goals.size %>)<% end %></a></li>
-    <li><a href="#tab5" data-toggle="tab">Locations<% if @interaction.locations.size > 0 %> (<%= @interaction.locations.size %>)<% end %></a></li>
-    <li><a href="#tab6" data-toggle="tab">Processes<% if @interaction.processes.size > 0 %> (<%= @interaction.processes.size %>)<% end %></a></li>
-    <li><a href="#tab7" data-toggle="tab">Resources<% if @interaction.resources.size > 0 %> (<%= @interaction.resources.size %>)<% end %></a></li>
+    <li class="active"><a href="#tab1" data-toggle="tab">
+      Metadata
+    </a></li>
+    <li><a href="#tab2" data-toggle="tab">
+      Roles<% if @interaction.roles.size > 0 %> (<%= @interaction.roles.size %>)<% end %>
+    </a></li>
+    <li><a href="#tab3" data-toggle="tab">
+      Time
+    </a></li>
+    <li><a href="#tab4" data-toggle="tab">
+      Goals<% if @interaction.goals.size > 0 %> (<%= @interaction.goals.size %>)<% end %>
+    </a></li>
+    <li><a href="#tab5" data-toggle="tab">
+      Locations<% if @interaction.locations.size > 0 %> (<%= @interaction.locations.size %>)<% end %>
+    </a></li>
+    <li><a href="#tab6" data-toggle="tab">
+      Processes<% if @interaction.processes.size > 0 %> (<%= @interaction.processes.size %>)<% end %>
+    </a></li>
+    <li><a href="#tab7" data-toggle="tab">
+      Resources<% if @interaction.resources.size > 0 %> (<%= @interaction.resources.size %>)<% end %>
+    </a></li>
   </ul>
   <div class="tab-content">
 
@@ -51,7 +65,7 @@
       </table>
       <%= form_tag(service_system_interaction_add_entity_path(@service_system.id, @interaction.id), method: :put) do %>
         <%= select_tag "role", options_from_collection_for_select(@roles, "id", "label"), include_blank: true %>
-        <%= submit_tag "Add a role to this interaction", class: "btn btn-success" %>
+        <%= submit_tag "Add role to this interaction", class: "btn btn-success" %>
       <% end %>
     </div>
 
@@ -75,7 +89,7 @@
       </table>
       <%= form_tag(service_system_interaction_add_entity_path(@service_system.id, @interaction.id), method: :put) do %>
         <%= select_tag "goal", options_from_collection_for_select(@goals, "id", "label"), include_blank: true %>
-        <%= submit_tag "Add a goal to this interaction", class: "btn btn-success" %>
+        <%= submit_tag "Add goal to this interaction", class: "btn btn-success" %>
       <% end %>
     </div>
 
@@ -94,7 +108,7 @@
       </table>
       <%= form_tag(service_system_interaction_add_entity_path(@service_system.id, @interaction.id), method: :put) do %>
         <%= select_tag "location", options_from_collection_for_select(@locations, "id", "label"), include_blank: true %>
-        <%= submit_tag "Add a location to this interaction", class: "btn btn-success" %>
+        <%= submit_tag "Add location to this interaction", class: "btn btn-success" %>
       <% end %>
     </div>
 
@@ -113,7 +127,7 @@
       </table>
       <%= form_tag(service_system_interaction_add_entity_path(@service_system.id, @interaction.id), method: :put) do %>
         <%= select_tag "process", options_from_collection_for_select(@processes, "id", "label"), include_blank: true %>
-        <%= submit_tag "Add a process to this interaction", class: "btn btn-success" %>
+        <%= submit_tag "Add process to this interaction", class: "btn btn-success" %>
       <% end %>
     </div>
 
@@ -168,7 +182,7 @@
       <%= form_tag(service_system_interaction_add_entity_path(@service_system.id, @interaction.id), method: :put) do %>
         <%= select_tag "relation", options_for_select(["Receives", "Creates", "Consumes", "Returns"]) %>
         <%= select_tag "resource", options_from_collection_for_select(@resources, "id", "label"), include_blank: true %>
-        <%= submit_tag "Add a resource to this interaction", class: "btn btn-success" %>
+        <%= submit_tag "Add resource to this interaction", class: "btn btn-success" %>
       <% end %>
     </div>
 
