@@ -3,7 +3,7 @@
 <div class="tabbable"> <!-- Only required for left/right tabs -->
   <ul class="nav nav-tabs">
     <li class="active"><a href="#tab1" data-toggle="tab">Metadata</a></li>
-    <li><a href="#tab2" data-toggle="tab">Roles</a></li>
+    <li><a href="#tab2" data-toggle="tab">Roles<% if @interaction.roles.size > 0 %> (<%= @interaction.roles.size %>)<% end %></a></li>
     <li><a href="#tab3" data-toggle="tab">Time</a></li>
     <li><a href="#tab4" data-toggle="tab">Goals</a></li>
     <li><a href="#tab5" data-toggle="tab">Locations</a></li>
@@ -38,11 +38,10 @@
 
     <%# Roles %>
     <div class="tab-pane" id="tab2">
-      <% if @interaction.roles.size > 0 %>
       <table class="table table-striped">
         <% for role in @interaction.roles %>
           <tr><td>
-            <%= form_tag(service_system_interaction_delete_roles_path(@service_system.id, @interaction.id), method: :delete, style: "margin: 0") do %>
+            <%= form_tag(service_system_interaction_delete_entity_path(@service_system.id, @interaction.id), method: :delete, style: "margin: 0") do %>
               <%= link_to role.label, service_system_role_path(@service_system.id, role.id) %>
               <%= hidden_field_tag "role", role.id %>
               (<%= submit_tag "Remove", class: "btn btn-link" %>)
@@ -50,8 +49,7 @@
           </td></tr>
         <% end %>
       </table>
-      <% end %>
-      <%= form_tag(service_system_interaction_update_roles_path(@service_system.id, @interaction.id), method: :put) do %>
+      <%= form_tag(service_system_interaction_add_entity_path(@service_system.id, @interaction.id), method: :put) do %>
         <%= select_tag "role", options_from_collection_for_select(@roles, "id", "label"), include_blank: true %>
         <%= submit_tag "Add a role to this interaction", class: "btn btn-success" %>
       <% end %>

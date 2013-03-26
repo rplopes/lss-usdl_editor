@@ -84,7 +84,7 @@ class InteractionsController < ApplicationController
     end
   end
 
-  def update_roles
+  def add_entity
     @interaction = Interaction.find(params[:interaction_id])
     if params[:role].present?
       role = Role.find(params[:role])
@@ -114,7 +114,7 @@ class InteractionsController < ApplicationController
     end
   end
 
-  def delete_roles
+  def delete_entity
     @interaction = Interaction.find(params[:interaction_id])
     if params[:role].present?
       role = Role.find(params[:role])

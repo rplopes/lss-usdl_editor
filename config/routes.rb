@@ -3,8 +3,8 @@ LssUsdlEditor::Application.routes.draw do
   resources :service_systems do
 
     resources :interactions do
-      put "update_roles"
-      delete "delete_roles"
+      put "add_entity"
+      delete "delete_entity"
     end
 
     resources :business_entities
