@@ -65,6 +65,10 @@ class InteractionsController < ApplicationController
     @interactions_during = Interaction.where "id != ? and service_system_id = ? and interaction_type != ?", @interaction.id, @service_system.id, @interaction.interaction_type
   end
 
+  def edit_time
+    @interaction = Interaction.find(params[:interaction_id])
+  end
+
   # POST /interactions
   # POST /interactions.json
   def create
@@ -87,7 +91,7 @@ class InteractionsController < ApplicationController
   # PUT /interactions/1.json
   def update
     @interaction = Interaction.find(params[:id])
-    params[:interaction][:sid] = camel_case params[:interaction][:label]
+    params[:interaction][:sid] = camel_case params[:interaction][:label] if params[:interaction][:label].present?
 
     respond_to do |format|
       if @interaction.update_attributes(params[:interaction])

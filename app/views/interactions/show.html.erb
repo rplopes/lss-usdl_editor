@@ -71,7 +71,22 @@
 
     <%# Time %>
     <div class="tab-pane" id="tab3">
-      <p>Time.</p>
+      <p>
+        <strong>Time type:</strong>
+        <%= @interaction.temporal_entity_type %>
+      </p>
+
+      <p>
+        <strong>Time description:</strong>
+        <%= @interaction.time_description %>
+      </p>
+      <p>
+        <strong>Duration:</strong>
+        <%= @interaction.duration_description %>
+      </p>
+      <p>
+        <%= link_to 'Edit time data', service_system_interaction_edit_time_path(@service_system.id, @interaction.id), class: "btn btn-success" %>
+      </p>
     </div>
 
     <%# Goals %>

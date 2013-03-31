@@ -1,0 +1,111 @@
+<h3>Editing interaction's time data</h3>
+
+<%= form_for [@service_system, @interaction] do |f| %>
+
+  <% if @interaction.errors.any? %>
+    <div id="error-explanation">
+      <h4><%= pluralize @interaction.errors.count, "error" %> prevented this interaction from being saved:</h4>
+      <ul>
+      <% @interaction.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  
+  <table>
+  
+    <tr>
+      <td><%= f.label :temporal_entity_type, "Time type" %></td>
+      <td><%= f.select :temporal_entity_type, Interaction.temporal_entity_subclasses.map{ |te| [te, te] }.prepend(["--", nil]) %></td>
+    </tr>
+
+    <tr>
+      <td></td>
+      <td>
+        <h4>Time description</h4>
+        Tip: select only the values that are relevant for the time description (e.g. define only minute and second for an hourly event).
+      </td>
+    </tr>
+
+    <tr>
+      <td><%= f.label :time_year, "Year" %></td>
+      <td><%= f.number_field :time_year %></td>
+    </tr>
+
+    <tr>
+      <td><%= f.label :time_month, "Month" %></td>
+      <td><%= f.select :time_month, (1..12).map{ |m| [Date::MONTHNAMES[m], m] }.prepend(["--", nil]) %></td>
+    </tr>
+    
+    <tr>
+      <td><%= f.label :time_week, "Week" %></td>
+      <td><%= f.select :time_week, (1..52).map{ |m| [m, m] }.prepend(["--", nil]) %></td>
+    </tr>
+    
+    <tr>
+      <td><%= f.label :time_day, "Day" %></td>
+      <td><%= f.select :time_day, (1..31).map{ |m| [m, m] }.prepend(["--", nil]) %></td>
+    </tr>
+
+    <tr>
+      <td><%= f.label :time_hour, "Hour" %></td>
+      <td><%= f.select :time_hour, (0..23).map{ |m| [m, m] }.prepend(["--", nil]) %></td>
+    </tr>
+
+    <tr>
+      <td><%= f.label :time_minute, "Minute" %></td>
+      <td><%= f.select :time_minute, (0..59).map{ |m| [m, m] }.prepend(["--", nil]) %></td>
+    </tr>
+    
+    <tr>
+      <td><%= f.label :time_second, "Second" %></td>
+      <td><%= f.select :time_second, (0..59).map{ |m| [m, m] }.prepend(["--", nil]) %></td>
+    </tr>
+
+    <tr>
+      <td></td>
+      <td>
+        <h4>Duration</h4>
+        Tip: select only the values that are relevant for the duration description (e.g. define only minutes and seconds for an hourly interval).
+      </td>
+    </tr>
+
+    <tr>
+      <td><%= f.label :duration_years, "Years" %></td>
+      <td><%= f.number_field :duration_years %></td>
+    </tr>
+
+    <tr>
+      <td><%= f.label :duration_months, "Months" %></td>
+      <td><%= f.number_field :duration_months %></td>
+    </tr>
+    
+    <tr>
+      <td><%= f.label :duration_days, "Days" %></td>
+      <td><%= f.number_field :duration_days %></td>
+    </tr>
+
+    <tr>
+      <td><%= f.label :duration_hours, "Hours" %></td>
+      <td><%= f.number_field :duration_hours %></td>
+    </tr>
+
+    <tr>
+      <td><%= f.label :duration_minutes, "Minutes" %></td>
+      <td><%= f.number_field :duration_minutes %></td>
+    </tr>
+    
+    <tr>
+      <td><%= f.label :duration_seconds, "Seconds" %></td>
+      <td><%= f.number_field :duration_seconds %></td>
+    </tr>
+  
+  </table>
+  
+  <div class="actions">
+    <%= link_to "Back to list", service_system_interactions_path, class: "btn btn-link" %>
+    <%= f.submit "Save", class: "btn btn-success" %>
+  </div>
+
+<% end %>

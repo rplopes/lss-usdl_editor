@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130326175236) do
+ActiveRecord::Schema.define(:version => 20130331184308) do
 
   create_table "business_entities", :force => true do |t|
     t.string   "sid"
@@ -53,6 +53,21 @@ ActiveRecord::Schema.define(:version => 20130326175236) do
     t.integer  "before_interaction_id"
     t.integer  "during_interaction_id"
     t.integer  "after_interaction_id"
+    t.integer  "time_day"
+    t.integer  "time_hour"
+    t.integer  "time_minute"
+    t.integer  "time_month"
+    t.integer  "time_second"
+    t.integer  "time_week"
+    t.integer  "time_year"
+    t.integer  "duration_days"
+    t.integer  "duration_hours"
+    t.integer  "duration_minutes"
+    t.integer  "duration_months"
+    t.integer  "duration_seconds"
+    t.integer  "duration_weeks"
+    t.integer  "duration_years"
+    t.string   "temporal_entity_type"
   end
 
   create_table "interactions_consumes_resources", :id => false, :force => true do |t|

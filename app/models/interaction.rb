@@ -1,6 +1,9 @@
 class Interaction < ActiveRecord::Base
   attr_accessible :comment, :interaction_type, :label, :service_system_id, :sid,
-                  :after_interaction_id, :during_interaction_id, :before_interaction_id
+                  :after_interaction_id, :during_interaction_id, :before_interaction_id,
+                  :temporal_entity_type, :time_hour, :time_minute, :time_second, :time_day,
+                  :time_month, :time_year, :time_week, :duration_years, :duration_months,
+                  :duration_days, :duration_hours, :duration_minutes, :duration_seconds
   belongs_to :service_system
 
   # These belongs_to names are inverted because if a has before_interaction_id B, then B is interaction_after A
@@ -28,6 +31,33 @@ class Interaction < ActiveRecord::Base
 
   def self.subclasses
     ["Customer", "Onstage", "Backstage", "Support"]
+  end
+
+  def self.temporal_entity_subclasses
+    ["Interval", "Instant"]
+  end
+
+  def time_description
+    desc = ""
+    desc += "Year #{self.time_year} " if self.time_year
+    desc += "month #{self.time_month} " if self.time_month
+    desc += "week #{self.time_week} " if self.time_week
+    desc += "day #{self.time_day} " if self.time_day
+    desc += "#{self.time_hour} hours " if self.time_hour
+    desc += "#{self.time_minute} minutes " if self.time_minute
+    desc += "#{self.time_second} seconds" if self.time_second
+    return desc.capitalize.strip
+  end
+
+  def duration_description
+    desc = ""
+    desc += "#{self.duration_seconds} seconds " if self.duration_seconds
+    desc += "#{self.duration_minutes} minutes " if self.duration_minutes
+    desc += "#{self.duration_hours} hours " if self.duration_hours
+    desc += "#{self.duration_days} days " if self.duration_days
+    desc += "#{self.duration_months} months " if self.duration_months
+    desc += "#{self.duration_years} years" if self.duration_years
+    return desc.strip
   end
 
   def self.build_interactions_blueprint(ss_id)

@@ -5,6 +5,7 @@ LssUsdlEditor::Application.routes.draw do
     resources :interactions do
       put "add_entity"
       delete "delete_entity"
+      get "edit_time"
     end
 
     resources :business_entities
