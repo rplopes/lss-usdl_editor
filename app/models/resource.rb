@@ -6,6 +6,10 @@ class Resource < ActiveRecord::Base
   has_and_belongs_to_many :interactions_consuming, class_name: "Interaction", join_table: "interactions_consumes_resources"
   has_and_belongs_to_many :interactions_returning, class_name: "Interaction", join_table: "interactions_returns_resources"
 
+  def to_s
+    self.label
+  end
+
   def self.subclasses
     [ "Physical", "Knowledge", "Financial" ]
   end

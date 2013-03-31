@@ -11,14 +11,30 @@ table#interactions-table tr td {
   min-width: 240px;
   width: 240px;
   padding: 10px;
-  vertical-align: middle;
+  vertical-align: top;
   text-align: center;
 
   .well {
-    margin: 0px;
+    margin: 5px 0 0 0;
     text-align: left;
-    height: 120px;
+    max-height: 120px;
+    min-height: 120px;
     width: 230px;
+    overflow: hidden;
+    position: absolute;
+    cursor: pointer;
+
+    &:hover {
+      max-height: 200px;
+    }
+
+    h4 {
+      margin: 0 0 5px 0;
+    }
+
+    p {
+      margin: 0;
+    }
   }
 }
 

@@ -1,8 +1,45 @@
 <% if interaction %>
 
-  <div class="well well-small span3">
+  <div class="well well-small span3" onclick="window.location.href='<%= service_system_interaction_path(@service_system.id, interaction.id) %>'">
     <h4><%= link_to interaction.label, service_system_interaction_path(@service_system.id, interaction.id) %></h4>
-    <p><%= interaction.comment %></p>
+    <p>
+      <% interaction.roles.each do |role| %>
+        <span class="label">
+          <i class="icon-user icon-white"></i>
+          <%= role %>
+        </span>
+      <% end %>
+      <% if interaction.temporal_entity_type.present? %>
+        <span class="label">
+          <i class="icon-time icon-white"></i>
+          <%= interaction.temporal_entity_type %>
+        </span>
+      <% end %>
+      <% interaction.goals.each do |goal| %>
+        <span class="label">
+          <i class="icon-screenshot icon-white"></i>
+          <%= goal %>
+        </span>
+      <% end %>
+      <% interaction.locations.each do |location| %>
+        <span class="label">
+          <i class="icon-globe icon-white"></i>
+          <%= location %>
+        </span>
+      <% end %>
+      <% interaction.processes.each do |process| %>
+        <span class="label">
+          <i class="icon-tasks icon-white"></i>
+          <%= process %>
+        </span>
+      <% end %>
+      <% interaction.resources.each do |resource| %>
+        <span class="label">
+          <i class="icon-book icon-white"></i>
+          <%= resource %>
+        </span>
+      <% end %>
+    </p>
   </div>
 
 <% end %>
