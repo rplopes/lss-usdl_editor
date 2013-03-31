@@ -6,6 +6,10 @@ class Location < ActiveRecord::Base
   belongs_to :broader_location, :class_name => "Location", :foreign_key => "location_id"
   has_many :narrower_locations, :class_name => "Location", :foreign_key => "location_id"
 
+  validates :label, :sid, presence: true
+  validates :location_id, numericality: { only_integer: true }, allow_nil: true
+  validates :service_system_id, numericality: { only_integer: true }
+
   def to_s
     self.label
   end

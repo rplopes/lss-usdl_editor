@@ -20,7 +20,7 @@
 
     <tr>
       <td><%= f.label :business_entity_id, "Business entity" %></td>
-      <td><%= f.select :business_entity_id, @business_entities.map{ |be| [be.foaf_name, be.id] } %></td>
+      <td><%= f.select :business_entity_id, @business_entities.map{ |be| [be.foaf_name, be.id] }.prepend(["--", nil]) %></td>
     </tr>
   
     <tr>

@@ -6,10 +6,12 @@
   <%= @role.sid %>
 </p>
 
+<% if @role.business_entity %>
 <p>
   <strong>Business entity:</strong>
   <%= link_to @role.business_entity, service_system_business_entity_path(@service_system.id, @role.business_entity.id) %>
 </p>
+<% end %>
 
 <p>
   <strong>Comment:</strong><br />

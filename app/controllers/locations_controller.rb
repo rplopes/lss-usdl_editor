@@ -55,6 +55,7 @@ class LocationsController < ApplicationController
         format.html { redirect_to service_system_locations_url, notice: 'Location was successfully created.' }
         format.json { render json: @location, status: :created, location: @location }
       else
+        @locations = Location.where "service_system_id = ? and id != ?", @service_system.id, @location.id
         format.html { render action: "new" }
         format.json { render json: @location.errors, status: :unprocessable_entity }
       end
@@ -72,6 +73,7 @@ class LocationsController < ApplicationController
         format.html { redirect_to service_system_location_url, notice: 'Location was successfully updated.' }
         format.json { head :no_content }
       else
+        @locations = Location.where "service_system_id = ? and id != ?", @service_system.id, @location.id
         format.html { render action: "edit" }
         format.json { render json: @location.errors, status: :unprocessable_entity }
       end

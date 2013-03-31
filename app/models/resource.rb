@@ -6,6 +6,12 @@ class Resource < ActiveRecord::Base
   has_and_belongs_to_many :interactions_consuming, class_name: "Interaction", join_table: "interactions_consumes_resources"
   has_and_belongs_to_many :interactions_returning, class_name: "Interaction", join_table: "interactions_returns_resources"
 
+  validates :label, :sid, presence: true
+  validates :max_value, numericality: true, allow_nil: true
+  validates :min_value, numericality: true, allow_nil: true
+  validates :value, numericality: true, allow_nil: true
+  validates :service_system_id, numericality: { only_integer: true }
+
   def to_s
     self.label
   end
