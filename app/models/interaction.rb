@@ -25,6 +25,28 @@ class Interaction < ActiveRecord::Base
   has_and_belongs_to_many :consumed_resources, class_name: "Resource", join_table: "interactions_consumes_resources"
   has_and_belongs_to_many :returned_resources, class_name: "Resource", join_table: "interactions_returns_resources"
 
+  validates :label, :sid, presence: true
+  validates :after_interaction_id, numericality: { only_integer: true }, allow_nil: true
+  validates :during_interaction_id, numericality: { only_integer: true }, allow_nil: true
+  validates :before_interaction_id, numericality: { only_integer: true }, allow_nil: true
+
+  validates :time_hour, numericality: { only_integer: true }, allow_nil: true
+  validates :time_minute, numericality: { only_integer: true }, allow_nil: true
+  validates :time_second, numericality: { only_integer: true }, allow_nil: true
+  validates :time_day, numericality: { only_integer: true }, allow_nil: true
+  validates :time_month, numericality: { only_integer: true }, allow_nil: true
+  validates :time_year, numericality: { only_integer: true }, allow_nil: true
+  validates :time_week, numericality: { only_integer: true }, allow_nil: true
+
+  validates :duration_hours, numericality: { only_integer: true }, allow_nil: true
+  validates :duration_minutes, numericality: { only_integer: true }, allow_nil: true
+  validates :duration_seconds, numericality: { only_integer: true }, allow_nil: true
+  validates :duration_days, numericality: { only_integer: true }, allow_nil: true
+  validates :duration_months, numericality: { only_integer: true }, allow_nil: true
+  validates :duration_years, numericality: { only_integer: true }, allow_nil: true
+
+  validates :service_system_id, numericality: { only_integer: true }
+
   def resources
     received_resources | created_resources | consumed_resources | returned_resources
   end

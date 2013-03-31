@@ -81,6 +81,8 @@ class InteractionsController < ApplicationController
         format.html { redirect_to service_system_interactions_url, notice: 'Interaction was successfully created.' }
         format.json { render json: @interaction, status: :created, location: @interaction }
       else
+        @interactions_before_after = Interaction.where "service_system_id = ?", @service_system.id
+        @interactions_during = @interactions_before_after
         format.html { render action: "new" }
         format.json { render json: @interaction.errors, status: :unprocessable_entity }
       end
@@ -97,7 +99,9 @@ class InteractionsController < ApplicationController
       if @interaction.update_attributes(params[:interaction])
         format.html { redirect_to service_system_interaction_url, notice: 'Interaction was successfully updated.' }
         format.json { head :no_content }
-      else
+      else   
+        @interactions_before_after = Interaction.where "id != ? and service_system_id = ?", @interaction.id, @service_system.id
+        @interactions_during = Interaction.where "id != ? and service_system_id = ? and interaction_type != ?", @interaction.id, @service_system.id, @interaction.interaction_type
         format.html { render action: "edit" }
         format.json { render json: @interaction.errors, status: :unprocessable_entity }
       end
