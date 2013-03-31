@@ -65,10 +65,7 @@ class Interaction < ActiveRecord::Base
     blueprint = Array.new(4) { Array.new }
     return blueprint if interactions.blank?
 
-    cols = build_blueprint_cols(interactions)
-    cols = sort_blueprint_cols(cols)
-
-    cols.each do |col|
+    build_blueprint_cols(interactions).each do |col|
       (0..3).each do |i|
         blueprint[i].append col[i]
       end
@@ -83,7 +80,6 @@ class Interaction < ActiveRecord::Base
     cols = []
 
     begin
-
       # Create blueprint column and append this interaction
       col = Array.new(4)
       interaction = interactions.shift # remove this interaction from staged interactions
@@ -104,17 +100,15 @@ class Interaction < ActiveRecord::Base
       end
 
       cols.append col
-
     end while interactions.present?
 
-    return cols
+    return sort_blueprint_cols(cols)
   end
 
   def self.sort_blueprint_cols(cols)
     new_cols = []
 
     begin
-
       col = rewind_cols(cols, cols.first) # Get a column with no previous interactions
       new_cols.append col
       cols.delete_at(cols.index(col))
@@ -123,62 +117,41 @@ class Interaction < ActiveRecord::Base
         cols.delete_at(cols.index(next_col))
         cols.unshift next_col
       end
-
     end while cols.present?
 
     return new_cols
   end
 
   def self.rewind_cols(cols, current)
-
-    # First searching based on curren't information
-    current.each do |interaction|
-      if interaction and interaction.interaction_before
-        cols.each do |col|
-          return rewind_cols(cols, col) if col.index(interaction.interaction_before)
-        end
-      end
-    end
-
-    # If nothing was found, search based on other's information
     current.each do |interaction|
       if interaction
-        interaction.interactions_before.each do |interaction_before|
-          cols.each do |col|
+        cols.each do |col|
+          # Search based on current's information
+          return rewind_cols(cols, col) if interaction.interaction_before and col.index(interaction.interaction_before)
+          # Search based on other's information
+          interaction.interactions_before.each do |interaction_before|
             return rewind_cols(cols, col) if col.index(interaction_before)
           end
         end
       end
     end
-
-    # If nothing was found, then this is the earliest column
-    return current
+    return current # If nothing was found, then this is the earliest column
   end
 
   def self.forward_col(cols, current)
-
-    # First searching based on curren't information
-    current.each do |interaction|
-      if interaction and interaction.interaction_after
-        cols.each do |col|
-          return col if col.index(interaction.interaction_after)
-        end
-      end
-    end
-
-    # If nothing was found, search based on other's information
     current.each do |interaction|
       if interaction
-        interaction.interactions_after.each do |interaction_after|
-          cols.each do |col|
+        cols.each do |col|
+          # Search based on current's information
+          return col if interaction.interaction_after and col.index(interaction.interaction_after)
+          # Search based on other's information
+          interaction.interactions_after.each do |interaction_after|
             return col if col.index(interaction_after)
           end
         end
       end
     end
-
-    # If nothing was found, then this is the last column and we can't forward more
-    return nil
+    return nil # If nothing was found, then we had the last column and we can't forward more
   end
 
 end
