@@ -10,4 +10,9 @@ class ServiceSystem < ActiveRecord::Base
   has_many :resources
 
   has_many :interactions
+
+  validates :label, :uri, presence: true
+  validates :uri, uniqueness: true
+  validates_format_of :uri, :with => URI::regexp(%w(http https))
+  validates :user_id, numericality: { only_integer: true }
 end
