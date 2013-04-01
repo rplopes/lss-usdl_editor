@@ -17,7 +17,7 @@
 
 $(document).ready( function() {
 
-  $('div.alert').delay(2000).fadeOut();
+  $('.alert').delay(2000).fadeOut();
 
   $('.toggle-interactions-menu').click(function() {
     menu = $('#interactions-menu-area');
