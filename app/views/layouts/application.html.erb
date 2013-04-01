@@ -9,7 +9,7 @@
 </head>
 <body>
 
-  <div class="navbar navbar-static-top">
+  <div class="navbar navbar-static-top" style="z-index: 3">
     <div class="navbar-inner">
       <ul class="nav">
 
@@ -60,25 +60,31 @@
     </div>
   </div>
 
-  <% if notice.present? %>
-    <div class="alert alert-success fade in">
-      <button type="button" class="close" data-dismiss="alert">&times;</button>
-      <%= notice %>
-    </div>
-  <% end %>
-  <% if alert.present? %>
-    <p class="alert fade in">
-      <button type="button" class="close" data-dismiss="alert">&times;</button>
-      <%= alert %>
-    </p>
-  <% end %>
+  <div style="width: 100%; position: absolute; z-index: 2">
+    <% if notice.present? %>
+      <div class="alert alert-success fade in">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <%= notice %>
+      </div>
+    <% end %>
+    <% if alert.present? %>
+      <p class="alert fade in">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <%= alert %>
+      </p>
+    <% end %>
+  </div>
 
   <div class="container<% if @full_width %>-fluid<% end %>">
+    <% unless @full_width %>
     <div class="row">
-      <% unless @full_width %><div class="span12"><% end %>
+      <div class="span12">
+    <% end %>
         <%= yield %>
-      <% unless @full_width %></div><% end %>
+    <% unless @full_width %>
+      </div>
     </div>
+    <% end %>
   </div>
 
 </body>
