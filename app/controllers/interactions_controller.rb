@@ -4,8 +4,17 @@ class InteractionsController < ApplicationController
   # GET /interactions
   # GET /interactions.json
   def index
-    @interactions = Interaction.build_interactions_blueprint(@service_system.id)
-    @full_width = true
+    if params[:view_status] and ["esb", "list"].index(params[:view_status])
+      @service_system.view_status = params[:view_status]
+      @service_system.save
+    end
+    if @service_system.view_status == "list"
+      @interactions = Interaction.where "service_system_id = ?", @service_system.id
+      @full_width = false
+    else
+      @interactions = Interaction.build_interactions_blueprint(@service_system.id)
+      @full_width = true
+    end
 
     respond_to do |format|
       format.html # index.html.erb

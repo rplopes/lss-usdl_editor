@@ -10,7 +10,22 @@ div#blueprint {
   height: 100%;
   margin: 0;
   overflow: scroll;
-  padding: 0 0 0 0;
+  padding: 0;
+}
+
+#interactions-menu-area {
+  position: fixed;
+  top: 40px;
+  left: -235px;
+  height: 100%;
+  z-index: 2;
+
+  ul#interactions-menu {
+    width: 200px;
+    border-radius: 0px;
+    float: left;
+    height: 100%;
+  }
 }
 
 table#interactions-table {

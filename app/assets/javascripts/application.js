@@ -18,3 +18,14 @@
 $(document).ready( function() {
   $('div.alert').delay(2000).fadeOut();
 });
+
+$(document).ready(function() {
+  $('.toggle-interactions-menu').click(function() {
+    var $lefty = $('#interactions-menu-area');
+    $lefty.animate({
+      marginLeft: parseInt($lefty.css('marginLeft'),10) == 0 ?
+        $lefty.outerWidth()-40 :
+        0
+    });
+  });
+});
