@@ -14,3 +14,7 @@
 //= require jquery_ujs
 //= require bootstrap
 //= require_tree .
+
+$(document).ready( function() {
+  $('div.alert').delay(2000).fadeOut();
+});
