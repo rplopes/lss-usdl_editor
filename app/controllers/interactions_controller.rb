@@ -27,27 +27,6 @@ class InteractionsController < ApplicationController
   def show
     @interaction = Interaction.find(params[:id])
 
-    @roles = []
-    Role.where("service_system_id = ?", @service_system.id).each do |obj|
-      @roles.append obj unless @interaction.roles.index(obj)
-    end
-    @goals = []
-    Goal.where("service_system_id = ?", @service_system.id).each do |obj|
-      @goals.append obj unless @interaction.goals.index(obj)
-    end
-    @locations = []
-    Location.where("service_system_id = ?", @service_system.id).each do |obj|
-      @locations.append obj unless @interaction.locations.index(obj)
-    end
-    @processes = []
-    ProcessEntity.where("service_system_id = ?", @service_system.id).each do |obj|
-      @processes.append obj unless @interaction.processes.index(obj)
-    end
-    @resources = []
-    Resource.where("service_system_id = ?", @service_system.id).each do |obj|
-      @resources.append obj unless @interaction.resources.index(obj)
-    end
-
     respond_to do |format|
       format.html # show.html.erb
       format.json { render json: @interaction }
@@ -70,6 +49,28 @@ class InteractionsController < ApplicationController
   # GET /interactions/1/edit
   def edit
     @interaction = Interaction.find(params[:id])
+
+    @roles = []
+    Role.where("service_system_id = ?", @service_system.id).each do |obj|
+      @roles.append obj unless @interaction.roles.index(obj)
+    end
+    @goals = []
+    Goal.where("service_system_id = ?", @service_system.id).each do |obj|
+      @goals.append obj unless @interaction.goals.index(obj)
+    end
+    @locations = []
+    Location.where("service_system_id = ?", @service_system.id).each do |obj|
+      @locations.append obj unless @interaction.locations.index(obj)
+    end
+    @processes = []
+    ProcessEntity.where("service_system_id = ?", @service_system.id).each do |obj|
+      @processes.append obj unless @interaction.processes.index(obj)
+    end
+    @resources = []
+    Resource.where("service_system_id = ?", @service_system.id).each do |obj|
+      @resources.append obj unless @interaction.resources.index(obj)
+    end
+    
     @interactions_before_after = Interaction.where "id != ? and service_system_id = ?", @interaction.id, @service_system.id
     @interactions_during = Interaction.where "id != ? and service_system_id = ? and interaction_type != ?", @interaction.id, @service_system.id, @interaction.interaction_type
   end

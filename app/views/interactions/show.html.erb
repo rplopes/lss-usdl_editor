@@ -1,211 +1,62 @@
 <h3><%= @interaction.label %></h3>
 
-<div class="tabbable"> <!-- Only required for left/right tabs -->
-  <ul class="nav nav-tabs">
-    <li class="active"><a href="#tab1" data-toggle="tab">
-      Metadata
-    </a></li>
-    <li><a href="#tab2" data-toggle="tab">
-      <i class="icon-user"></i>
-      Roles<% if @interaction.roles.size > 0 %> (<%= @interaction.roles.size %>)<% end %>
-    </a></li>
-    <li><a href="#tab3" data-toggle="tab">
-      <i class="icon-time"></i>
-      Time
-    </a></li>
-    <li><a href="#tab4" data-toggle="tab">
-      <i class="icon-screenshot"></i>
-      Goals<% if @interaction.goals.size > 0 %> (<%= @interaction.goals.size %>)<% end %>
-    </a></li>
-    <li><a href="#tab5" data-toggle="tab">
-      <i class="icon-globe"></i>
-      Locations<% if @interaction.locations.size > 0 %> (<%= @interaction.locations.size %>)<% end %>
-    </a></li>
-    <li><a href="#tab6" data-toggle="tab">
-      <i class="icon-tasks"></i>
-      Processes<% if @interaction.processes.size > 0 %> (<%= @interaction.processes.size %>)<% end %>
-    </a></li>
-    <li><a href="#tab7" data-toggle="tab">
-      <i class="icon-book"></i>
-      Resources<% if @interaction.resources.size > 0 %> (<%= @interaction.resources.size %>)<% end %>
-    </a></li>
+<p>
+  <strong>Semantic ID:</strong>
+  <%= @interaction.sid %>
+</p>
+
+<p>
+  <strong>Interaction type:</strong>
+  <%= @interaction.interaction_type.gsub /Interaction/, " interaction" %>
+</p>
+
+<p>
+  <strong>Roles:</strong>
+  <%= @interaction.roles.join(", ") %>
+</p>
+
+<p>
+  <strong>Time:</strong>
+  <%= @interaction.temporal_entity_type %>
+  <% if @interaction.time_description.present? %>
+    at <%= @interaction.time_description %>
+  <% end %>
+  <% if @interaction.duration_description.present? %>
+    during <%= @interaction.duration_description %>
+  <% end %>
+</p>
+
+<p>
+  <strong>Goals:</strong>
+  <%= @interaction.goals.join(", ") %>
+</p>
+
+<p>
+  <strong>Locations:</strong>
+  <%= @interaction.locations.join(", ") %>
+</p>
+
+<p>
+  <strong>Processes:</strong>
+  <%= @interaction.processes.join(", ") %>
+</p>
+
+<p>
+  <strong>Resources:</strong><br />
+  <ul>
+    <% if @interaction.received_resources.present? %><li>Receives <%= @interaction.received_resources.join(", ") %></li><% end %>
+    <% if @interaction.created_resources.present? %><li>Creates <%= @interaction.created_resources.join(", ") %></li><% end %>
+    <% if @interaction.consumed_resources.present? %><li>Consumes <%= @interaction.consumed_resources.join(", ") %></li><% end %>
+    <% if @interaction.returned_resources.present? %><li>Returns <%= @interaction.returned_resources.join(", ") %></li><% end %>
   </ul>
-  <div class="tab-content">
+</p>
 
-    <%# Metadata %>
-    <div class="tab-pane active" id="tab1">
-      <p>
-        <strong>Semantic ID:</strong>
-        <%= @interaction.sid %>
-      </p>
-
-      <p>
-        <strong>Interaction type:</strong>
-        <%= @interaction.interaction_type.gsub /Interaction/, " interaction" %>
-      </p>
-
-      <p>
-        <strong>Comment:</strong><br />
-        <%= @interaction.comment %>
-      </p>
-      <p>
-        <%= link_to 'Back to list', service_system_interactions_path, class: "btn btn-link" %>
-        <%= link_to "Delete", service_system_interaction_path(@service_system.id, @interaction.id), method: :delete, class: "btn btn-danger", data: { confirm: "Are you sure you want to delete this?" } %>
-        <%= link_to 'Edit', edit_service_system_interaction_path(@service_system.id, @interaction.id), class: "btn btn-success" %>
-      </p>
-
-    </div>
-
-    <%# Roles %>
-    <div class="tab-pane" id="tab2">
-      <table class="table table-striped">
-        <% for role in @interaction.roles %>
-          <tr><td>
-            <%= form_tag(service_system_interaction_delete_entity_path(@service_system.id, @interaction.id), method: :delete, style: "margin: 0") do %>
-              <%= link_to role.label, service_system_role_path(@service_system.id, role.id) %>
-              <%= hidden_field_tag "role", role.id %>
-              (<%= submit_tag "Remove", class: "btn btn-link" %>)
-            <% end %>
-          </td></tr>
-        <% end %>
-      </table>
-      <%= form_tag(service_system_interaction_add_entity_path(@service_system.id, @interaction.id), method: :put) do %>
-        <%= select_tag "role", options_from_collection_for_select(@roles, "id", "label"), include_blank: true %>
-        <%= submit_tag "Add role to this interaction", class: "btn btn-success" %>
-      <% end %>
-    </div>
-
-    <%# Time %>
-    <div class="tab-pane" id="tab3">
-      <p>
-        <strong>Time type:</strong>
-        <%= @interaction.temporal_entity_type %>
-      </p>
-
-      <p>
-        <strong>Time description:</strong>
-        <%= @interaction.time_description %>
-      </p>
-      <p>
-        <strong>Duration:</strong>
-        <%= @interaction.duration_description %>
-      </p>
-      <p>
-        <%= link_to 'Edit time data', service_system_interaction_edit_time_path(@service_system.id, @interaction.id), class: "btn btn-success" %>
-      </p>
-    </div>
-
-    <%# Goals %>
-    <div class="tab-pane" id="tab4">
-      <table class="table table-striped">
-        <% for goal in @interaction.goals %>
-          <tr><td>
-            <%= form_tag(service_system_interaction_delete_entity_path(@service_system.id, @interaction.id), method: :delete, style: "margin: 0") do %>
-              <%= link_to goal.label, service_system_goal_path(@service_system.id, goal.id) %>
-              <%= hidden_field_tag "goal", goal.id %>
-              (<%= submit_tag "Remove", class: "btn btn-link" %>)
-            <% end %>
-          </td></tr>
-        <% end %>
-      </table>
-      <%= form_tag(service_system_interaction_add_entity_path(@service_system.id, @interaction.id), method: :put) do %>
-        <%= select_tag "goal", options_from_collection_for_select(@goals, "id", "label"), include_blank: true %>
-        <%= submit_tag "Add goal to this interaction", class: "btn btn-success" %>
-      <% end %>
-    </div>
-
-    <%# Locations %>
-    <div class="tab-pane" id="tab5">
-      <table class="table table-striped">
-        <% for location in @interaction.locations %>
-          <tr><td>
-            <%= form_tag(service_system_interaction_delete_entity_path(@service_system.id, @interaction.id), method: :delete, style: "margin: 0") do %>
-              <%= link_to location.label, service_system_location_path(@service_system.id, location.id) %>
-              <%= hidden_field_tag "location", location.id %>
-              (<%= submit_tag "Remove", class: "btn btn-link" %>)
-            <% end %>
-          </td></tr>
-        <% end %>
-      </table>
-      <%= form_tag(service_system_interaction_add_entity_path(@service_system.id, @interaction.id), method: :put) do %>
-        <%= select_tag "location", options_from_collection_for_select(@locations, "id", "label"), include_blank: true %>
-        <%= submit_tag "Add location to this interaction", class: "btn btn-success" %>
-      <% end %>
-    </div>
-
-    <%# Processes %>
-    <div class="tab-pane" id="tab6">
-      <table class="table table-striped">
-        <% for process in @interaction.processes %>
-          <tr><td>
-            <%= form_tag(service_system_interaction_delete_entity_path(@service_system.id, @interaction.id), method: :delete, style: "margin: 0") do %>
-              <%= link_to process.label, service_system_process_entity_path(@service_system.id, process.id) %>
-              <%= hidden_field_tag "process", process.id %>
-              (<%= submit_tag "Remove", class: "btn btn-link" %>)
-            <% end %>
-          </td></tr>
-        <% end %>
-      </table>
-      <%= form_tag(service_system_interaction_add_entity_path(@service_system.id, @interaction.id), method: :put) do %>
-        <%= select_tag "process", options_from_collection_for_select(@processes, "id", "label"), include_blank: true %>
-        <%= submit_tag "Add process to this interaction", class: "btn btn-success" %>
-      <% end %>
-    </div>
-
-    <%# Resources %>
-    <div class="tab-pane" id="tab7">
-      <table class="table table-striped">
-        <% for resource in @interaction.received_resources %>
-          <tr>
-            <td>Receives</td>
-            <td>
-            <%= form_tag(service_system_interaction_delete_entity_path(@service_system.id, @interaction.id), method: :delete, style: "margin: 0") do %>
-              <%= link_to resource.label, service_system_resource_path(@service_system.id, resource.id) %>
-              <%= hidden_field_tag "received_resource", resource.id %>
-              (<%= submit_tag "Remove", class: "btn btn-link" %>)
-            <% end %>
-          </td></tr>
-        <% end %>
-        <% for resource in @interaction.created_resources %>
-          <tr>
-            <td>Creates</td>
-            <td>
-            <%= form_tag(service_system_interaction_delete_entity_path(@service_system.id, @interaction.id), method: :delete, style: "margin: 0") do %>
-              <%= link_to resource.label, service_system_resource_path(@service_system.id, resource.id) %>
-              <%= hidden_field_tag "created_resource", resource.id %>
-              (<%= submit_tag "Remove", class: "btn btn-link" %>)
-            <% end %>
-          </td></tr>
-        <% end %>
-        <% for resource in @interaction.consumed_resources %>
-          <tr>
-            <td>Consumes</td>
-            <td>
-            <%= form_tag(service_system_interaction_delete_entity_path(@service_system.id, @interaction.id), method: :delete, style: "margin: 0") do %>
-              <%= link_to resource.label, service_system_resource_path(@service_system.id, resource.id) %>
-              <%= hidden_field_tag "consumed_resource", resource.id %>
-              (<%= submit_tag "Remove", class: "btn btn-link" %>)
-            <% end %>
-          </td></tr>
-        <% end %>
-        <% for resource in @interaction.returned_resources %>
-          <tr>
-            <td>Returns</td>
-            <td>
-            <%= form_tag(service_system_interaction_delete_entity_path(@service_system.id, @interaction.id), method: :delete, style: "margin: 0") do %>
-              <%= link_to resource.label, service_system_resource_path(@service_system.id, resource.id) %>
-              <%= hidden_field_tag "returned_resource", resource.id %>
-              (<%= submit_tag "Remove", class: "btn btn-link" %>)
-            <% end %>
-          </td></tr>
-        <% end %>
-      </table>
-      <%= form_tag(service_system_interaction_add_entity_path(@service_system.id, @interaction.id), method: :put) do %>
-        <%= select_tag "relation", options_for_select(["Receives", "Creates", "Consumes", "Returns"]) %>
-        <%= select_tag "resource", options_from_collection_for_select(@resources, "id", "label"), include_blank: true %>
-        <%= submit_tag "Add resource to this interaction", class: "btn btn-success" %>
-      <% end %>
-    </div>
-
-  </div>
-</div>
+<p>
+  <strong>Comment:</strong><br />
+  <%= @interaction.comment %>
+</p>
+<p>
+  <%= link_to 'Back to list', service_system_interactions_path, class: "btn btn-link" %>
+  <%= link_to "Delete", service_system_interaction_path(@service_system.id, @interaction.id), method: :delete, class: "btn btn-danger", data: { confirm: "Are you sure you want to delete this?" } %>
+  <%= link_to 'Edit', edit_service_system_interaction_path(@service_system.id, @interaction.id), class: "btn btn-success" %>
+</p>
