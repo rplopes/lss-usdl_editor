@@ -22,7 +22,7 @@ $(document).ready( function() {
   $('.toggle-interactions-menu').click(function() {
     menu = $('#interactions-menu-area');
     menu.animate({
-      marginLeft: parseInt($lefty.css('marginLeft'),10) == 0 ? menu.outerWidth()-40 : 0
+      marginLeft: parseInt(menu.css('marginLeft'),10) == 0 ? menu.outerWidth()-40 : 0
     });
   });
   
