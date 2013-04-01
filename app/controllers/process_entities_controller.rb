@@ -2,7 +2,7 @@ class ProcessEntitiesController < ApplicationController
   # GET /process_entities
   # GET /process_entities.json
   def index
-    if @servicesystem.present?
+    if @service_system.present?
       @process_entities = ProcessEntity.where "service_system_id = ?", @service_system.id
     else
       @process_entities = ProcessEntity.all
