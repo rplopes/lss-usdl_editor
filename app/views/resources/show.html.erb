@@ -1,35 +1,39 @@
 <h3><%= @resource.label %></h3>
 
-
 <p>
   <strong>Semantic ID:</strong>
   <%= @resource.sid %>
 </p>
-
+<% if @resource.value %>
 <p>
   <strong>Value:</strong>
   <%= @resource.value %> <%= @resource.unit_of_measurement %>
 </p>
-
+<% end %>
+<% if @resource.max_value %>
 <p>
   <strong>Max value:</strong>
   <%= @resource.max_value %> <%= @resource.unit_of_measurement %>
 </p>
-
+<% end %>
+<% if @resource.min_value %>
 <p>
   <strong>Min value:</strong>
   <%= @resource.min_value %> <%= @resource.unit_of_measurement %>
 </p>
-
+<% end %>
+<% if @resource.resource_type.present? %>
 <p>
   <strong>Resource type:</strong>
   <%= @resource.resource_type.gsub(/Resource/, " resource") %>
 </p>
-
+<% end %>
+<% if @resource.comment.present? %>
 <p>
   <strong>Comment:</strong><br />
   <%= @resource.comment %>
 </p>
+<% end %>
 
 <p>
   <%= link_to 'Back to list', service_system_resources_path, class: "btn btn-link" %>

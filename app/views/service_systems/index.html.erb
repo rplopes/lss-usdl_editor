@@ -11,21 +11,23 @@
   <strong>URI:</strong>
   <%= service_system.uri %>
 </p>
-
+<% if service_system.prefix.present? %>
 <p>
   <strong>Prefix:</strong>
   <%= service_system.prefix %>
 </p>
-
+<% end %>
+<% if service_system.user %>
 <p>
   <strong>Author:</strong>
   <%= service_system.user %>
 </p>
-
+<% end %>
+<% if service_system.comment.present? %>
 <p>
-  <strong>Comment:</strong><br />
   <%= service_system.comment %>
 </p>
+<% end %>
 
 <% if service_system.user == current_user %>
 <p>

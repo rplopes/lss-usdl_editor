@@ -1,15 +1,14 @@
 <h3><%= @process_entity.label %></h3>
 
-
 <p>
   <strong>Semantic ID:</strong>
   <%= @process_entity.sid %>
 </p>
-
+<% if @process_entity.comment.present? %>
 <p>
-  <strong>Comment:</strong><br />
   <%= @process_entity.comment %>
 </p>
+<% end %>
 
 <p>
   <%= link_to 'Back to list', service_system_process_entities_path, class: "btn btn-link" %>

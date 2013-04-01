@@ -1,15 +1,14 @@
 <h3><%= @goal.label %></h3>
 
-
 <p>
   <strong>Semantic ID:</strong>
   <%= @goal.sid %>
 </p>
-
+<% if @goal.comment.present? %>
 <p>
-  <strong>Comment:</strong><br />
   <%= @goal.comment %>
 </p>
+<% end %>
 
 <p>
   <%= link_to 'Back to list', service_system_goals_path, class: "btn btn-link" %>

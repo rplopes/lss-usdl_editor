@@ -1,22 +1,27 @@
 <h3><%= @service_system.label %></h3>
 
-
 <p>
   <strong>URI:</strong>
   <%= @service_system.uri %>
 </p>
+<% if @service_system.prefix.present? %>
 <p>
   <strong>Prefix:</strong>
   <%= @service_system.prefix %>
 </p>
+<% end %>
+<% if @service_system.user %>
 <p>
   <strong>Author:</strong>
   <%= @service_system.user %>
 </p>
+<% end %>
+<% if @service_system.comment %>
 <p>
-  <strong>Comment:</strong><br />
   <%= @service_system.comment %>
 </p>
+<% end %>
+
 <p>
   <% if @service_system.user == current_user %>
   <%= link_to "Delete", service_systems_path(@service_system), method: :delete, class: "btn btn-danger", data: { confirm: "Are you sure you want to delete this?" } %>

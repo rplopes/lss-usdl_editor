@@ -7,30 +7,35 @@
 <hr />
 <h4><%= link_to business_entity.foaf_name, service_system_business_entity_path(@service_system.id, business_entity.id) %></h4>
 
+<% if business_entity.foaf_page.present? %>
 <p>
   <strong>Webpage:</strong>
   <%= business_entity.foaf_page %>
 </p>
-
+<% end %>
+<% if business_entity.foaf_logo.present? %>
 <p>
   <strong>Logo:</strong>
   <%= business_entity.foaf_logo %>
 </p>
-
+<% end %>
+<% if business_entity.s_telephone.present? %>
 <p>
   <strong>Telephone:</strong>
   <%= business_entity.s_telephone %>
 </p>
-
+<% end %>
+<% if business_entity.s_email.present? %>
 <p>
   <strong>Email:</strong>
   <%= business_entity.s_email %>
 </p>
-
+<% end %>
+<% if business_entity.gr_description.present? %>
 <p>
-  <strong>Description:</strong><br />
   <%= business_entity.gr_description %>
 </p>
+<% end %>
 
 <p>
   <%= link_to "Edit", edit_service_system_business_entity_path(@service_system.id, business_entity.id) %> |

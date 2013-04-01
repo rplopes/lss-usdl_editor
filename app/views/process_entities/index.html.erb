@@ -7,10 +7,11 @@
 <hr />
 <h4><%= link_to process_entity.label, service_system_process_entity_path(@service_system.id, process_entity.id) %></h4>
 
+<% if process_entity.comment.present? %>
 <p>
-  <strong>Comment:</strong><br />
   <%= process_entity.comment %>
 </p>
+<% end %>
 
 <p>
   <%= link_to "Edit", edit_service_system_process_entity_path(@service_system.id, process_entity.id) %> |

@@ -7,20 +7,23 @@
 <hr />
 <h4><%= link_to location.label, service_system_location_path(@service_system.id, location.id) %></h4>
 
-<% if location.broader_location %><p>
+<% if location.broader_location %>
+<p>
   <strong>Belongs to:</strong>
   <%= location.broader_location %>
-</p><% end %>
-
+</p>
+<% end %>
+<% if location.gn_feature.present? %>
 <p>
   <strong>Is location from:</strong>
   <span class="gn-id"><%= location.gn_feature %></span>
 </p>
-
+<% end %>
+<% if location.comment.present? %>
 <p>
-  <strong>Comment:</strong><br />
   <%= location.comment %>
 </p>
+<% end %>
 
 <p>
   <%= link_to "Edit", edit_service_system_location_path(@service_system.id, location.id) %> |

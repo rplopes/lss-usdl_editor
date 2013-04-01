@@ -1,25 +1,26 @@
 <h3><%= @location.label %></h3>
 
-
 <p>
   <strong>Semantic ID:</strong>
   <%= @location.sid %>
 </p>
-
-<% if @location.broader_location %><p>
+<% if @location.broader_location %>
+<p>
   <strong>Belongs to:</strong>
   <%= @location.broader_location %>
-</p><% end %>
-
+</p>
+<% end %>
+<% if @location.gn_feature.present?%>
 <p>
   <strong>Is location from:</strong>
   <span class="gn-id"><%= @location.gn_feature %></span>
 </p>
-
+<% end %>
+<% if @location.comment.present? %>
 <p>
-  <strong>Comment:</strong><br />
   <%= @location.comment %>
 </p>
+<% end %>
 
 <p>
   <%= link_to 'Back to list', service_system_locations_path, class: "btn btn-link" %>

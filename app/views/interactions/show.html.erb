@@ -4,17 +4,19 @@
   <strong>Semantic ID:</strong>
   <%= @interaction.sid %>
 </p>
-
+<% if @interaction.interaction_type.present? %>
 <p>
   <strong>Interaction type:</strong>
   <%= @interaction.interaction_type.gsub /Interaction/, " interaction" %>
 </p>
-
+<% end %>
+<% if @interaction.roles.present? %>
 <p>
   <strong>Roles:</strong>
   <%= @interaction.roles.join(", ") %>
 </p>
-
+<% end %>
+<% if @interaction.temporal_entity_type.present? %>
 <p>
   <strong>Time:</strong>
   <%= @interaction.temporal_entity_type %>
@@ -25,22 +27,26 @@
     during <%= @interaction.duration_description %>
   <% end %>
 </p>
-
+<% end %>
+<% if @interaction.goals.present? %>
 <p>
   <strong>Goals:</strong>
   <%= @interaction.goals.join(", ") %>
 </p>
-
+<% end %>
+<% if @interaction.locations.present? %>
 <p>
   <strong>Locations:</strong>
   <%= @interaction.locations.join(", ") %>
 </p>
-
+<% end %>
+<% if @interaction.processes.present? %>
 <p>
   <strong>Processes:</strong>
   <%= @interaction.processes.join(", ") %>
 </p>
-
+<% end %>
+<% if @interaction.resources.present? %>
 <p>
   <strong>Resources:</strong><br />
   <ul>
@@ -50,11 +56,13 @@
     <% if @interaction.returned_resources.present? %><li>Returns <%= @interaction.returned_resources.join(", ") %></li><% end %>
   </ul>
 </p>
-
+<% end %>
+<% if @interaction.comment.present? %>
 <p>
-  <strong>Comment:</strong><br />
   <%= @interaction.comment %>
 </p>
+<% end %>
+
 <p>
   <%= link_to 'Back to list', service_system_interactions_path, class: "btn btn-link" %>
   <%= link_to "Delete", service_system_interaction_path(@service_system.id, @interaction.id), method: :delete, class: "btn btn-danger", data: { confirm: "Are you sure you want to delete this?" } %>

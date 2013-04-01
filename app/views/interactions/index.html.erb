@@ -23,25 +23,25 @@
       <tr>
         <td><p class="subtitle">Line of interaction</p></td>
         <% for interaction in @interactions[0] %>
-          <td><%= render 'blueprint_node', :interaction => interaction %></td>
+          <td><%= render 'blueprint_node', interaction: interaction %></td>
         <% end %>
       </tr>
       <tr>
         <td><p class="subtitle">Line of visibility</p></td>
         <% for interaction in @interactions[1] %>
-          <td><%= render 'blueprint_node', :interaction => interaction %></td>
+          <td><%= render 'blueprint_node', interaction: interaction %></td>
         <% end %>
       </tr>
       <tr>
         <td><p class="subtitle">Line of internal interaction</p></td>
         <% for interaction in @interactions[2] %>
-          <td><%= render 'blueprint_node', :interaction => interaction %></td>
+          <td><%= render 'blueprint_node', interaction: interaction %></td>
         <% end %>
       </tr>
       <tr>
         <td></td>
         <% for interaction in @interactions[3] %>
-          <td><%= render 'blueprint_node', :interaction => interaction %></td>
+          <td><%= render 'blueprint_node', interaction: interaction %></td>
         <% end %>
       </tr>
     </table>
@@ -55,16 +55,19 @@
     <hr />
     <h4><%= link_to interaction.label, service_system_interaction_path(@service_system.id, interaction.id) %></h4>
 
+    <% if interaction.interaction_type.present? %>
     <p>
       <strong>Interaction type:</strong>
       <%= interaction.interaction_type.gsub /Interaction/, " interaction" %>
     </p>
-
+    <% end %>
+    <% if interaction.roles.present? %>
     <p>
       <strong>Roles:</strong>
       <%= interaction.roles.join(", ") %>
     </p>
-
+    <% end %>
+    <% if interaction.temporal_entity_type.present? %>
     <p>
       <strong>Time:</strong>
       <%= interaction.temporal_entity_type %>
@@ -75,31 +78,36 @@
         during <%= interaction.duration_description %>
       <% end %>
     </p>
-
+    <% end %>
+    <% if interaction.goals.present? %>
     <p>
       <strong>Goals:</strong>
       <%= interaction.goals.join(", ") %>
     </p>
-
+    <% end %>
+    <% if interaction.locations.present? %>
     <p>
       <strong>Locations:</strong>
       <%= interaction.locations.join(", ") %>
     </p>
-
+    <% end %>
+    <% if interaction.processes.present? %>
     <p>
       <strong>Processes:</strong>
       <%= interaction.processes.join(", ") %>
     </p>
-
+    <% end %>
+    <% if interaction.resources.present? %>
     <p>
       <strong>Resources:</strong>
       <%= interaction.resources.join(", ") %>
     </p>
-
+    <% end %>
+    <% if interaction.comment.present? %>
     <p>
-      <strong>Comment:</strong><br />
       <%= interaction.comment %>
     </p>
+    <% end %>
 
     <p>
       <%= link_to "Edit", edit_service_system_interaction_path(@service_system.id, interaction.id) %> |
