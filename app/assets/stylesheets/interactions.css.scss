@@ -2,24 +2,32 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+div#blueprint {
+  width: 100%;
+  margin: 0;
+  overflow: auto;
+  padding-left: 10px;
+}
+
 table#interactions-table tr:not(:last-child) {
   border-bottom: 1px solid #999;
 }
 
 table#interactions-table tr td {
   height: 150px;
-  min-width: 240px;
-  width: 240px;
-  padding: 10px;
+  min-width: 210px;
+  width: 210px;
+  padding: 10px 5px 10px 5px;
   vertical-align: top;
   text-align: center;
+  position: relative;
 
   .well {
     margin: 5px 0 0 0;
     text-align: left;
     max-height: 120px;
     min-height: 120px;
-    width: 230px;
+    width: 182px;
     overflow: hidden;
     position: absolute;
     cursor: pointer;

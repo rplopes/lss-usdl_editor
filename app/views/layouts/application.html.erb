@@ -75,9 +75,9 @@
 
   <div class="container<% if @full_width %>-fluid<% end %>">
     <div class="row">
-      <div class="span12">
+      <% unless @full_width %><div class="span12"><% end %>
         <%= yield %>
-      </div>
+      <% unless @full_width %></div><% end %>
     </div>
   </div>
 

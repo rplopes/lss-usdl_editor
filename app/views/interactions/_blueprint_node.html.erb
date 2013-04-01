@@ -1,6 +1,6 @@
 <% if interaction %>
 
-  <div class="well well-small span3" onclick="window.location.href='<%= service_system_interaction_path(@service_system.id, interaction.id) %>'">
+  <div class="well well-small" onclick="window.location.href='<%= service_system_interaction_path(@service_system.id, interaction.id) %>'">
     <h4><%= link_to interaction.label, service_system_interaction_path(@service_system.id, interaction.id) %></h4>
     <p>
       <% interaction.roles.each do |role| %>

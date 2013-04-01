@@ -1,33 +1,37 @@
 <% if true %>
 
-<p style="position: absolute"><br /><%= link_to "New Interaction", new_service_system_interaction_path, class: "btn btn-success" %></p>
+<div id="blueprint">
 
-<table id="interactions-table">
-  <tr>
-    <td><p class="subtitle">Line of interaction</p></td>
-    <% for interaction in @interactions[0] %>
-      <td><%= render 'blueprint_node', :interaction => interaction %></td>
-    <% end %>
-  </tr>
-  <tr>
-    <td><p class="subtitle">Line of visibility</p></td>
-    <% for interaction in @interactions[1] %>
-      <td><%= render 'blueprint_node', :interaction => interaction %></td>
-    <% end %>
-  </tr>
-  <tr>
-    <td><p class="subtitle">Line of internal interaction</p></td>
-    <% for interaction in @interactions[2] %>
-      <td><%= render 'blueprint_node', :interaction => interaction %></td>
-    <% end %>
-  </tr>
-  <tr>
-    <td></td>
-    <% for interaction in @interactions[3] %>
-      <td><%= render 'blueprint_node', :interaction => interaction %></td>
-    <% end %>
-  </tr>
-</table>
+  <p style="position: absolute; z-index: 1"><br /><%= link_to "New Interaction", new_service_system_interaction_path, class: "btn btn-success" %></p>
+
+  <table id="interactions-table">
+    <tr>
+      <td><p class="subtitle">Line of interaction</p></td>
+      <% for interaction in @interactions[0] %>
+        <td><%= render 'blueprint_node', :interaction => interaction %></td>
+      <% end %>
+    </tr>
+    <tr>
+      <td><p class="subtitle">Line of visibility</p></td>
+      <% for interaction in @interactions[1] %>
+        <td><%= render 'blueprint_node', :interaction => interaction %></td>
+      <% end %>
+    </tr>
+    <tr>
+      <td><p class="subtitle">Line of internal interaction</p></td>
+      <% for interaction in @interactions[2] %>
+        <td><%= render 'blueprint_node', :interaction => interaction %></td>
+      <% end %>
+    </tr>
+    <tr>
+      <td></td>
+      <% for interaction in @interactions[3] %>
+        <td><%= render 'blueprint_node', :interaction => interaction %></td>
+      <% end %>
+    </tr>
+  </table>
+
+</div>
 
 <% else %>
 <br />
