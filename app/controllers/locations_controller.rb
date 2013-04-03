@@ -29,7 +29,7 @@ class LocationsController < ApplicationController
   # GET /locations/new.json
   def new
     @location = @service_system.locations.build
-    @locations = Location.where "service_system_id = ? and id != ?", @service_system.id, @location.id
+    @locations = Location.where "service_system_id = ?", @service_system.id
 
     respond_to do |format|
       format.html # new.html.erb
