@@ -47,6 +47,10 @@ class Interaction < ActiveRecord::Base
 
   validates :service_system_id, numericality: { only_integer: true }
 
+  def to_s
+    self.label
+  end
+
   def resources
     received_resources | created_resources | consumed_resources | returned_resources
   end
@@ -82,6 +86,18 @@ class Interaction < ActiveRecord::Base
     return desc.strip
   end
 
+  def all_same_time_interactions # Includes self
+    interactions = [self]
+    begin
+      array_size = interactions.size
+      interactions.each do |interaction|
+        interactions |= [interaction.interaction_during] if interaction.interaction_during.present?
+        interactions |= interaction.interactions_during
+      end
+    end while interactions.size > array_size
+    return interactions
+  end
+
   def self.build_interactions_blueprint(ss_id)
     interactions = Interaction.where "service_system_id = ?", ss_id
     blueprint = Array.new(4) { Array.new }
@@ -102,25 +118,11 @@ class Interaction < ActiveRecord::Base
     cols = []
 
     begin
-      # Create blueprint column and append this interaction
       col = Array.new(4)
-      interaction = interactions.shift # remove this interaction from staged interactions
-      col[subclasses.index(interaction.interaction_type.gsub(/Interaction/, ""))] = interaction
-
-      # Append to this column the interaction marked as happening at the same time
-      if interaction.interaction_during.present?
-        col[subclasses.index(interaction.interaction_during.interaction_type.gsub(/Interaction/, ""))] = interaction.interaction_during
-        interactions.delete_at(interactions.index(interaction.interaction_during)) # remove this interaction from staged interactions
+      interactions.first.all_same_time_interactions.each do |interaction|
+        col[subclasses.index(interaction.interaction_type.gsub(/Interaction/, ""))] = interaction
+        interactions.delete_at(interactions.index(interaction))
       end
-
-      # Append to this column all other interactions happening at the same time
-      interaction.interactions_during.each do |during|
-        if interactions.index(during) # only add those that haven't been added yet
-          col[subclasses.index(during.interaction_type.gsub(/Interaction/, ""))] = during
-          interactions.delete_at(interactions.index(during)) # remove this interaction from staged interactions
-        end
-      end
-
       cols.append col
     end while interactions.present?
 
