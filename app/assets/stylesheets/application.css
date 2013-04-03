@@ -17,6 +17,14 @@
   height: 100%;
  }
 
+ #notifications {
+  width: 100%;
+  position: absolute;
+  z-index: 3;
+  top: 40px;
+  left: 0
+ }
+
 form td {
   padding: 0 10px 0 10px;
   vertical-align: top;
