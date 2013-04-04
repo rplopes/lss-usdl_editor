@@ -8,11 +8,19 @@ class InteractionsController < ApplicationController
       @service_system.view_status = params[:view_status]
       @service_system.save
     end
+    filter = {
+      roles: params[:roles],
+      goals: params[:goals],
+      time: params[:time],
+      locations: params[:locations],
+      processes: params[:processes],
+      resources: params[:resources]
+    }
     if @service_system.view_status == "list"
-      @interactions = Interaction.build_interactions_list(@service_system.id)
+      @interactions = Interaction.build_interactions_list(@service_system.id, filter)
       @full_width = false
     else
-      @interactions = Interaction.build_interactions_blueprint(@service_system.id)
+      @interactions = Interaction.build_interactions_blueprint(@service_system.id, filter)
       @full_width = true
     end
 

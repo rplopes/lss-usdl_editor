@@ -98,12 +98,23 @@ class Interaction < ActiveRecord::Base
     return interactions
   end
 
-  def self.build_interactions_list(ss_id)
-    return Interaction.where "service_system_id = ?", ss_id
+  def self.build_interactions_list(ss_id, filter={})
+    interactions = Interaction.where "service_system_id = ?", ss_id
+    (interactions.size-1).downto(0).each do |i|
+      if  (filter[:roles].present? and not interactions[i].roles.index(Role.find(filter[:roles]))) or
+          (filter[:goals].present? and not interactions[i].goals.index(Goal.find(filter[:goals]))) or
+          (filter[:time].present? and not interactions[i].temporal_entity_type.downcase == filter[:time].downcase) or
+          (filter[:locations].present? and not interactions[i].locations.index(Location.find(filter[:locations]))) or
+          (filter[:processes].present? and not interactions[i].processes.index(ProcessEntity.find(filter[:processes]))) or
+          (filter[:resources].present? and not interactions[i].resources.index(Resource.find(filter[:resources])))
+        interactions.delete_at(i)
+      end
+    end
+    return interactions
   end
 
-  def self.build_interactions_blueprint(ss_id)
-    interactions = Interaction.where "service_system_id = ?", ss_id
+  def self.build_interactions_blueprint(ss_id, filter={})
+    interactions = build_interactions_list(ss_id, filter)
     blueprint = Array.new(4) { Array.new }
     return blueprint if interactions.blank?
 
@@ -124,8 +135,10 @@ class Interaction < ActiveRecord::Base
     begin
       col = Array.new(4)
       interactions.first.all_same_time_interactions.each do |interaction|
-        col[subclasses.index(interaction.interaction_type.gsub(/Interaction/, ""))] = interaction
-        interactions.delete_at(interactions.index(interaction))
+        if interactions.index(interaction)
+          col[subclasses.index(interaction.interaction_type.gsub(/Interaction/, ""))] = interaction
+          interactions.delete_at(interactions.index(interaction))
+        end
       end
       cols.append col
     end while interactions.present?
