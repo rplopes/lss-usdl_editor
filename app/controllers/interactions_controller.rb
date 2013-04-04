@@ -9,7 +9,7 @@ class InteractionsController < ApplicationController
       @service_system.save
     end
     if @service_system.view_status == "list"
-      @interactions = Interaction.where "service_system_id = ?", @service_system.id
+      @interactions = Interaction.build_interactions_list(@service_system.id)
       @full_width = false
     else
       @interactions = Interaction.build_interactions_blueprint(@service_system.id)

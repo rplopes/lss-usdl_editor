@@ -98,6 +98,10 @@ class Interaction < ActiveRecord::Base
     return interactions
   end
 
+  def self.build_interactions_list(ss_id)
+    return Interaction.where "service_system_id = ?", ss_id
+  end
+
   def self.build_interactions_blueprint(ss_id)
     interactions = Interaction.where "service_system_id = ?", ss_id
     blueprint = Array.new(4) { Array.new }
