@@ -19,6 +19,6 @@ class ApplicationController < ActionController::Base
     label.split(" ").each do |word|
       str += word.capitalize
     end
-    return str
+    return str.gsub /[^a-zA-Z0-9]+/, ""
   end
 end
