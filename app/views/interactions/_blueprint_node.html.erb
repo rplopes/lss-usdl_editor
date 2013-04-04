@@ -3,6 +3,34 @@
   <div class="well well-small" onclick="window.location.href='<%= service_system_interaction_path(@service_system.id, interaction.id) %>'">
     <h4><%= link_to interaction.label, service_system_interaction_path(@service_system.id, interaction.id) %></h4>
     <p>
+      <% interaction.received_resources.each do |resource| %>
+        <span class="label label-warning">
+          <i class="icon-arrow-down icon-white"></i>
+          <i class="icon-book icon-white"></i>
+          <%= resource %>
+        </span>
+      <% end %>
+      <% interaction.created_resources.each do |resource| %>
+        <span class="label label-success">
+          <i class="icon-arrow-down icon-white"></i>
+          <i class="icon-book icon-white"></i>
+          <%= resource %>
+        </span>
+      <% end %>
+      <% interaction.consumed_resources.each do |resource| %>
+        <span class="label label-important">
+          <i class="icon-arrow-up icon-white"></i>
+          <i class="icon-book icon-white"></i>
+          <%= resource %>
+        </span>
+      <% end %>
+      <% interaction.returned_resources.each do |resource| %>
+        <span class="label label-warning">
+          <i class="icon-arrow-up icon-white"></i>
+          <i class="icon-book icon-white"></i>
+          <%= resource %>
+        </span>
+      <% end %>
       <% interaction.roles.each do |role| %>
         <span class="label">
           <i class="icon-user icon-white"></i>
@@ -16,7 +44,7 @@
         </span>
       <% end %>
       <% interaction.goals.each do |goal| %>
-        <span class="label">
+        <span class="label label-info">
           <i class="icon-screenshot icon-white"></i>
           <%= goal %>
         </span>
@@ -31,12 +59,6 @@
         <span class="label">
           <i class="icon-tasks icon-white"></i>
           <%= process %>
-        </span>
-      <% end %>
-      <% interaction.resources.each do |resource| %>
-        <span class="label">
-          <i class="icon-book icon-white"></i>
-          <%= resource %>
         </span>
       <% end %>
     </p>
