@@ -14,6 +14,15 @@ div#blueprint {
   z-index: 0;
 }
 
+form#filter-form {
+  height: 100%;
+
+  select {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}
+
 #interactions-menu-area {
   position: fixed;
   top: 40px;

@@ -1,19 +1,36 @@
 <div id="interactions-menu-area">
 
-  <ul id="interactions-menu" class="nav nav-list well">
-    <li class="nav-header">Create</li>
-    <li><%= link_to "New Interaction", new_service_system_interaction_path %></li>
-    <li class="nav-header">Display interactions as</li>
-    <li<% if @full_width %> class="active"<% end %>><a href="?view_status=esb">Extended service blueprint</a></li>
-    <li<% if not @full_width %> class="active"<% end %>><a href="?view_status=list">Ordinary list</a></li>
-  </ul>
+  <%= form_tag("/service_systems/#{@service_system.id}/interactions", method: :get, id: 'filter-form') do %>
 
-  <div class="btn-group" display="float: right">
-    <a href="#" class="btn" style="display: none"></a>
-    <a href="#" class="btn toggle-interactions-menu"><i class="icon-list-alt"></i></a>
+    <ul id="interactions-menu" class="nav nav-list well">
+
+      <li class="nav-header">Create</li>
+      <li><%= link_to "New Interaction", new_service_system_interaction_path %></li>
+
+      <li class="nav-header">Display interactions as</li>
+      <li<% if @full_width %> class="active"<% end %>><a href="?view_status=esb">Extended service blueprint</a></li>
+      <li<% if not @full_width %> class="active"<% end %>><a href="?view_status=list">Ordinary list</a></li>
+
+      <li class="nav-header">Filter interactions</li>
+      <li>
+        <%= select_tag :roles, options_from_collection_for_select(@roles, "id", "label"), prompt: "All roles" %>
+        <%= select_tag :time, '<option value>All times</option><option value="interval">Interval</option><option value="instant">Instant</option>'.html_safe %>
+        <%= select_tag :goals, options_from_collection_for_select(@goals, "id", "label"), prompt: "All goals" %>
+        <%= select_tag :locations, options_from_collection_for_select(@locations, "id", "label"), prompt: "All locations" %>
+        <%= select_tag :processes, options_from_collection_for_select(@processes, "id", "label"), prompt: "All processes" %>
+        <%= select_tag :resources, options_from_collection_for_select(@resources, "id", "label"), prompt: "All resources" %>
+      </li>
+      <li><%= submit_tag "Apply filters", class: "btn btn-primary" %></li>
+    </ul>
+
+    <div class="btn-group" display="float: right">
+      <a href="#" class="btn" style="display: none"></a>
+      <a href="#" class="btn toggle-interactions-menu"><i class="icon-list-alt"></i></a>
+    </div>
+
+    <% end %>
+
   </div>
-
-</div>
 
 <% if @full_width %>
 

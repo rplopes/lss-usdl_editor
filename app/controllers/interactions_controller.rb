@@ -8,10 +8,18 @@ class InteractionsController < ApplicationController
       @service_system.view_status = params[:view_status]
       @service_system.save
     end
+
+    @roles = Role.where "service_system_id = ?", @service_system.id
+    @times = [{"name" => "Interval"}, {"name" => "Instant"}]
+    @goals = Goal.where "service_system_id = ?", @service_system.id
+    @locations = Location.where "service_system_id = ?", @service_system.id
+    @processes = ProcessEntity.where "service_system_id = ?", @service_system.id
+    @resources = Resource.where "service_system_id = ?", @service_system.id
+    
     filter = {
       roles: params[:roles],
-      goals: params[:goals],
       time: params[:time],
+      goals: params[:goals],
       locations: params[:locations],
       processes: params[:processes],
       resources: params[:resources]
