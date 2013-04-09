@@ -1,41 +1,3 @@
-<!--<div id="interactions-menu-area">
-
-  <%= form_tag("/service_systems/#{@service_system.id}/interactions", method: :get, id: 'filter-form') do %>
-
-    <ul id="interactions-menu" class="nav nav-list well">
-
-      <li class="nav-header">Create</li>
-      <li><%= link_to "New Interaction", new_service_system_interaction_path %></li>
-
-      <li class="nav-header">Display interactions as</li>
-      <li<% if @full_width %> class="active"<% end %>><a href="?view_status=esb">Extended service blueprint</a></li>
-      <li<% if not @full_width %> class="active"<% end %>><a href="?view_status=list">Ordinary list</a></li>
-
-      <li class="nav-header">Filter interactions</li>
-      <li>
-        <%= select_tag :roles, options_from_collection_for_select(@roles, "id", "label"), prompt: "All roles" %>
-        <%= select_tag :time, '<option value>All times</option><option value="interval">Interval</option><option value="instant">Instant</option>'.html_safe %>
-        <%= select_tag :goals, options_from_collection_for_select(@goals, "id", "label"), prompt: "All goals" %>
-        <%= select_tag :locations, options_from_collection_for_select(@locations, "id", "label"), prompt: "All locations" %>
-        <%= select_tag :processes, options_from_collection_for_select(@processes, "id", "label"), prompt: "All processes" %>
-        <%= select_tag :resources, options_from_collection_for_select(@resources, "id", "label"), prompt: "All resources" %>
-      </li>
-      <li><%= submit_tag "Apply filters", class: "btn btn-primary" %></li>
-
-      <li class="nav-header">Export</li>
-      <li><a href="#">To LSS-USDL file</a></li>
-      <li><a href="#">To Linked USDL file</a></li>
-    </ul>
-
-    <div class="btn-group" display="float: right">
-      <a href="#" class="btn" style="display: none"></a>
-      <a href="#" class="btn toggle-interactions-menu"><i class="icon-list-alt"></i></a>
-    </div>
-
-  <% end %>
-
-</div>-->
-
 <div id="service-metadata">
   <div class="row service-data">
     <div class="span8">
@@ -75,10 +37,6 @@
     <div class="span12">
       <hr />
       <%= form_tag("/service_systems/#{@service_system.id}/interactions", method: :get, id: 'filter-form', class: "form-inline") do %>
-        <!--<p id="filters-description">
-          Show All roles, All times, All goals, All locations, All processes, All resources
-          <%= submit_tag "Apply this filter", class: "btn btn-primary", style: "margin-left: 10px" %>
-        </p>-->
         <%= select_tag :roles, options_from_collection_for_select(@roles, "id", "label"), prompt: "All roles", class: "span4" %>
         <%= select_tag :time, '<option value>All times</option><option value="interval">Interval</option><option value="instant">Instant</option>'.html_safe, class: "span4" %>
         <%= select_tag :goals, options_from_collection_for_select(@goals, "id", "label"), prompt: "All goals", class: "span4" %>

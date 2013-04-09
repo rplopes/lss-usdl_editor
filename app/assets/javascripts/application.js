@@ -22,5 +22,7 @@ $(document).ready( function() {
   $('.toggle-interactions-menu').click(function() {
     $('#service-metadata .slide-menu').slideToggle();
   });
+
+  $('a').tooltip({container: 'body'})
   
 });

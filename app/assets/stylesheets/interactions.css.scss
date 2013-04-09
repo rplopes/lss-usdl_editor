@@ -2,6 +2,25 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+.label {
+  opacity: 0.8;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 90px;
+  &:hover {
+    opacity: 1;
+  }
+
+  a {
+    color: white;
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
+
 div#blueprint {
   position: fixed;
   top: 0;
@@ -19,21 +38,6 @@ form#filter-form {
 
   select {
     margin-bottom: 10px;
-  }
-}
-
-#interactions-menu-area {
-  position: fixed;
-  top: 40px;
-  left: -235px;
-  height: 100%;
-  z-index: 2;
-
-  ul#interactions-menu {
-    width: 200px;
-    border-radius: 0px;
-    float: left;
-    height: 100%;
   }
 }
 
