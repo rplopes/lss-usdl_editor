@@ -1,4 +1,6 @@
 class GoalsController < ApplicationController
+  before_filter :select_tab
+
   # GET /goals
   # GET /goals.json
   def index
@@ -86,5 +88,11 @@ class GoalsController < ApplicationController
       format.html { redirect_to service_system_goals_url }
       format.json { head :no_content }
     end
+  end
+
+  private
+
+  def select_tab
+    @tab = {"goals" => true}
   end
 end

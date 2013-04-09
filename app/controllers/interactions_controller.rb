@@ -1,5 +1,5 @@
 class InteractionsController < ApplicationController
-  before_filter :select_interactions_tab
+  before_filter :select_tab
 
   # GET /interactions
   # GET /interactions.json
@@ -202,7 +202,7 @@ class InteractionsController < ApplicationController
 
   private
 
-  def select_interactions_tab
-    @interactions_tab = true
+  def select_tab
+    @tab = {"interactions" => true}
   end
 end

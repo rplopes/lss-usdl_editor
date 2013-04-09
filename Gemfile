@@ -15,3 +15,4 @@ end
 gem "devise"
 gem "jquery-rails"
 gem 'thin'
+gem 'rdf'

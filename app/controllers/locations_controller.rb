@@ -1,4 +1,6 @@
 class LocationsController < ApplicationController
+  before_filter :select_tab
+
   # GET /locations
   # GET /locations.json
   def index
@@ -90,5 +92,11 @@ class LocationsController < ApplicationController
       format.html { redirect_to service_system_locations_url }
       format.json { head :no_content }
     end
+  end
+
+  private
+
+  def select_tab
+    @tab = {"locations" => true}
   end
 end

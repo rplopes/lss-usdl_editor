@@ -15,12 +15,13 @@ class ServiceSystemsController < ApplicationController
   # GET /service_systems/1
   # GET /service_systems/1.json
   def show
-    @service_system = ServiceSystem.find(params[:id])
+    redirect_to service_system_interactions_url(params[:id])
+    #@service_system = ServiceSystem.find(params[:id])
 
-    respond_to do |format|
-      format.html # show.html.erb
-      format.json { render json: @service_system }
-    end
+    #respond_to do |format|
+    #  format.html # show.html.erb
+    #  format.json { render json: @service_system }
+    #end
   end
 
   # GET /service_systems/new

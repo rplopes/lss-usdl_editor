@@ -1,4 +1,6 @@
 class RolesController < ApplicationController
+  before_filter :select_tab
+
   # GET /roles
   # GET /roles.json
   def index
@@ -88,5 +90,11 @@ class RolesController < ApplicationController
       format.html { redirect_to service_system_roles_url }
       format.json { head :no_content }
     end
+  end
+
+  private
+
+  def select_tab
+    @tab = {"roles" => true}
   end
 end

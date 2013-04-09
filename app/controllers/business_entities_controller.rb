@@ -1,4 +1,6 @@
 class BusinessEntitiesController < ApplicationController
+  before_filter :select_tab
+
   # GET /business_entities
   # GET /business_entities.json
   def index
@@ -86,5 +88,11 @@ class BusinessEntitiesController < ApplicationController
       format.html { redirect_to service_system_business_entities_url }
       format.json { head :no_content }
     end
+  end
+
+  private
+
+  def select_tab
+    @tab = {"business_entities" => true}
   end
 end

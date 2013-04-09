@@ -1,4 +1,4 @@
-<div id="interactions-menu-area">
+<!--<div id="interactions-menu-area">
 
   <%= form_tag("/service_systems/#{@service_system.id}/interactions", method: :get, id: 'filter-form') do %>
 
@@ -21,6 +21,10 @@
         <%= select_tag :resources, options_from_collection_for_select(@resources, "id", "label"), prompt: "All resources" %>
       </li>
       <li><%= submit_tag "Apply filters", class: "btn btn-primary" %></li>
+
+      <li class="nav-header">Export</li>
+      <li><a href="#">To LSS-USDL file</a></li>
+      <li><a href="#">To Linked USDL file</a></li>
     </ul>
 
     <div class="btn-group" display="float: right">
@@ -28,9 +32,64 @@
       <a href="#" class="btn toggle-interactions-menu"><i class="icon-list-alt"></i></a>
     </div>
 
-    <% end %>
+  <% end %>
 
+</div>-->
+
+<div id="service-metadata">
+  <div class="row service-data">
+    <div class="span8">
+      <span class="code">
+        <% if @service_system.prefix.present? %><%= @service_system.prefix %>: <% end %>
+        &lt;<%= @service_system.uri %>&gt;
+      </span>
+      <p><%= @service_system.comment %></p>
+    </div>
+    <div class="span4">
+      <a href="#" class="btn toggle-interactions-menu"><i class="icon-list-alt"></i> Show menu</a>
+      <%= link_to "New Interaction", new_service_system_interaction_path, class: 'btn btn-success' %>
+    </div>
   </div>
+  <div class="row slide-menu">
+    <div class="span12">
+      <%= link_to 'Edit metadata', edit_service_system_path(@service_system), class: "btn btn-success" %>
+      <div class="btn-group">
+        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+          <i class="icon-eye-open"></i> View interactions as <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li<% if @full_width %> class="active"<% end %>><a href="?view_status=esb">Extended service blueprint</a></li>
+          <li<% if not @full_width %> class="active"<% end %>><a href="?view_status=list">Ordinary list</a></li>
+        </ul>
+      </div>
+      <div class="btn-group">
+        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+          <i class="icon-download-alt"></i> Export data to <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li><a href="#">LSS-USDL file</a></li>
+          <li><a href="#">Linked USDL file</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="span12">
+      <hr />
+      <%= form_tag("/service_systems/#{@service_system.id}/interactions", method: :get, id: 'filter-form', class: "form-inline") do %>
+        <!--<p id="filters-description">
+          Show All roles, All times, All goals, All locations, All processes, All resources
+          <%= submit_tag "Apply this filter", class: "btn btn-primary", style: "margin-left: 10px" %>
+        </p>-->
+        <%= select_tag :roles, options_from_collection_for_select(@roles, "id", "label"), prompt: "All roles", class: "span4" %>
+        <%= select_tag :time, '<option value>All times</option><option value="interval">Interval</option><option value="instant">Instant</option>'.html_safe, class: "span4" %>
+        <%= select_tag :goals, options_from_collection_for_select(@goals, "id", "label"), prompt: "All goals", class: "span4" %>
+        <%= select_tag :locations, options_from_collection_for_select(@locations, "id", "label"), prompt: "All locations", class: "span4" %>
+        <%= select_tag :processes, options_from_collection_for_select(@processes, "id", "label"), prompt: "All processes", class: "span4" %>
+        <%= select_tag :resources, options_from_collection_for_select(@resources, "id", "label"), prompt: "All resources", class: "span4" %>
+        <p style="text-align: right"><%= submit_tag "Apply this filter", class: "btn btn-primary", style: "margin-right: 30px" %></p>
+      <% end %>
+    </div>
+  </div>
+</div>
 
 <% if @full_width %>
 

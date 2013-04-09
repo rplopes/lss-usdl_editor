@@ -20,10 +20,7 @@ $(document).ready( function() {
   $('.alert').delay(2000).fadeOut();
 
   $('.toggle-interactions-menu').click(function() {
-    menu = $('#interactions-menu-area');
-    menu.animate({
-      marginLeft: parseInt(menu.css('marginLeft'),10) == 0 ? menu.outerWidth()-40 : 0
-    });
+    $('#service-metadata .slide-menu').slideToggle();
   });
   
 });

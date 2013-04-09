@@ -1,4 +1,6 @@
 class ProcessEntitiesController < ApplicationController
+  before_filter :select_tab
+
   # GET /process_entities
   # GET /process_entities.json
   def index
@@ -86,5 +88,11 @@ class ProcessEntitiesController < ApplicationController
       format.html { redirect_to service_system_process_entities_url }
       format.json { head :no_content }
     end
+  end
+
+  private
+
+  def select_tab
+    @tab = {"processes" => true}
   end
 end

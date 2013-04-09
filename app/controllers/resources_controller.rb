@@ -1,4 +1,6 @@
 class ResourcesController < ApplicationController
+  before_filter :select_tab
+
   # GET /resources
   # GET /resources.json
   def index
@@ -86,5 +88,11 @@ class ResourcesController < ApplicationController
       format.html { redirect_to service_system_resources_url }
       format.json { head :no_content }
     end
+  end
+
+  private
+
+  def select_tab
+    @tab = {"resources" => true}
   end
 end
