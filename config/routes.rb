@@ -15,6 +15,8 @@ LssUsdlEditor::Application.routes.draw do
     resources :process_entities, path: "processes"
     resources :resources
 
+    get 'export_to_lss_usdl'
+
   end
 
   devise_for :users
