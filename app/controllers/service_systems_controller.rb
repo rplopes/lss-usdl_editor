@@ -91,7 +91,7 @@ class ServiceSystemsController < ApplicationController
     @service_system = ServiceSystem.find(params[:service_system_id])
     send_data SemanticWorker.from_db_to_lss_usdl(@service_system),
           :type => 'text/xml; charset=iso-8859-1; header=present',
-          :disposition => "attachment; filename=#{@service_system.label}.rdf"
+          :disposition => "attachment; filename=#{@service_system.label}.ttl"
   end
 
   private

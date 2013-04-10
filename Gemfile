@@ -16,3 +16,5 @@ gem "devise"
 gem "jquery-rails"
 gem 'thin'
 gem 'rdf'
+gem 'linkeddata'
+gem 'rdf-turtle'
