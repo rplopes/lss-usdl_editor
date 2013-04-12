@@ -19,4 +19,20 @@ class Resource < ActiveRecord::Base
   def self.subclasses
     [ "Physical", "Knowledge", "Financial" ]
   end
+
+  def value_
+    if self.value
+      return self.value.to_i == self.value ? self.value.to_i : self.value
+    end
+  end
+  def max_value_
+    if self.max_value
+      return self.max_value.to_i == self.max_value ? self.max_value.to_i : self.max_value
+    end
+  end
+  def min_value_
+    if self.min_value
+      return self.min_value.to_i == self.min_value ? self.min_value.to_i : self.min_value
+    end
+  end
 end
