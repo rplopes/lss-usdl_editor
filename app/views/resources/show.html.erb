@@ -3,19 +3,19 @@
 <% if @resource.value %>
 <p>
   <strong>Value:</strong>
-  <%= @resource.value %> <%= @resource.unit_of_measurement %>
+  <%= @resource.value_ %> <%= @resource.unit_of_measurement %>
 </p>
 <% end %>
 <% if @resource.max_value %>
 <p>
   <strong>Max value:</strong>
-  <%= @resource.max_value %> <%= @resource.unit_of_measurement %>
+  <%= @resource.max_value_ %> <%= @resource.unit_of_measurement %>
 </p>
 <% end %>
 <% if @resource.min_value %>
 <p>
   <strong>Min value:</strong>
-  <%= @resource.min_value %> <%= @resource.unit_of_measurement %>
+  <%= @resource.min_value_ %> <%= @resource.unit_of_measurement %>
 </p>
 <% end %>
 <% if @resource.resource_type.present? %>
