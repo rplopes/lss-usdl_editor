@@ -98,20 +98,22 @@ class SemanticWorker < ActiveRecord::Base
         if resource.value or resource.max_value or resource.min_value or resource.unit_of_measurement.present?
           # Price specification
           if resource_type == 'FinancialResource'
-            value_sid = data["#{camel_case(resource.label)}PriceSpecification"]
-            graph << [value_sid, RDF.type, GR.PriceSpecification]
-            graph << [value_sid, GR.hasCurrencyValue, resource.value_] if resource.value
-            graph << [value_sid, GR.hasMaxCurrencyValue, resource.max_value_] if resource.max_value
-            graph << [value_sid, GR.hasMinCurrencyValue, resource.min_value_] if resource.min_value
-            graph << [value_sid, GR.hasCurrency, resource.unit_of_measurement] if resource.unit_of_measurement.present?
+            priceSpecification = RDF::Node.new "#{resource_sid}PriceSpecification"
+            graph << [resource_sid, LSS_USDL.hasPriceSpecification, priceSpecification]
+            graph << [priceSpecification, RDF.type, GR.PriceSpecification]
+            graph << [priceSpecification, GR.hasCurrencyValue, resource.value_] if resource.value
+            graph << [priceSpecification, GR.hasMaxCurrencyValue, resource.max_value_] if resource.max_value
+            graph << [priceSpecification, GR.hasMinCurrencyValue, resource.min_value_] if resource.min_value
+            graph << [priceSpecification, GR.hasCurrency, resource.unit_of_measurement] if resource.unit_of_measurement.present?
           # Quantitative value
           else
-            value_sid = data["#{camel_case(resource.label)}QuantitativeValue"]
-            graph << [value_sid, RDF.type, GR.QuantitativeValue]
-            graph << [value_sid, GR.hasValue, resource.value_] if resource.value
-            graph << [value_sid, GR.hasMaxValue, resource.max_value_] if resource.max_value
-            graph << [value_sid, GR.hasMinValue, resource.min_value_] if resource.min_value
-            graph << [value_sid, GR.hasUnitOfMeasurement, resource.unit_of_measurement] if resource.unit_of_measurement.present?
+            quantitativeValue = RDF::Node.new "#{resource_sid}QuantitativeValue"
+            graph << [resource_sid, LSS_USDL.hasQuantitativeValue, quantitativeValue]
+            graph << [quantitativeValue, RDF.type, GR.QuantitativeValue]
+            graph << [quantitativeValue, GR.hasValue, resource.value_] if resource.value
+            graph << [quantitativeValue, GR.hasMaxValue, resource.max_value_] if resource.max_value
+            graph << [quantitativeValue, GR.hasMinValue, resource.min_value_] if resource.min_value
+            graph << [quantitativeValue, GR.hasUnitOfMeasurement, resource.unit_of_measurement] if resource.unit_of_measurement.present?
           end
         end
       end
