@@ -63,11 +63,42 @@ class SemanticWorker < ActiveRecord::Base
       te_sid = data["#{camel_case(interaction.label)}Time"]
       te_type = "TemporalEntity"
       if interaction.temporal_entity_type.present?
-        te_type = "Interval" if interaction.temporal_entity_type == "Interval"
-        te_type = "Instant" if interaction.temporal_entity_type == "Instant"
+        if interaction.temporal_entity_type == "Interval"
+          if interaction.time_description.present?
+            te_type = "DateTimeInterval"
+          else
+            te_type = "Interval"
+          end
+        else
+          te_type = "Instant"
+        end
       end
       graph << [time, LSS_USDL.hasTemporalEntity, te_sid]
       graph << [te_sid, RDF.type, TIME[te_type]]
+      if interaction.time_description.present?
+        time_description = RDF::Node.new "#{interaction_sid}DateTimeDescription"
+        time_property = te_type == "Instant" ? "inDateTime" : "hasDateTimeDescription"
+        graph << [te_sid, TIME[time_property], time_description] if te_type != "TemporalEntity"
+        graph << [time_description, RDF.type, TIME.DateTimeDescription]
+        graph << [time_description, TIME.year, interaction.time_year] if interaction.time_year
+        graph << [time_description, TIME.month, interaction.time_month] if interaction.time_month
+        graph << [time_description, TIME.week, interaction.time_week] if interaction.time_week
+        graph << [time_description, TIME.day, interaction.time_day] if interaction.time_day
+        graph << [time_description, TIME.hour, interaction.time_hour] if interaction.time_hour
+        graph << [time_description, TIME.minute, interaction.time_minute] if interaction.time_minute
+        graph << [time_description, TIME.second, interaction.time_second] if interaction.time_second
+      end
+      if interaction.duration_description.present?
+        duration_description = RDF::Node.new "#{interaction_sid}DurationDescription"
+        graph << [te_sid, TIME.hasDurationDescription, duration_description]
+        graph << [duration_description, RDF.type, TIME.DurationDescription]
+        graph << [duration_description, TIME.years, interaction.duration_years] if interaction.duration_years
+        graph << [duration_description, TIME.months, interaction.duration_months] if interaction.duration_months
+        graph << [duration_description, TIME.days, interaction.duration_days] if interaction.duration_days
+        graph << [duration_description, TIME.hours, interaction.duration_hours] if interaction.duration_hours
+        graph << [duration_description, TIME.minutes, interaction.duration_minutes] if interaction.duration_minutes
+        graph << [duration_description, TIME.seconds, interaction.duration_seconds] if interaction.duration_seconds
+      end
 
       # Goals
       interaction.goals.each do |goal|
