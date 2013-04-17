@@ -21,6 +21,7 @@ class SemanticWorker < ActiveRecord::Base
   GR   = RDF::Vocabulary.new 'http://purl.org/goodrelations/v1#'
   S    = RDF::Vocabulary.new 'http://schema.org/'
   GN   = RDF::Vocabulary.new 'http://sws.geonames.org/'
+  TIME = RDF::Vocabulary.new 'http://www.w3.org/2006/time#'
 
   def self.from_db_to_lss_usdl(service_system)
     data = RDF::Vocabulary.new service_system.uri
@@ -53,6 +54,20 @@ class SemanticWorker < ActiveRecord::Base
           graph << [business_entity_id, GR.description, role.business_entity.gr_description] if role.business_entity.gr_description.present?
         end
       end
+
+      # Time
+      time = RDF::Node.new "#{interaction_sid}Time"
+      graph << [interaction_sid, LSS_USDL.hasTime, time]
+      graph << [time, RDF.type, LSS_USDL.Time]
+      # Temporal entity
+      te_sid = data["#{camel_case(interaction.label)}Time"]
+      te_type = "TemporalEntity"
+      if interaction.temporal_entity_type.present?
+        te_type = "Interval" if interaction.temporal_entity_type == "Interval"
+        te_type = "Instant" if interaction.temporal_entity_type == "Instant"
+      end
+      graph << [time, LSS_USDL.hasTemporalEntity, te_sid]
+      graph << [te_sid, RDF.type, TIME[te_type]]
 
       # Goals
       interaction.goals.each do |goal|
