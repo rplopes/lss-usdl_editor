@@ -59,26 +59,14 @@ class SemanticWorker < ActiveRecord::Base
       time = RDF::Node.new "#{interaction_sid}Time"
       graph << [interaction_sid, LSS_USDL.hasTime, time]
       graph << [time, RDF.type, LSS_USDL.Time]
-      # Temporal entity
+      # Temporal entity - Só pode ser ProperInterval ou DateTimeInterval!!!!
       te_sid = data["#{camel_case(interaction.label)}Time"]
-      te_type = "TemporalEntity"
-      if interaction.temporal_entity_type.present?
-        if interaction.temporal_entity_type == "Interval"
-          if interaction.time_description.present?
-            te_type = "DateTimeInterval"
-          else
-            te_type = "Interval"
-          end
-        else
-          te_type = "Instant"
-        end
-      end
+      te_type = interaction.time_description.present? ? "DateTimeInterval" : "ProperInterval"
       graph << [time, LSS_USDL.hasTemporalEntity, te_sid]
       graph << [te_sid, RDF.type, TIME[te_type]]
       if interaction.time_description.present?
         time_description = RDF::Node.new "#{interaction_sid}DateTimeDescription"
-        time_property = te_type == "Instant" ? "inDateTime" : "hasDateTimeDescription"
-        graph << [te_sid, TIME[time_property], time_description] if te_type != "TemporalEntity"
+        graph << [te_sid, TIME.hasDateTimeDescription, time_description]
         graph << [time_description, RDF.type, TIME.DateTimeDescription]
         graph << [time_description, TIME.year, interaction.time_year] if interaction.time_year
         graph << [time_description, TIME.month, interaction.time_month] if interaction.time_month
@@ -98,6 +86,16 @@ class SemanticWorker < ActiveRecord::Base
         graph << [duration_description, TIME.hours, interaction.duration_hours] if interaction.duration_hours
         graph << [duration_description, TIME.minutes, interaction.duration_minutes] if interaction.duration_minutes
         graph << [duration_description, TIME.seconds, interaction.duration_seconds] if interaction.duration_seconds
+      end
+      # Interactions flow
+      (interaction.interactions_before | [interaction.interaction_before]).each do |i|
+        graph << [te_sid, TIME.intervalAfter, data["#{camel_case(i.label)}Time"]] if i
+      end
+      (interaction.interactions_during| [interaction.interaction_during]).each do |i|
+        graph << [te_sid, TIME.intervalDuring, data["#{camel_case(i.label)}Time"]] if i
+      end
+      (interaction.interactions_after | [interaction.interaction_after]).each do |i|
+        graph << [te_sid, TIME.intervalBefore, data["#{camel_case(i.label)}Time"]] if i
       end
 
       # Goals
