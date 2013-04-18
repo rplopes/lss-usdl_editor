@@ -63,9 +63,16 @@ class Interaction < ActiveRecord::Base
     ["Interval", "Instant"]
   end
 
+  def time_string
+    str = ""
+    str += "Lasts #{self.duration_description} " if self.duration_description.present?
+    str += "at #{time_description}" if self.time_description.present?
+    return str.capitalize.strip
+  end
+
   def time_description
     desc = ""
-    desc += "Year #{self.time_year} " if self.time_year
+    desc += "year #{self.time_year} " if self.time_year
     desc += "month #{self.time_month} " if self.time_month
     desc += "week #{self.time_week} " if self.time_week
     desc += "day #{self.time_day} " if self.time_day

@@ -59,7 +59,7 @@ class SemanticWorker < ActiveRecord::Base
       time = RDF::Node.new "#{interaction_sid}Time"
       graph << [interaction_sid, LSS_USDL.hasTime, time]
       graph << [time, RDF.type, LSS_USDL.Time]
-      # Temporal entity - Só pode ser ProperInterval ou DateTimeInterval!!!!
+      # Temporal entity
       te_sid = data["#{camel_case(interaction.label)}Time"]
       te_type = interaction.time_description.present? ? "DateTimeInterval" : "ProperInterval"
       graph << [time, LSS_USDL.hasTemporalEntity, te_sid]

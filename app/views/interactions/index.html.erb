@@ -101,16 +101,10 @@
       <%= interaction.roles.join(", ") %>
     </p>
     <% end %>
-    <% if interaction.temporal_entity_type.present? %>
+    <% if interaction.time_string.present? %>
     <p>
       <strong>Time:</strong>
-      <%= interaction.temporal_entity_type %>
-      <% if interaction.time_description.present? %>
-        at <%= interaction.time_description %>
-      <% end %>
-      <% if interaction.duration_description.present? %>
-        during <%= interaction.duration_description %>
-      <% end %>
+      <%= interaction.time_string %>
     </p>
     <% end %>
     <% if interaction.goals.present? %>

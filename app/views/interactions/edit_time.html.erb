@@ -14,11 +14,6 @@
   <% end %>
   
   <table>
-  
-    <tr>
-      <td><%= f.label :temporal_entity_type, "Time type" %></td>
-      <td><%= f.select :temporal_entity_type, Interaction.temporal_entity_subclasses.map{ |te| [te, te] }.prepend(["--", nil]) %></td>
-    </tr>
 
     <tr>
       <td></td>

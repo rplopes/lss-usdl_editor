@@ -47,11 +47,11 @@
           </a>
         </span>
       <% end %>
-      <% if interaction.temporal_entity_type.present? %>
+      <% if interaction.time_string.present? %>
         <span class="label">
-          <a href="<%= service_system_interaction_path(@service_system.id, interaction.id) %>" data-toggle="tooltip" title="Time: <%= interaction.temporal_entity_type %>">
+          <a href="<%= service_system_interaction_path(@service_system.id, interaction.id) %>" data-toggle="tooltip" title="Time: <%= interaction.time_string %>">
             <i class="icon-time icon-white"></i>
-            <%= interaction.temporal_entity_type %>
+            <%= interaction.time_string %>
           </a>
         </span>
       <% end %>
