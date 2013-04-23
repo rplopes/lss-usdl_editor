@@ -1,6 +1,7 @@
 <h3>Service systems</h3>
 
 <%= link_to "New Service system", new_service_system_path, class: "btn btn-success" %>
+<a href="#myModal" role="button" class="btn" data-toggle="modal">Import from file</a>
 
 <% @service_systems.each do |service_system| %>
 
@@ -36,4 +37,28 @@
 </p>
 <% end %>
 
+<% end %>
+
+<%= form_tag service_systems_import_path, :multipart => true do %>
+  <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      <h3 id="myModalLabel">Import from file</h3>
+    </div>
+    <div class="modal-body">
+      <p>
+        <label for="file">File to Upload</label>
+        <%= file_field_tag "file" %>
+      </p>
+      <p>
+        <label for="type">Type of file</label>
+        <%= radio_button_tag 'type', 'LSS-USDL', true %> LSS-USDL<br />
+        <%= radio_button_tag 'type', 'Linked USDL' %> Linked USDL
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+      <%= submit_tag "Import service system", class: "btn btn-success" %>
+    </div>
+  </div>
 <% end %>

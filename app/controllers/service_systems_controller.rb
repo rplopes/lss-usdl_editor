@@ -93,6 +93,25 @@ class ServiceSystemsController < ApplicationController
           :disposition => "attachment; filename=#{@service_system.label}.ttl"
   end
 
+  def import
+    if params[:type] == "LSS-USDL"
+      @service_system = SemanticWorker.from_lss_usdl_to_db(params[:file])
+    else
+      #TODO @service_system = SemanticWorker.from_linked_usdl_to_db(params[:file])
+    end
+    @service_system.user = current_user # add creator
+
+    respond_to do |format|
+      if @service_system.save
+        format.html { redirect_to @service_system, notice: 'Service system was successfully created.' }
+        format.json { render json: @service_system, status: :created, location: @service_system }
+      else
+        format.html { redirect_to service_systems_url, alert: 'Service system could not be imported from that file.' }
+        format.json { render json: @service_system.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
   private
 
   def select_metadata_tab

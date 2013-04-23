@@ -23,6 +23,30 @@ class SemanticWorker < ActiveRecord::Base
   GN   = RDF::Vocabulary.new 'http://sws.geonames.org/'
   TIME = RDF::Vocabulary.new 'http://www.w3.org/2006/time#'
 
+
+  def self.from_lss_usdl_to_db(file)
+    #puts file.tempfile.path
+    #RDF::Reader.open(file.tempfile.path) do |reader|
+    #  reader.each_statement do |statement|
+    #    puts statement.inspect
+    #  end
+    #end
+    graph = RDF::Graph.load(file.tempfile.path)
+    service_system = ServiceSystem.new
+
+    RDF::Query.new({:service_system => {
+      RDF.type  => LSS_USDL.ServiceSystem,
+      RDFS.label => :label,
+      RDFS.comment => :comment,
+    }}).execute(graph).each do |solution|
+      service_system.label = solution.label
+      service_system.comment = solution.comment
+    end
+
+    return service_system
+  end
+
+
   def self.from_db_to_lss_usdl(service_system)
     data = RDF::Vocabulary.new service_system.uri
     graph = RDF::Graph.new

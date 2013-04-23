@@ -19,6 +19,8 @@ LssUsdlEditor::Application.routes.draw do
 
   end
 
+  match "/service_systems/import" => "service_systems#import"
+
   devise_for :users
 
   root to: "service_systems#index"
