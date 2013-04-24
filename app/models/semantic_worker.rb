@@ -39,11 +39,32 @@ class SemanticWorker < ActiveRecord::Base
       RDFS.label => :label,
       RDFS.comment => :comment,
     }}).execute(graph).each do |solution|
-      service_system.label = solution.label
-      service_system.comment = solution.comment
+      service_system.uri = solution.service_system.to_s.gsub(/#.*/, '#')
+      service_system.label = solution.label.to_s
+      service_system.comment = solution.comment.to_s
+      puts service_system.inspect
     end
 
-    return service_system
+    puts "Roles"
+    roles = []
+    RDF::Query.new({
+      :role => {
+        RDF.type  => LSS_USDL.Role,
+        RDFS.label => :label,
+        RDFS.comment => :comment,
+      }
+    }).execute(graph).each do |solution|
+      puts solution.inspect
+      role = Role.new
+      role.sid = solution.role.to_s.gsub(/^.*#/, '')
+      role.label = solution.label.to_s
+      role.comment = solution.comment.to_s
+      role.service_system = service_system
+      roles << role
+      puts role.inspect
+    end
+
+    #return service_system
   end
 
 
