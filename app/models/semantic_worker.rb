@@ -24,12 +24,17 @@ class SemanticWorker < ActiveRecord::Base
   TIME = RDF::Vocabulary.new 'http://www.w3.org/2006/time#'
 
 
+  ##########################################
+  #
+  # Imports an LSS-USDL file into the database
+  #
+  ##########################################
   def self.from_lss_usdl_to_db(file, author)
     graph = RDF::Graph.load(file.tempfile.path)
     service_system = ServiceSystem.new
     service_system.user = author
 
-    puts "Service System"
+    # Service System
     RDF::Query.new({q: {RDF.type  => LSS_USDL.ServiceSystem}}).execute(graph).each do |s|
       service_system.uri = s.q.to_s.gsub(/#.*/, '#')
       service_system.label = query_str(graph, s.q, RDFS.label)
@@ -38,8 +43,7 @@ class SemanticWorker < ActiveRecord::Base
       puts service_system.inspect
     end
 
-    puts "\nBusiness Entities"
-    bes = []
+    # Business Entities
     RDF::Query.new({q: {RDF.type => GR.BusinessEntity}}).execute(graph).each do |s|
       o = BusinessEntity.new
       o.sid = s.q.to_s.gsub(/^.*#/, '')
@@ -51,37 +55,28 @@ class SemanticWorker < ActiveRecord::Base
       o.s_telephone = query_str(graph, s.q, S.telephone)
       o.gr_description = query_str(graph, s.q, GR.description)
       o.save
-      puts o.inspect
-      bes << o
     end
 
-    puts "\nRoles"
-    roles = []
+    # Roles
     RDF::Query.new({q: {RDF.type  => LSS_USDL.Role}}).execute(graph).each do |s|
       o = Role.new
       o.sid = s.q.to_s.gsub(/^.*#/, '')
       o.service_system = service_system
       o.label = query_str(graph, s.q, RDFS.label)
       o.comment = query_str(graph, s.q, RDFS.comment)
-      RDF::Query.new({q2: {LSS_USDL.belongsToBusinessEntity => :be}}).execute(graph).each do |s2|
-        if s.q == s2.q2
-          bes.each do |be|
-            if be.sid == s2.be.to_s.gsub(/^.*#/, '')
-              o.business_entity = be
-              break
-            end
-          end
-        end
-      end
+      o.business_entity = query_el(graph, s.q, LSS_USDL.belongsToBusinessEntity, service_system.id, BusinessEntity)
       o.save
-      puts o.inspect
-      roles << o
     end
 
     return service_system
   end
 
 
+  ##########################################
+  #
+  # Exports from the database to an LSS-USDL file
+  #
+  ##########################################
   def self.from_db_to_lss_usdl(service_system)
     data = RDF::Vocabulary.new service_system.uri
     graph = RDF::Graph.new
@@ -282,6 +277,15 @@ class SemanticWorker < ActiveRecord::Base
   def self.query_str(graph, element, attribute)
     RDF::Query.new({q: {attribute => :attribute}}).execute(graph).each do |s|
       return s.attribute.to_s if element == s.q
+    end
+    return nil
+  end
+
+  def self.query_el(graph, element, attribute, service_system_id, model)
+    RDF::Query.new({q: {attribute => :attribute}}).execute(graph).each do |s|
+      if element == s.q
+        return model.where("service_system_id = ? and sid = ?", service_system_id, s.attribute.to_s.gsub(/^.*#/, '')).first
+      end
     end
     return nil
   end
