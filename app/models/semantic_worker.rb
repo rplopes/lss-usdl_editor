@@ -24,47 +24,61 @@ class SemanticWorker < ActiveRecord::Base
   TIME = RDF::Vocabulary.new 'http://www.w3.org/2006/time#'
 
 
-  def self.from_lss_usdl_to_db(file)
-    #puts file.tempfile.path
-    #RDF::Reader.open(file.tempfile.path) do |reader|
-    #  reader.each_statement do |statement|
-    #    puts statement.inspect
-    #  end
-    #end
+  def self.from_lss_usdl_to_db(file, author)
     graph = RDF::Graph.load(file.tempfile.path)
     service_system = ServiceSystem.new
+    service_system.user = author
 
-    RDF::Query.new({:service_system => {
-      RDF.type  => LSS_USDL.ServiceSystem,
-      RDFS.label => :label,
-      RDFS.comment => :comment,
-    }}).execute(graph).each do |solution|
-      service_system.uri = solution.service_system.to_s.gsub(/#.*/, '#')
-      service_system.label = solution.label.to_s
-      service_system.comment = solution.comment.to_s
+    puts "Service System"
+    RDF::Query.new({q: {RDF.type  => LSS_USDL.ServiceSystem}}).execute(graph).each do |s|
+      service_system.uri = s.q.to_s.gsub(/#.*/, '#')
+      service_system.label = query_str(graph, s.q, RDFS.label)
+      service_system.comment = query_str(graph, s.q, RDFS.comment)
+      service_system.save!
       puts service_system.inspect
     end
 
-    puts "Roles"
-    roles = []
-    RDF::Query.new({
-      :role => {
-        RDF.type  => LSS_USDL.Role,
-        RDFS.label => :label,
-        RDFS.comment => :comment,
-      }
-    }).execute(graph).each do |solution|
-      puts solution.inspect
-      role = Role.new
-      role.sid = solution.role.to_s.gsub(/^.*#/, '')
-      role.label = solution.label.to_s
-      role.comment = solution.comment.to_s
-      role.service_system = service_system
-      roles << role
-      puts role.inspect
+    puts "\nBusiness Entities"
+    bes = []
+    RDF::Query.new({q: {RDF.type => GR.BusinessEntity}}).execute(graph).each do |s|
+      o = BusinessEntity.new
+      o.sid = s.q.to_s.gsub(/^.*#/, '')
+      o.service_system = service_system
+      o.foaf_name = query_str(graph, s.q, FOAF.name)
+      o.foaf_page = query_str(graph, s.q, FOAF.page)
+      o.foaf_logo = query_str(graph, s.q, FOAF.logo)
+      o.s_email = query_str(graph, s.q, S.email)
+      o.s_telephone = query_str(graph, s.q, S.telephone)
+      o.gr_description = query_str(graph, s.q, GR.description)
+      o.save
+      puts o.inspect
+      bes << o
     end
 
-    #return service_system
+    puts "\nRoles"
+    roles = []
+    RDF::Query.new({q: {RDF.type  => LSS_USDL.Role}}).execute(graph).each do |s|
+      o = Role.new
+      o.sid = s.q.to_s.gsub(/^.*#/, '')
+      o.service_system = service_system
+      o.label = query_str(graph, s.q, RDFS.label)
+      o.comment = query_str(graph, s.q, RDFS.comment)
+      RDF::Query.new({q2: {LSS_USDL.belongsToBusinessEntity => :be}}).execute(graph).each do |s2|
+        if s.q == s2.q2
+          bes.each do |be|
+            if be.sid == s2.be.to_s.gsub(/^.*#/, '')
+              o.business_entity = be
+              break
+            end
+          end
+        end
+      end
+      o.save
+      puts o.inspect
+      roles << o
+    end
+
+    return service_system
   end
 
 
@@ -264,6 +278,13 @@ class SemanticWorker < ActiveRecord::Base
   end
 
   private
+
+  def self.query_str(graph, element, attribute)
+    RDF::Query.new({q: {attribute => :attribute}}).execute(graph).each do |s|
+      return s.attribute.to_s if element == s.q
+    end
+    return nil
+  end
 
   def self.add_entity(data, graph, type, entity, sids)
     sid = camel_case(entity.label)

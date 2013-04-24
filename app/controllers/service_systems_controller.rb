@@ -79,6 +79,15 @@ class ServiceSystemsController < ApplicationController
   def destroy
     @service_system = ServiceSystem.find(params[:id])
     redirect_to action: :show and return if current_user != @service_system.user
+
+    @service_system.interactions.each { |o| o.destroy }
+    @service_system.roles.each { |o| o.destroy }
+    @service_system.business_entities.each { |o| o.destroy }
+    @service_system.goals.each { |o| o.destroy }
+    @service_system.locations.each { |o| o.destroy }
+    @service_system.process_entities.each { |o| o.destroy }
+    @service_system.resources.each { |o| o.destroy }
+
     @service_system.destroy
 
     respond_to do |format|
@@ -95,7 +104,7 @@ class ServiceSystemsController < ApplicationController
 
   def import
     if params[:type] == "LSS-USDL"
-      @service_system = SemanticWorker.from_lss_usdl_to_db(params[:file])
+      @service_system = SemanticWorker.from_lss_usdl_to_db(params[:file], current_user)
     else
       #TODO @service_system = SemanticWorker.from_linked_usdl_to_db(params[:file])
     end
