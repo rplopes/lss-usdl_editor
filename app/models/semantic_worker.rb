@@ -148,6 +148,45 @@ class SemanticWorker < ActiveRecord::Base
         o.created_resources = Array(query_el(graph, s.q, LSS_USDL.createsResource, service_system.id, Resource))
         o.consumed_resources = Array(query_el(graph, s.q, LSS_USDL.consumesResource, service_system.id, Resource))
         o.returned_resources = Array(query_el(graph, s.q, LSS_USDL.returnsResource, service_system.id, Resource))
+
+        # Time
+        RDF::Query.new({s.q => {LSS_USDL.hasTime => :time}, time: {LSS_USDL.hasTemporalEntity => :te}}).execute(graph).each do |s2|
+          i_before = query_str(graph, s2.te, TIME.intervalBefore)
+          i_during = query_str(graph, s2.te, TIME.intervalDuring)
+          i_after = query_str(graph, s2.te, TIME.intervalAfter)
+          if i_before
+            before = Interaction.where("service_system_id = ? and sid = ?", service_system.id, i_before.gsub(/(^.*#)|(Time$)/, ''))
+            o.interaction_after = before.first if before.present?
+          end
+          if i_during
+            during = Interaction.where("service_system_id = ? and sid = ?", service_system.id, i_during.gsub(/(^.*#)|(Time$)/, ''))
+            o.interaction_during = during.first if during.present?
+          end
+          if i_after
+            after = Interaction.where("service_system_id = ? and sid = ?", service_system.id, i_after.gsub(/(^.*#)|(Time$)/, ''))
+            o.interaction_before = after.first if after.present?
+          end
+          # DateTimeDescription
+          RDF::Query.new({s2.te => {TIME.hasDateTimeDescription => :dtd}}).execute(graph).each do |s3|
+            o.time_year = query_num(graph, s3.dtd, TIME.year)
+            o.time_month = query_num(graph, s3.dtd, TIME.month)
+            o.time_week = query_num(graph, s3.dtd, TIME.week)
+            o.time_day = query_num(graph, s3.dtd, TIME.day)
+            o.time_hour = query_num(graph, s3.dtd, TIME.hour)
+            o.time_minute = query_num(graph, s3.dtd, TIME.minute)
+            o.time_second = query_num(graph, s3.dtd, TIME.second)
+          end
+          # DurationDescription
+          RDF::Query.new({s2.te => {TIME.hasDurationDescription => :dd}}).execute(graph).each do |s3|
+            o.duration_years = query_num(graph, s3.dd, TIME.years)
+            o.duration_months = query_num(graph, s3.dd, TIME.months)
+            o.duration_days = query_num(graph, s3.dd, TIME.days)
+            o.duration_hours = query_num(graph, s3.dd, TIME.hours)
+            o.duration_minutes = query_num(graph, s3.dd, TIME.minutes)
+            o.duration_seconds = query_num(graph, s3.dd, TIME.seconds)
+          end
+        end
+
         o.save
       end
     end
@@ -222,6 +261,7 @@ class SemanticWorker < ActiveRecord::Base
       te_type = interaction.time_description.present? ? "DateTimeInterval" : "ProperInterval"
       graph << [time, LSS_USDL.hasTemporalEntity, data[te_sid]]
       graph << [data[te_sid], RDF.type, TIME[te_type]]
+      # DateTimeDescription
       if interaction.time_description.present?
         time_description = RDF::Node.new "#{interaction.sid}DateTimeDescription"
         graph << [data[te_sid], TIME.hasDateTimeDescription, time_description]
@@ -234,6 +274,7 @@ class SemanticWorker < ActiveRecord::Base
         graph << [time_description, TIME.minute, interaction.time_minute] if interaction.time_minute
         graph << [time_description, TIME.second, interaction.time_second] if interaction.time_second
       end
+      # DurationDescription
       if interaction.duration_description.present?
         duration_description = RDF::Node.new "#{interaction.sid}DurationDescription"
         graph << [data[te_sid], TIME.hasDurationDescription, duration_description]
