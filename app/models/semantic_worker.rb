@@ -58,13 +58,49 @@ class SemanticWorker < ActiveRecord::Base
     end
 
     # Roles
-    RDF::Query.new({q: {RDF.type  => LSS_USDL.Role}}).execute(graph).each do |s|
+    RDF::Query.new({q: {RDF.type => LSS_USDL.Role}}).execute(graph).each do |s|
       o = Role.new
       o.sid = s.q.to_s.gsub(/^.*#/, '')
       o.service_system = service_system
       o.label = query_str(graph, s.q, RDFS.label)
       o.comment = query_str(graph, s.q, RDFS.comment)
       o.business_entity = query_el(graph, s.q, LSS_USDL.belongsToBusinessEntity, service_system.id, BusinessEntity)
+      o.save
+    end
+
+    # Goals
+    RDF::Query.new({q: {RDF.type => LSS_USDL.Goal}}).execute(graph).each do |s|
+      o = Goal.new
+      o.sid = s.q.to_s.gsub(/^.*#/, '')
+      o.service_system = service_system
+      o.label = query_str(graph, s.q, RDFS.label)
+      o.comment = query_str(graph, s.q, RDFS.comment)
+      o.save
+    end
+
+    # Processes
+    RDF::Query.new({q: {RDF.type => LSS_USDL.Process}}).execute(graph).each do |s|
+      o = ProcessEntity.new
+      o.sid = s.q.to_s.gsub(/^.*#/, '')
+      o.service_system = service_system
+      o.label = query_str(graph, s.q, RDFS.label)
+      o.comment = query_str(graph, s.q, RDFS.comment)
+      o.save
+    end
+
+    # Locations
+    RDF::Query.new({q: {RDF.type => LSS_USDL.Location}}).execute(graph).each do |s|
+      o = Location.new
+      o.sid = s.q.to_s.gsub(/^.*#/, '')
+      o.service_system = service_system
+      o.label = query_str(graph, s.q, RDFS.label)
+      o.comment = query_str(graph, s.q, RDFS.comment)
+      o.gn_feature = query_str(graph, s.q, LSS_USDL.isLocationFrom)
+      o.save
+    end
+    RDF::Query.new({q: {RDF.type => LSS_USDL.Location}}).execute(graph).each do |s|
+      o = Location.where("service_system_id = ? and sid = ?", service_system.id, s.q.to_s.gsub(/^.*#/, '')).first
+      o.broader_location = query_el(graph, s.q, LSS_USDL.isLocatedIn, service_system.id, Location)
       o.save
     end
 
