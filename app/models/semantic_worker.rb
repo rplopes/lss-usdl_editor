@@ -32,166 +32,171 @@ class SemanticWorker < ActiveRecord::Base
   def self.from_lss_usdl_to_db(file, author)
     graph = RDF::Graph.load(file.tempfile.path)
     service_system = ServiceSystem.new
-    service_system.user = author
+    begin
+      service_system.user = author
 
-    # Service System
-    RDF::Query.new({q: {RDF.type  => LSS_USDL.ServiceSystem}}).execute(graph).each do |s|
-      service_system.uri = s.q.to_s.gsub(/#.*/, '#')
-      service_system.label = query_str(graph, s.q, RDFS.label)
-      service_system.comment = query_str(graph, s.q, RDFS.comment)
-      service_system.save!
-      puts service_system.inspect
-    end
+      # Service System
+      RDF::Query.new({q: {RDF.type  => LSS_USDL.ServiceSystem}}).execute(graph).each do |s|
+        service_system.uri = s.q.to_s.gsub(/#.*/, '#')
+        service_system.label = query_str(graph, s.q, RDFS.label)
+        service_system.comment = query_str(graph, s.q, RDFS.comment)
+        service_system.save!
+        puts service_system.inspect
+      end
 
-    # Business Entities
-    RDF::Query.new({q: {RDF.type => GR.BusinessEntity}}).execute(graph).each do |s|
-      o = BusinessEntity.new
-      o.sid = s.q.to_s.gsub(/^.*#/, '')
-      o.service_system = service_system
-      o.foaf_name = query_str(graph, s.q, FOAF.name)
-      o.foaf_page = query_str(graph, s.q, FOAF.page)
-      o.foaf_logo = query_str(graph, s.q, FOAF.logo)
-      o.s_email = query_str(graph, s.q, S.email)
-      o.s_telephone = query_str(graph, s.q, S.telephone)
-      o.gr_description = query_str(graph, s.q, GR.description)
-      o.save
-    end
+      # Business Entities
+      RDF::Query.new({q: {RDF.type => GR.BusinessEntity}}).execute(graph).each do |s|
+        o = BusinessEntity.new
+        o.sid = s.q.to_s.gsub(/^.*#/, '')
+        o.service_system = service_system
+        o.foaf_name = query_str(graph, s.q, FOAF.name)
+        o.foaf_page = query_str(graph, s.q, FOAF.page)
+        o.foaf_logo = query_str(graph, s.q, FOAF.logo)
+        o.s_email = query_str(graph, s.q, S.email)
+        o.s_telephone = query_str(graph, s.q, S.telephone)
+        o.gr_description = query_str(graph, s.q, GR.description)
+        o.save
+      end
 
-    # Roles
-    RDF::Query.new({q: {RDF.type => LSS_USDL.Role}}).execute(graph).each do |s|
-      o = Role.new
-      o.sid = s.q.to_s.gsub(/^.*#/, '')
-      o.service_system = service_system
-      o.label = query_str(graph, s.q, RDFS.label)
-      o.comment = query_str(graph, s.q, RDFS.comment)
-      o.business_entity = query_el(graph, s.q, LSS_USDL.belongsToBusinessEntity, service_system.id, BusinessEntity)
-      o.save
-    end
-
-    # Goals
-    RDF::Query.new({q: {RDF.type => LSS_USDL.Goal}}).execute(graph).each do |s|
-      o = Goal.new
-      o.sid = s.q.to_s.gsub(/^.*#/, '')
-      o.service_system = service_system
-      o.label = query_str(graph, s.q, RDFS.label)
-      o.comment = query_str(graph, s.q, RDFS.comment)
-      o.save
-    end
-
-    # Processes
-    RDF::Query.new({q: {RDF.type => LSS_USDL.Process}}).execute(graph).each do |s|
-      o = ProcessEntity.new
-      o.sid = s.q.to_s.gsub(/^.*#/, '')
-      o.service_system = service_system
-      o.label = query_str(graph, s.q, RDFS.label)
-      o.comment = query_str(graph, s.q, RDFS.comment)
-      o.save
-    end
-
-    # Locations
-    RDF::Query.new({q: {RDF.type => LSS_USDL.Location}}).execute(graph).each do |s|
-      o = Location.new
-      o.sid = s.q.to_s.gsub(/^.*#/, '')
-      o.service_system = service_system
-      o.label = query_str(graph, s.q, RDFS.label)
-      o.comment = query_str(graph, s.q, RDFS.comment)
-      o.gn_feature = query_str(graph, s.q, LSS_USDL.isLocationFrom)
-      o.save
-    end
-    RDF::Query.new({q: {RDF.type => LSS_USDL.Location}}).execute(graph).each do |s|
-      o = Location.where("service_system_id = ? and sid = ?", service_system.id, s.q.to_s.gsub(/^.*#/, '')).first
-      o.broader_location = query_el(graph, s.q, LSS_USDL.isLocatedIn, service_system.id, Location)
-      o.save
-    end
-
-    # Resources
-    ([""] | Resource.subclasses).each do |subclass|
-      RDF::Query.new({q: {RDF.type => LSS_USDL["#{subclass}Resource"]}}).execute(graph).each do |s|
-        o = Resource.new
+      # Roles
+      RDF::Query.new({q: {RDF.type => LSS_USDL.Role}}).execute(graph).each do |s|
+        o = Role.new
         o.sid = s.q.to_s.gsub(/^.*#/, '')
         o.service_system = service_system
         o.label = query_str(graph, s.q, RDFS.label)
         o.comment = query_str(graph, s.q, RDFS.comment)
-        o.resource_type = "#{subclass}Resource" if subclass.present?
-        # Quantitative Value
-        RDF::Query.new({s.q => {LSS_USDL.hasQuantitativeValue => :qv}}).execute(graph).each do |s2|
-          o.value = query_num(graph, s2.qv, GR.hasValue)
-          o.max_value = query_num(graph, s2.qv, GR.hasMaxValue)
-          o.min_value = query_num(graph, s2.qv, GR.hasMinValue)
-          o.unit_of_measurement = query_str(graph, s2.qv, GR.hasUnitOfMeasurement)
-        end
-        # Proce Specification
-        RDF::Query.new({s.q => {LSS_USDL.hasPriceSpecification => :ps}}).execute(graph).each do |s2|
-          o.value = query_num(graph, s2.ps, GR.hasCurrencyValue)
-          o.max_value = query_num(graph, s2.ps, GR.hasMaxCurrencyValue)
-          o.min_value = query_num(graph, s2.ps, GR.hasMinCurrencyValue)
-          o.unit_of_measurement = query_str(graph, s2.ps, GR.hasCurrency)
-        end
+        o.business_entity = query_el(graph, s.q, LSS_USDL.belongsToBusinessEntity, service_system.id, BusinessEntity)
         o.save
       end
-    end
 
-    # Interactions
-    ([""] | Interaction.subclasses).each do |subclass|
-      RDF::Query.new({q: {RDF.type => LSS_USDL["#{subclass}Interaction"]}}).execute(graph).each do |s|
-        o = Interaction.new
+      # Goals
+      RDF::Query.new({q: {RDF.type => LSS_USDL.Goal}}).execute(graph).each do |s|
+        o = Goal.new
         o.sid = s.q.to_s.gsub(/^.*#/, '')
         o.service_system = service_system
         o.label = query_str(graph, s.q, RDFS.label)
         o.comment = query_str(graph, s.q, RDFS.comment)
-        o.interaction_type = "#{subclass}Interaction" if subclass.present?
-        o.roles = Array(query_el(graph, s.q, LSS_USDL.isPerformedBy, service_system.id, Role))
-        o.goals = Array(query_el(graph, s.q, LSS_USDL.hasGoal, service_system.id, Goal))
-        o.processes = Array(query_el(graph, s.q, LSS_USDL.belongsToProcess, service_system.id, ProcessEntity))
-        o.locations = Array(query_el(graph, s.q, LSS_USDL.hasLocation, service_system.id, Location))
-        o.received_resources = Array(query_el(graph, s.q, LSS_USDL.receivesResource, service_system.id, Resource))
-        o.created_resources = Array(query_el(graph, s.q, LSS_USDL.createsResource, service_system.id, Resource))
-        o.consumed_resources = Array(query_el(graph, s.q, LSS_USDL.consumesResource, service_system.id, Resource))
-        o.returned_resources = Array(query_el(graph, s.q, LSS_USDL.returnsResource, service_system.id, Resource))
-
-        # Time
-        RDF::Query.new({s.q => {LSS_USDL.hasTime => :time}, time: {LSS_USDL.hasTemporalEntity => :te}}).execute(graph).each do |s2|
-          i_before = query_str(graph, s2.te, TIME.intervalBefore)
-          i_during = query_str(graph, s2.te, TIME.intervalDuring)
-          i_after = query_str(graph, s2.te, TIME.intervalAfter)
-          if i_before
-            before = Interaction.where("service_system_id = ? and sid = ?", service_system.id, i_before.gsub(/(^.*#)|(Time$)/, ''))
-            o.interaction_after = before.first if before.present?
-          end
-          if i_during
-            during = Interaction.where("service_system_id = ? and sid = ?", service_system.id, i_during.gsub(/(^.*#)|(Time$)/, ''))
-            o.interaction_during = during.first if during.present?
-          end
-          if i_after
-            after = Interaction.where("service_system_id = ? and sid = ?", service_system.id, i_after.gsub(/(^.*#)|(Time$)/, ''))
-            o.interaction_before = after.first if after.present?
-          end
-          # DateTimeDescription
-          RDF::Query.new({s2.te => {TIME.hasDateTimeDescription => :dtd}}).execute(graph).each do |s3|
-            o.time_year = query_num(graph, s3.dtd, TIME.year)
-            o.time_month = query_num(graph, s3.dtd, TIME.month)
-            o.time_week = query_num(graph, s3.dtd, TIME.week)
-            o.time_day = query_num(graph, s3.dtd, TIME.day)
-            o.time_hour = query_num(graph, s3.dtd, TIME.hour)
-            o.time_minute = query_num(graph, s3.dtd, TIME.minute)
-            o.time_second = query_num(graph, s3.dtd, TIME.second)
-          end
-          # DurationDescription
-          RDF::Query.new({s2.te => {TIME.hasDurationDescription => :dd}}).execute(graph).each do |s3|
-            o.duration_years = query_num(graph, s3.dd, TIME.years)
-            o.duration_months = query_num(graph, s3.dd, TIME.months)
-            o.duration_days = query_num(graph, s3.dd, TIME.days)
-            o.duration_hours = query_num(graph, s3.dd, TIME.hours)
-            o.duration_minutes = query_num(graph, s3.dd, TIME.minutes)
-            o.duration_seconds = query_num(graph, s3.dd, TIME.seconds)
-          end
-        end
-
         o.save
       end
-    end
 
-    return service_system
+      # Processes
+      RDF::Query.new({q: {RDF.type => LSS_USDL.Process}}).execute(graph).each do |s|
+        o = ProcessEntity.new
+        o.sid = s.q.to_s.gsub(/^.*#/, '')
+        o.service_system = service_system
+        o.label = query_str(graph, s.q, RDFS.label)
+        o.comment = query_str(graph, s.q, RDFS.comment)
+        o.save
+      end
+
+      # Locations
+      RDF::Query.new({q: {RDF.type => LSS_USDL.Location}}).execute(graph).each do |s|
+        o = Location.new
+        o.sid = s.q.to_s.gsub(/^.*#/, '')
+        o.service_system = service_system
+        o.label = query_str(graph, s.q, RDFS.label)
+        o.comment = query_str(graph, s.q, RDFS.comment)
+        o.gn_feature = query_str(graph, s.q, LSS_USDL.isLocationFrom)
+        o.save
+      end
+      RDF::Query.new({q: {RDF.type => LSS_USDL.Location}}).execute(graph).each do |s|
+        o = Location.where("service_system_id = ? and sid = ?", service_system.id, s.q.to_s.gsub(/^.*#/, '')).first
+        o.broader_location = query_el(graph, s.q, LSS_USDL.isLocatedIn, service_system.id, Location)
+        o.save
+      end
+
+      # Resources
+      ([""] | Resource.subclasses).each do |subclass|
+        RDF::Query.new({q: {RDF.type => LSS_USDL["#{subclass}Resource"]}}).execute(graph).each do |s|
+          o = Resource.new
+          o.sid = s.q.to_s.gsub(/^.*#/, '')
+          o.service_system = service_system
+          o.label = query_str(graph, s.q, RDFS.label)
+          o.comment = query_str(graph, s.q, RDFS.comment)
+          o.resource_type = "#{subclass}Resource" if subclass.present?
+          # Quantitative Value
+          RDF::Query.new({s.q => {LSS_USDL.hasQuantitativeValue => :qv}}).execute(graph).each do |s2|
+            o.value = query_num(graph, s2.qv, GR.hasValue)
+            o.max_value = query_num(graph, s2.qv, GR.hasMaxValue)
+            o.min_value = query_num(graph, s2.qv, GR.hasMinValue)
+            o.unit_of_measurement = query_str(graph, s2.qv, GR.hasUnitOfMeasurement)
+          end
+          # Proce Specification
+          RDF::Query.new({s.q => {LSS_USDL.hasPriceSpecification => :ps}}).execute(graph).each do |s2|
+            o.value = query_num(graph, s2.ps, GR.hasCurrencyValue)
+            o.max_value = query_num(graph, s2.ps, GR.hasMaxCurrencyValue)
+            o.min_value = query_num(graph, s2.ps, GR.hasMinCurrencyValue)
+            o.unit_of_measurement = query_str(graph, s2.ps, GR.hasCurrency)
+          end
+          o.save
+        end
+      end
+
+      # Interactions
+      ([""] | Interaction.subclasses).each do |subclass|
+        RDF::Query.new({q: {RDF.type => LSS_USDL["#{subclass}Interaction"]}}).execute(graph).each do |s|
+          o = Interaction.new
+          o.sid = s.q.to_s.gsub(/^.*#/, '')
+          o.service_system = service_system
+          o.label = query_str(graph, s.q, RDFS.label)
+          o.comment = query_str(graph, s.q, RDFS.comment)
+          o.interaction_type = "#{subclass}Interaction" if subclass.present?
+          o.roles = Array(query_el(graph, s.q, LSS_USDL.isPerformedBy, service_system.id, Role))
+          o.goals = Array(query_el(graph, s.q, LSS_USDL.hasGoal, service_system.id, Goal))
+          o.processes = Array(query_el(graph, s.q, LSS_USDL.belongsToProcess, service_system.id, ProcessEntity))
+          o.locations = Array(query_el(graph, s.q, LSS_USDL.hasLocation, service_system.id, Location))
+          o.received_resources = Array(query_el(graph, s.q, LSS_USDL.receivesResource, service_system.id, Resource))
+          o.created_resources = Array(query_el(graph, s.q, LSS_USDL.createsResource, service_system.id, Resource))
+          o.consumed_resources = Array(query_el(graph, s.q, LSS_USDL.consumesResource, service_system.id, Resource))
+          o.returned_resources = Array(query_el(graph, s.q, LSS_USDL.returnsResource, service_system.id, Resource))
+
+          # Time
+          RDF::Query.new({s.q => {LSS_USDL.hasTime => :time}, time: {LSS_USDL.hasTemporalEntity => :te}}).execute(graph).each do |s2|
+            i_before = query_str(graph, s2.te, TIME.intervalBefore)
+            i_during = query_str(graph, s2.te, TIME.intervalDuring)
+            i_after = query_str(graph, s2.te, TIME.intervalAfter)
+            if i_before
+              before = Interaction.where("service_system_id = ? and sid = ?", service_system.id, i_before.gsub(/(^.*#)|(Time$)/, ''))
+              o.interaction_after = before.first if before.present?
+            end
+            if i_during
+              during = Interaction.where("service_system_id = ? and sid = ?", service_system.id, i_during.gsub(/(^.*#)|(Time$)/, ''))
+              o.interaction_during = during.first if during.present?
+            end
+            if i_after
+              after = Interaction.where("service_system_id = ? and sid = ?", service_system.id, i_after.gsub(/(^.*#)|(Time$)/, ''))
+              o.interaction_before = after.first if after.present?
+            end
+            # DateTimeDescription
+            RDF::Query.new({s2.te => {TIME.hasDateTimeDescription => :dtd}}).execute(graph).each do |s3|
+              o.time_year = query_num(graph, s3.dtd, TIME.year)
+              o.time_month = query_num(graph, s3.dtd, TIME.month)
+              o.time_week = query_num(graph, s3.dtd, TIME.week)
+              o.time_day = query_num(graph, s3.dtd, TIME.day)
+              o.time_hour = query_num(graph, s3.dtd, TIME.hour)
+              o.time_minute = query_num(graph, s3.dtd, TIME.minute)
+              o.time_second = query_num(graph, s3.dtd, TIME.second)
+            end
+            # DurationDescription
+            RDF::Query.new({s2.te => {TIME.hasDurationDescription => :dd}}).execute(graph).each do |s3|
+              o.duration_years = query_num(graph, s3.dd, TIME.years)
+              o.duration_months = query_num(graph, s3.dd, TIME.months)
+              o.duration_days = query_num(graph, s3.dd, TIME.days)
+              o.duration_hours = query_num(graph, s3.dd, TIME.hours)
+              o.duration_minutes = query_num(graph, s3.dd, TIME.minutes)
+              o.duration_seconds = query_num(graph, s3.dd, TIME.seconds)
+            end
+          end
+
+          o.save
+        end
+      end
+
+      return service_system
+    rescue
+      service_system.destroy
+      return nil
+    end
   end
 
 

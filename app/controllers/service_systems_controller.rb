@@ -108,10 +108,9 @@ class ServiceSystemsController < ApplicationController
     else
       #TODO @service_system = SemanticWorker.from_linked_usdl_to_db(params[:file])
     end
-    @service_system.user = current_user # add creator
 
     respond_to do |format|
-      if @service_system.save
+      if @service_system
         format.html { redirect_to @service_system, notice: 'Service system was successfully created.' }
         format.json { render json: @service_system, status: :created, location: @service_system }
       else
