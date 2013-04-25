@@ -112,25 +112,42 @@ class SemanticWorker < ActiveRecord::Base
         o.service_system = service_system
         o.label = query_str(graph, s.q, RDFS.label)
         o.comment = query_str(graph, s.q, RDFS.comment)
-        o.resource_type = "#{subclass}Resource"
+        o.resource_type = "#{subclass}Resource" if subclass.present?
         # Quantitative Value
-        RDF::Query.new({q2: {LSS_USDL.hasQuantitativeValue => :qv}}).execute(graph).each do |s2|
-          if s.q == s2.q2
-            o.value = query_num(graph, s2.qv, GR.hasValue)
-            o.max_value = query_num(graph, s2.qv, GR.hasMaxValue)
-            o.min_value = query_num(graph, s2.qv, GR.hasMinValue)
-            o.unit_of_measurement = query_str(graph, s2.qv, GR.hasUnitOfMeasurement)
-          end
+        RDF::Query.new({s.q => {LSS_USDL.hasQuantitativeValue => :qv}}).execute(graph).each do |s2|
+          o.value = query_num(graph, s2.qv, GR.hasValue)
+          o.max_value = query_num(graph, s2.qv, GR.hasMaxValue)
+          o.min_value = query_num(graph, s2.qv, GR.hasMinValue)
+          o.unit_of_measurement = query_str(graph, s2.qv, GR.hasUnitOfMeasurement)
         end
         # Proce Specification
-        RDF::Query.new({q2: {LSS_USDL.hasPriceSpecification => :ps}}).execute(graph).each do |s2|
-          if s.q == s2.q2
-            o.value = query_num(graph, s2.ps, GR.hasCurrencyValue)
-            o.max_value = query_num(graph, s2.ps, GR.hasMaxCurrencyValue)
-            o.min_value = query_num(graph, s2.ps, GR.hasMinCurrencyValue)
-            o.unit_of_measurement = query_str(graph, s2.ps, GR.hasCurrency)
-          end
+        RDF::Query.new({s.q => {LSS_USDL.hasPriceSpecification => :ps}}).execute(graph).each do |s2|
+          o.value = query_num(graph, s2.ps, GR.hasCurrencyValue)
+          o.max_value = query_num(graph, s2.ps, GR.hasMaxCurrencyValue)
+          o.min_value = query_num(graph, s2.ps, GR.hasMinCurrencyValue)
+          o.unit_of_measurement = query_str(graph, s2.ps, GR.hasCurrency)
         end
+        o.save
+      end
+    end
+
+    # Interactions
+    ([""] | Interaction.subclasses).each do |subclass|
+      RDF::Query.new({q: {RDF.type => LSS_USDL["#{subclass}Interaction"]}}).execute(graph).each do |s|
+        o = Interaction.new
+        o.sid = s.q.to_s.gsub(/^.*#/, '')
+        o.service_system = service_system
+        o.label = query_str(graph, s.q, RDFS.label)
+        o.comment = query_str(graph, s.q, RDFS.comment)
+        o.interaction_type = "#{subclass}Interaction" if subclass.present?
+        o.roles = Array(query_el(graph, s.q, LSS_USDL.isPerformedBy, service_system.id, Role))
+        o.goals = Array(query_el(graph, s.q, LSS_USDL.hasGoal, service_system.id, Goal))
+        o.processes = Array(query_el(graph, s.q, LSS_USDL.belongsToProcess, service_system.id, ProcessEntity))
+        o.locations = Array(query_el(graph, s.q, LSS_USDL.hasLocation, service_system.id, Location))
+        o.received_resources = Array(query_el(graph, s.q, LSS_USDL.receivesResource, service_system.id, Resource))
+        o.created_resources = Array(query_el(graph, s.q, LSS_USDL.createsResource, service_system.id, Resource))
+        o.consumed_resources = Array(query_el(graph, s.q, LSS_USDL.consumesResource, service_system.id, Resource))
+        o.returned_resources = Array(query_el(graph, s.q, LSS_USDL.returnsResource, service_system.id, Resource))
         o.save
       end
     end
@@ -356,12 +373,17 @@ class SemanticWorker < ActiveRecord::Base
   end
 
   def self.query_el(graph, element, attribute, service_system_id, model)
-    RDF::Query.new({q: {attribute => :attribute}}).execute(graph).each do |s|
-      if element == s.q
-        return model.where("service_system_id = ? and sid = ?", service_system_id, s.attribute.to_s.gsub(/^.*#/, '')).first
-      end
+    els = []
+    RDF::Query.new({element => {attribute => :attribute}}).execute(graph).each do |s|
+      els << model.where("service_system_id = ? and sid = ?", service_system_id, s.attribute.to_s.gsub(/^.*#/, '')).first
     end
-    return nil
+    if els.blank?
+      return nil
+    elsif els.size == 1
+      return els.first
+    else
+      return els
+    end
   end
 
   def self.add_entity(data, graph, type, entity, sids)

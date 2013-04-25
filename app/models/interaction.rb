@@ -59,10 +59,6 @@ class Interaction < ActiveRecord::Base
     ["Customer", "Onstage", "Backstage", "Support"]
   end
 
-  def self.temporal_entity_subclasses
-    ["Interval", "Instant"]
-  end
-
   def time_string
     str = ""
     str += "Lasts #{self.duration_description} " if self.duration_description.present?
