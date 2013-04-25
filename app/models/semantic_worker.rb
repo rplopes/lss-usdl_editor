@@ -104,6 +104,37 @@ class SemanticWorker < ActiveRecord::Base
       o.save
     end
 
+    # Resources
+    ([""] | Resource.subclasses).each do |subclass|
+      RDF::Query.new({q: {RDF.type => LSS_USDL["#{subclass}Resource"]}}).execute(graph).each do |s|
+        o = Resource.new
+        o.sid = s.q.to_s.gsub(/^.*#/, '')
+        o.service_system = service_system
+        o.label = query_str(graph, s.q, RDFS.label)
+        o.comment = query_str(graph, s.q, RDFS.comment)
+        o.resource_type = "#{subclass}Resource"
+        # Quantitative Value
+        RDF::Query.new({q2: {LSS_USDL.hasQuantitativeValue => :qv}}).execute(graph).each do |s2|
+          if s.q == s2.q2
+            o.value = query_num(graph, s2.qv, GR.hasValue)
+            o.max_value = query_num(graph, s2.qv, GR.hasMaxValue)
+            o.min_value = query_num(graph, s2.qv, GR.hasMinValue)
+            o.unit_of_measurement = query_str(graph, s2.qv, GR.hasUnitOfMeasurement)
+          end
+        end
+        # Proce Specification
+        RDF::Query.new({q2: {LSS_USDL.hasPriceSpecification => :ps}}).execute(graph).each do |s2|
+          if s.q == s2.q2
+            o.value = query_num(graph, s2.ps, GR.hasCurrencyValue)
+            o.max_value = query_num(graph, s2.ps, GR.hasMaxCurrencyValue)
+            o.min_value = query_num(graph, s2.ps, GR.hasMinCurrencyValue)
+            o.unit_of_measurement = query_str(graph, s2.ps, GR.hasCurrency)
+          end
+        end
+        o.save
+      end
+    end
+
     return service_system
   end
 
@@ -313,6 +344,13 @@ class SemanticWorker < ActiveRecord::Base
   def self.query_str(graph, element, attribute)
     RDF::Query.new({q: {attribute => :attribute}}).execute(graph).each do |s|
       return s.attribute.to_s if element == s.q
+    end
+    return nil
+  end
+
+  def self.query_num(graph, element, attribute)
+    RDF::Query.new({q: {attribute => :attribute}}).execute(graph).each do |s|
+      return s.attribute if element == s.q
     end
     return nil
   end
