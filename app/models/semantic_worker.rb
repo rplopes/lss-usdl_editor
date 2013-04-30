@@ -250,12 +250,12 @@ class SemanticWorker < ActiveRecord::Base
           end
           graph << [data[role_id], LSS_USDL.belongsToBusinessEntity, data[be.sid]]
           graph << [data[be.sid], RDF.type, GR.BusinessEntity]
-          graph << [data[be.sid], FOAF.name, be.sid.foaf_name]
-          graph << [data[be.sid], FOAF.page, be.sid.foaf_page] if be.sid.foaf_page.present?
-          graph << [data[be.sid], FOAF.logo, be.sid.foaf_logo] if be.sid.foaf_logo.present?
-          graph << [data[be.sid], S.telephone, be.sid.s_telephone] if be.sid.s_telephone.present?
-          graph << [data[be.sid], S.email, be.sid.s_email] if be.sid.s_email.present?
-          graph << [data[be.sid], GR.description, be.sid.gr_description] if be.sid.gr_description.present?
+          graph << [data[be.sid], FOAF.name, be.foaf_name]
+          graph << [data[be.sid], FOAF.page, be.foaf_page] if be.foaf_page.present?
+          graph << [data[be.sid], FOAF.logo, be.foaf_logo] if be.foaf_logo.present?
+          graph << [data[be.sid], S.telephone, be.s_telephone] if be.s_telephone.present?
+          graph << [data[be.sid], S.email, be.s_email] if be.s_email.present?
+          graph << [data[be.sid], GR.description, be.gr_description] if be.gr_description.present?
         end
       end
 
