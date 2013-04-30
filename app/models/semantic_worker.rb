@@ -237,23 +237,25 @@ class SemanticWorker < ActiveRecord::Base
 
         # Business entity
         if role.business_entity
-          if used_entities.index(role.business_entity)
-            graph << [data[role_id], LSS_USDL.belongsToBusinessEntity, data[role.business_entity.sid]]
+          be = role.business_entity
+          if used_entities.index(be)
+            graph << [data[role_id], LSS_USDL.belongsToBusinessEntity, data[be.sid]]
             next
           else
-            business_entity_id = camel_case(role.business_entity.foaf_name)
-            business_entity_id = "#{business_entity_id}#{Time.now.to_i}" if sids.index(business_entity_id)
-            sids << business_entity_id
-            used_entities << role.business_entity
+            be.sid = camel_case(be.foaf_name)
+            be.sid = "#{be.sid}#{Time.now.to_i}" if sids.index(be.sid)
+            be.save
+            sids << be.sid
+            used_entities << be
           end
-          graph << [data[role_id], LSS_USDL.belongsToBusinessEntity, data[business_entity_id]]
-          graph << [data[business_entity_id], RDF.type, GR.BusinessEntity]
-          graph << [data[business_entity_id], FOAF.name, role.business_entity.foaf_name]
-          graph << [data[business_entity_id], FOAF.page, role.business_entity.foaf_page] if role.business_entity.foaf_page.present?
-          graph << [data[business_entity_id], FOAF.logo, role.business_entity.foaf_logo] if role.business_entity.foaf_logo.present?
-          graph << [data[business_entity_id], S.telephone, role.business_entity.s_telephone] if role.business_entity.s_telephone.present?
-          graph << [data[business_entity_id], S.email, role.business_entity.s_email] if role.business_entity.s_email.present?
-          graph << [data[business_entity_id], GR.description, role.business_entity.gr_description] if role.business_entity.gr_description.present?
+          graph << [data[role_id], LSS_USDL.belongsToBusinessEntity, data[be.sid]]
+          graph << [data[be.sid], RDF.type, GR.BusinessEntity]
+          graph << [data[be.sid], FOAF.name, be.sid.foaf_name]
+          graph << [data[be.sid], FOAF.page, be.sid.foaf_page] if be.sid.foaf_page.present?
+          graph << [data[be.sid], FOAF.logo, be.sid.foaf_logo] if be.sid.foaf_logo.present?
+          graph << [data[be.sid], S.telephone, be.sid.s_telephone] if be.sid.s_telephone.present?
+          graph << [data[be.sid], S.email, be.sid.s_email] if be.sid.s_email.present?
+          graph << [data[be.sid], GR.description, be.sid.gr_description] if be.sid.gr_description.present?
         end
       end
 
