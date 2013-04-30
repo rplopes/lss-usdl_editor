@@ -10,7 +10,7 @@ class InteractionsController < ApplicationController
     end
 
     @roles = Role.where "service_system_id = ?", @service_system.id
-    @times = [{"name" => "Interval"}, {"name" => "Instant"}]
+    #@times = [{"name" => "Interval"}, {"name" => "Instant"}]
     @goals = Goal.where "service_system_id = ?", @service_system.id
     @locations = Location.where "service_system_id = ?", @service_system.id
     @processes = ProcessEntity.where "service_system_id = ?", @service_system.id
@@ -18,7 +18,7 @@ class InteractionsController < ApplicationController
     
     filter = {
       roles: params[:roles],
-      time: params[:time],
+      #time: params[:time],
       goals: params[:goals],
       locations: params[:locations],
       processes: params[:processes],
