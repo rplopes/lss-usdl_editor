@@ -13,6 +13,7 @@ class SemanticWorker < ActiveRecord::Base
     time: 'http://www.w3.org/2006/time#',
     gn: 'http://www.geonames.org/ontology#',
     s: 'http://schema.org/',
+    usdl: 'http://www.linked-usdl.org/ns/usdl#',
     'lss-usdl' => ONTOLOGY_URL
   }
 
@@ -22,6 +23,8 @@ class SemanticWorker < ActiveRecord::Base
   S    = RDF::Vocabulary.new 'http://schema.org/'
   GN   = RDF::Vocabulary.new 'http://sws.geonames.org/'
   TIME = RDF::Vocabulary.new 'http://www.w3.org/2006/time#'
+
+  USDL = RDF::Vocabulary.new 'http://www.linked-usdl.org/ns/usdl#'
 
 
   ##########################################
@@ -404,6 +407,26 @@ class SemanticWorker < ActiveRecord::Base
     build_tll graph, service_system
   end
 
+
+  ##########################################
+  #
+  # Exports from the database to an LSS-USDL file
+  #
+  ##########################################
+  def self.from_db_to_linked_usdl(service_system)
+    data = RDF::Vocabulary.new service_system.uri
+    graph = RDF::Graph.new
+
+    sids = []
+    used_entities = []
+
+    # Service system
+    service_sid = add_generic_entity data, graph, USDL['Service'], service_system, sids
+
+    build_tll graph, service_system
+  end
+
+
   private
 
   def self.query_str(graph, element, attribute)
@@ -435,16 +458,21 @@ class SemanticWorker < ActiveRecord::Base
   end
 
   def self.add_entity(data, graph, type, entity, sids)
+    sid = add_generic_entity data, graph, LSS_USDL[type], entity, sids
+    graph << [data[sid], RDFS.label, entity.label]
+    graph << [data[sid], RDFS.comment, entity.comment] if entity.comment.present?
+    return sid
+  end
+
+  def self.add_generic_entity(data, graph, type, entity, sids)
     sid = camel_case(entity.label)
     sid = "#{sid}#{Time.now.to_i}" if sids.index(sid)
     sids << sid
-    if type != 'ServiceSystem'
+    if type != LSS_USDL['ServiceSystem'] and type != USDL['Service']
       entity.sid = sid
       entity.save
     end
-    graph << [data[sid], RDF.type, LSS_USDL[type]]
-    graph << [data[sid], RDFS.label, entity.label]
-    graph << [data[sid], RDFS.comment, entity.comment] if entity.comment.present?
+    graph << [data[sid], RDF.type, type]
     return sid
   end
 

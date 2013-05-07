@@ -120,6 +120,12 @@ class ServiceSystemsController < ApplicationController
     end
   end
 
+  def export_to_linked_usdl
+    @service_system = ServiceSystem.find(params[:service_system_id])
+    send_data SemanticWorker.from_db_to_linked_usdl(@service_system),
+          :disposition => "attachment; filename=#{@service_system.label} - Linked USDL.ttl"
+  end
+
   private
 
   def select_metadata_tab

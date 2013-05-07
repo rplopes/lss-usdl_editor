@@ -16,6 +16,7 @@ LssUsdlEditor::Application.routes.draw do
     resources :resources
 
     get 'export_to_lss_usdl'
+    get 'export_to_linked_usdl'
 
   end
 
