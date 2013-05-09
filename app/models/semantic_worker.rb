@@ -453,6 +453,17 @@ class SemanticWorker < ActiveRecord::Base
           graph << [data[interaction.sid], USDL.hasInteractingEntity, data[role.sid]]
         end
       end
+
+      # Resources
+      (interaction.received_resources | interaction.returned_resources).each do |resource|
+        unless used_entities.index(resource)
+          resource_sid = add_generic_entity data, graph, RDF['Resource'], resource, sids
+          used_entities << resource
+        end
+        property = interaction.received_resources.index(resource) ? USDL.receives : USDL.yields
+        graph << [data[interaction.sid], property, data[resource.sid]]
+      end
+
     end
 
     build_tll graph, service_system
