@@ -218,14 +218,14 @@ class SemanticWorker < ActiveRecord::Base
     # Service system
     service_sid = add_entity data, graph, 'ServiceSystem', service_system, sids
 
+    # Interactions
     service_system.interactions.each do |interaction|
-
-      # Interactions
       interaction_type = interaction.interaction_type.present? ? interaction.interaction_type : 'Interaction'
       interaction_sid = add_entity data, graph, interaction_type, interaction, sids
-    end
-    service_system.interactions.each do |interaction|
       graph << [data[service_sid], LSS_USDL.hasInteraction, data[interaction.sid]]
+    end
+    
+    service_system.interactions.each do |interaction|
 
       # Roles
       interaction.roles.each do |role|
@@ -410,7 +410,7 @@ class SemanticWorker < ActiveRecord::Base
 
   ##########################################
   #
-  # Exports from the database to an LSS-USDL file
+  # Exports from the database to a Linked-USDL file
   #
   ##########################################
   def self.from_db_to_linked_usdl(service_system)
@@ -421,7 +421,19 @@ class SemanticWorker < ActiveRecord::Base
     used_entities = []
 
     # Service system
-    service_sid = add_generic_entity data, graph, USDL['Service'], service_system, sids
+    service_sid = add_generic_entity data, graph, USDL.Service, service_system, sids
+
+    # Interactions
+    service_system.interactions.each do |interaction|
+      next unless interaction.interaction_type == 'CustomerInteraction'
+      interaction_sid = add_generic_entity data, graph, USDL.InteractionPoint, interaction, sids
+      graph << [data[service_sid], USDL.hasInteractionPoint, data[interaction.sid]]
+    end
+
+    service_system.interactions.each do |interaction|
+      next unless interaction.interaction_type == 'CustomerInteraction'
+
+    end
 
     build_tll graph, service_system
   end
