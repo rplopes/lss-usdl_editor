@@ -224,7 +224,7 @@ class SemanticWorker < ActiveRecord::Base
       interaction_sid = add_entity data, graph, interaction_type, interaction, sids
       graph << [data[service_sid], LSS_USDL.hasInteraction, data[interaction.sid]]
     end
-    
+
     service_system.interactions.each do |interaction|
 
       # Roles
@@ -433,6 +433,26 @@ class SemanticWorker < ActiveRecord::Base
     service_system.interactions.each do |interaction|
       next unless interaction.interaction_type == 'CustomerInteraction'
 
+      # Roles
+      interaction.roles.each do |role|
+        if used_entities.index(role)
+          graph << [data[interaction.sid], USDL.hasInteractingEntity, data[role.sid]]
+          next
+        else
+          ie_sid = add_generic_entity data, graph, USDL.InteractingEntity, role, sids
+          if ['Regulator', 'Producer', 'Provider', 'Intermediary', 'Consumer', 'Customer'].index(role.label)
+            usdl_role = RDF::Node.new "#{ie_sid}BusinessRole"
+            graph << [usdl_role, RDF.type, USDL[role.label]]
+            graph << [data[ie_sid], USDL.hasEntityType, usdl_role]
+          elsif ['Observer', 'Participant', 'Initiator', 'Mediator', 'Receiver'].index(role.label)
+            usdl_role = RDF::Node.new "#{ie_sid}InteractionRole"
+            graph << [usdl_role, RDF.type, USDL[role.label]]
+            graph << [data[ie_sid], USDL.hasEntityType, usdl_role]
+          end
+          used_entities << role
+          graph << [data[interaction.sid], USDL.hasInteractingEntity, data[role.sid]]
+        end
+      end
     end
 
     build_tll graph, service_system
