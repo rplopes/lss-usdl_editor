@@ -428,6 +428,7 @@ class SemanticWorker < ActiveRecord::Base
       next unless interaction.interaction_type == 'CustomerInteraction'
       interaction_sid = add_generic_entity data, graph, USDL.InteractionPoint, interaction, sids
       graph << [data[service_sid], USDL.hasInteractionPoint, data[interaction.sid]]
+      used_entities << interaction
     end
 
     service_system.interactions.each do |interaction|
@@ -462,6 +463,47 @@ class SemanticWorker < ActiveRecord::Base
         end
         property = interaction.received_resources.index(resource) ? USDL.receives : USDL.yields
         graph << [data[interaction.sid], property, data[resource.sid]]
+      end
+
+      # Temporal entity
+      te_sid = "#{interaction.sid.to_s.gsub(service_system.uri, '')}Time"
+      te_type = interaction.time_description.present? ? "DateTimeInterval" : "ProperInterval"
+      graph << [data[interaction.sid], USDL.spansInterval, data[te_sid]]
+      graph << [data[te_sid], RDF.type, TIME[te_type]]
+      # DateTimeDescription
+      if interaction.time_description.present?
+        time_description = RDF::Node.new "#{interaction.sid}DateTimeDescription"
+        graph << [data[te_sid], TIME.hasDateTimeDescription, time_description]
+        graph << [time_description, RDF.type, TIME.DateTimeDescription]
+        graph << [time_description, TIME.year, interaction.time_year] if interaction.time_year
+        graph << [time_description, TIME.month, interaction.time_month] if interaction.time_month
+        graph << [time_description, TIME.week, interaction.time_week] if interaction.time_week
+        graph << [time_description, TIME.day, interaction.time_day] if interaction.time_day
+        graph << [time_description, TIME.hour, interaction.time_hour] if interaction.time_hour
+        graph << [time_description, TIME.minute, interaction.time_minute] if interaction.time_minute
+        graph << [time_description, TIME.second, interaction.time_second] if interaction.time_second
+      end
+      # DurationDescription
+      if interaction.duration_description.present?
+        duration_description = RDF::Node.new "#{interaction.sid}DurationDescription"
+        graph << [data[te_sid], TIME.hasDurationDescription, duration_description]
+        graph << [duration_description, RDF.type, TIME.DurationDescription]
+        graph << [duration_description, TIME.years, interaction.duration_years] if interaction.duration_years
+        graph << [duration_description, TIME.months, interaction.duration_months] if interaction.duration_months
+        graph << [duration_description, TIME.days, interaction.duration_days] if interaction.duration_days
+        graph << [duration_description, TIME.hours, interaction.duration_hours] if interaction.duration_hours
+        graph << [duration_description, TIME.minutes, interaction.duration_minutes] if interaction.duration_minutes
+        graph << [duration_description, TIME.seconds, interaction.duration_seconds] if interaction.duration_seconds
+      end
+      # Interactions flow
+      (interaction.interactions_before | [interaction.interaction_before]).each do |i|
+        graph << [data[te_sid], TIME.intervalAfter, data["#{i.sid}Time"]] if i and used_entities.index(i)
+      end
+      (interaction.interactions_during| [interaction.interaction_during]).each do |i|
+        graph << [data[te_sid], TIME.intervalDuring, data["#{i.sid}Time"]] if i and used_entities.index(i)
+      end
+      (interaction.interactions_after | [interaction.interaction_after]).each do |i|
+        graph << [data[te_sid], TIME.intervalBefore, data["#{i.sid}Time"]] if i and used_entities.index(i)
       end
 
     end
