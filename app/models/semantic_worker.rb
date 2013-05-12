@@ -216,12 +216,12 @@ class SemanticWorker < ActiveRecord::Base
     used_entities = []
 
     # Service system
-    service_sid = add_entity data, graph, 'ServiceSystem', service_system, sids
+    service_sid = add_entity data, graph, LSS_USDL.ServiceSystem, service_system, sids
 
     # Interactions
     service_system.interactions.each do |interaction|
       interaction_type = interaction.interaction_type.present? ? interaction.interaction_type : 'Interaction'
-      interaction_sid = add_entity data, graph, interaction_type, interaction, sids
+      interaction_sid = add_entity data, graph, LSS_USDL[interaction_type], interaction, sids
       graph << [data[service_sid], LSS_USDL.hasInteraction, data[interaction.sid]]
     end
 
@@ -233,7 +233,7 @@ class SemanticWorker < ActiveRecord::Base
           graph << [data[interaction.sid], LSS_USDL.isPerformedBy, data[role.sid]]
           next
         else
-          role_id = add_entity data, graph, 'Role', role, sids
+          role_id = add_entity data, graph, LSS_USDL.Role, role, sids
           used_entities << role
         end
         graph << [data[interaction.sid], LSS_USDL.isPerformedBy, data[role_id]]
@@ -312,7 +312,7 @@ class SemanticWorker < ActiveRecord::Base
         if used_entities.index(goal)
           goal_sid = goal.sid
         else
-          goal_sid = add_entity data, graph, 'Goal', goal, sids
+          goal_sid = add_entity data, graph, LSS_USDL.Goal, goal, sids
           used_entities << goal
         end
         graph << [data[interaction.sid], LSS_USDL.hasGoal, data[goal_sid]]
@@ -323,7 +323,7 @@ class SemanticWorker < ActiveRecord::Base
         if used_entities.index(process)
           process_sid = process.sid
         else
-          process_sid = add_entity data, graph, 'Process', process, sids
+          process_sid = add_entity data, graph, LSS_USDL.Process, process, sids
           used_entities << process
         end
         graph << [data[interaction.sid], LSS_USDL.belongsToProcess, data[process_sid]]
@@ -335,7 +335,7 @@ class SemanticWorker < ActiveRecord::Base
           graph << [data[interaction.sid], LSS_USDL.hasLocation, data[location.sid]]
           next
         else
-          location_sid = add_entity data, graph, 'Location', location, sids
+          location_sid = add_entity data, graph, LSS_USDL.Location, location, sids
           used_entities << location
         end
         graph << [data[interaction.sid], LSS_USDL.hasLocation, data[location_sid]]
@@ -348,7 +348,7 @@ class SemanticWorker < ActiveRecord::Base
           else
             used_entities << location
           end
-          new_location_sid = add_entity data, graph, 'Location', location, sids
+          new_location_sid = add_entity data, graph, LSS_USDL.Location, location, sids
           graph << [data[new_location_sid], LSS_USDL.isLocationFrom, GN[location.gn_feature.gsub(/[^0-9]*/, '')]] if location.gn_feature.present?
           graph << [data[location_sid], LSS_USDL.isLocatedIn, data[new_location_sid]]
           location_sid = new_location_sid
@@ -363,7 +363,7 @@ class SemanticWorker < ActiveRecord::Base
           resource_sid = resource.sid
           old_resource = true
         else
-          resource_sid = add_entity data, graph, resource_type, resource, sids
+          resource_sid = add_entity data, graph, LSS_USDL[resource_type], resource, sids
           used_entities << resource
         end
         if interaction.received_resources.index(resource)
@@ -421,12 +421,12 @@ class SemanticWorker < ActiveRecord::Base
     used_entities = []
 
     # Service system
-    service_sid = add_generic_entity data, graph, USDL.Service, service_system, sids
+    service_sid = add_entity data, graph, USDL.Service, service_system, sids
 
     # Interactions
     service_system.interactions.each do |interaction|
       next unless interaction.interaction_type == 'CustomerInteraction'
-      interaction_sid = add_generic_entity data, graph, USDL.InteractionPoint, interaction, sids
+      interaction_sid = add_entity data, graph, USDL.InteractionPoint, interaction, sids
       graph << [data[service_sid], USDL.hasInteractionPoint, data[interaction.sid]]
       used_entities << interaction
     end
@@ -440,7 +440,7 @@ class SemanticWorker < ActiveRecord::Base
           graph << [data[interaction.sid], USDL.hasInteractingEntity, data[role.sid]]
           next
         else
-          ie_sid = add_generic_entity data, graph, USDL.InteractingEntity, role, sids
+          ie_sid = add_entity data, graph, USDL.InteractingEntity, role, sids
           if ['Regulator', 'Producer', 'Provider', 'Intermediary', 'Consumer', 'Customer'].index(role.label)
             usdl_role = RDF::Node.new "#{ie_sid}BusinessRole"
             graph << [usdl_role, RDF.type, USDL[role.label]]
@@ -458,7 +458,7 @@ class SemanticWorker < ActiveRecord::Base
       # Resources
       (interaction.received_resources | interaction.returned_resources).each do |resource|
         unless used_entities.index(resource)
-          resource_sid = add_generic_entity data, graph, RDF['Resource'], resource, sids
+          resource_sid = add_entity data, graph, RDF['Resource'], resource, sids
           used_entities << resource
         end
         property = interaction.received_resources.index(resource) ? USDL.receives : USDL.yields
@@ -543,13 +543,6 @@ class SemanticWorker < ActiveRecord::Base
   end
 
   def self.add_entity(data, graph, type, entity, sids)
-    sid = add_generic_entity data, graph, LSS_USDL[type], entity, sids
-    graph << [data[sid], RDFS.label, entity.label]
-    graph << [data[sid], RDFS.comment, entity.comment] if entity.comment.present?
-    return sid
-  end
-
-  def self.add_generic_entity(data, graph, type, entity, sids)
     sid = camel_case(entity.label)
     sid = "#{sid}#{Time.now.to_i}" if sids.index(sid)
     sids << sid
@@ -558,6 +551,8 @@ class SemanticWorker < ActiveRecord::Base
       entity.save
     end
     graph << [data[sid], RDF.type, type]
+    graph << [data[sid], RDFS.label, entity.label]
+    graph << [data[sid], RDFS.comment, entity.comment] if entity.comment.present?
     return sid
   end
 
