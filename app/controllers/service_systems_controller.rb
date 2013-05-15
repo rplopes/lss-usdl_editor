@@ -106,7 +106,7 @@ class ServiceSystemsController < ApplicationController
     if params[:type] == "LSS-USDL"
       @service_system = SemanticWorker.from_lss_usdl_to_db(params[:file], current_user)
     else
-      #TODO @service_system = SemanticWorker.from_linked_usdl_to_db(params[:file])
+      @service_system = SemanticWorker.from_linked_usdl_to_db(params[:file], current_user)
     end
 
     respond_to do |format|

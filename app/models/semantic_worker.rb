@@ -205,6 +205,35 @@ class SemanticWorker < ActiveRecord::Base
 
   ##########################################
   #
+  # Imports an LSS-USDL file into the database
+  #
+  ##########################################
+  def self.from_linked_usdl_to_db(file, author)
+    graph = RDF::Graph.load(file.tempfile.path)
+    service_system = ServiceSystem.new
+    begin
+      service_system.user = author
+
+      # Service System
+      RDF::Query.new({q: {RDF.type  => USDL.Service}}).execute(graph).each do |s|
+        service_system.uri = s.q.to_s.gsub(/#.*/, '#')
+        service_system.label = query_str(graph, s.q, RDFS.label)
+        service_system.comment = query_str(graph, s.q, RDFS.comment)
+        service_system.save!
+        puts service_system.inspect
+      end
+      puts service_system.inspect
+
+      #return service_system
+    #rescue
+      service_system.destroy
+      return nil
+    end
+  end
+
+
+  ##########################################
+  #
   # Exports from the database to an LSS-USDL file
   #
   ##########################################
