@@ -148,7 +148,7 @@ class SemanticWorker < ActiveRecord::Base
             o.min_value = query_num(graph, s2.qv, GR.hasMinValue)
             o.unit_of_measurement = query_str(graph, s2.qv, GR.hasUnitOfMeasurement)
           end
-          # Proce Specification
+          # Price Specification
           RDF::Query.new({s.q => {LSS_USDL.hasPriceSpecification => :ps}}).execute(graph).each do |s2|
             o.value = query_num(graph, s2.ps, GR.hasCurrencyValue)
             o.max_value = query_num(graph, s2.ps, GR.hasMaxCurrencyValue)
@@ -245,7 +245,6 @@ class SemanticWorker < ActiveRecord::Base
         service_system.label = query_str(graph, s.q, RDFS.label)
         service_system.comment = query_str(graph, s.q, RDFS.comment)
         service_system.save!
-        puts service_system.inspect
       end
 
       # Roles
@@ -261,33 +260,80 @@ class SemanticWorker < ActiveRecord::Base
           o.label = query_str(graph, s.role, RDFS.label) if o.label.blank?
           o.comment = query_str(graph, s.role, RDFS.comment)
           o.save
-          puts o.inspect
         end
       end
 
+      # Resources
+      RDF::Query.new({q: {RDF.type => RDF['Resource']}}).execute(graph).each do |s|
+        unless used_sids.index(s.q)
+          used_sids << s.q
+          o = Resource.new
+          o.sid = s.q.to_s.gsub(/^.*#/, '')
+          o.service_system = service_system
+          o.label = query_str(graph, s.q, RDFS.label)
+          o.comment = query_str(graph, s.q, RDFS.comment)
+          o.save
+        end
+      end
 
-      # interaction.roles.each do |role|
-      #   if used_entities.index(role)
-      #     graph << [data[interaction.sid], USDL.hasInteractingEntity, data[role.sid]]
-      #     next
-      #   else
-      #     ie_sid = add_entity data, graph, USDL.InteractingEntity, role, sids
-      #     if ['Regulator', 'Producer', 'Provider', 'Intermediary', 'Consumer', 'Customer'].index(role.label)
-      #       usdl_role = RDF::Node.new "#{ie_sid}BusinessRole"
-      #       graph << [usdl_role, RDF.type, USDL[role.label]]
-      #       graph << [data[ie_sid], USDL.hasEntityType, usdl_role]
-      #     elsif ['Observer', 'Participant', 'Initiator', 'Mediator', 'Receiver'].index(role.label)
-      #       usdl_role = RDF::Node.new "#{ie_sid}InteractionRole"
-      #       graph << [usdl_role, RDF.type, USDL[role.label]]
-      #       graph << [data[ie_sid], USDL.hasEntityType, usdl_role]
-      #     end
-      #     used_entities << role
-      #     graph << [data[interaction.sid], USDL.hasInteractingEntity, data[role.sid]]
-      #   end
-      # end
+      # Interactions
+      RDF::Query.new({q: {RDF.type => USDL.InteractionPoint}}).execute(graph).each do |s|
+        unless used_sids.index(s.q)
+          used_sids << s.q
+          o = Interaction.new
+          o.sid = s.q.to_s.gsub(/^.+#/, '')
+          o.service_system = service_system
+          o.label = query_str(graph, s.q, RDFS.label)
+          o.comment = query_str(graph, s.q, RDFS.comment)
+          o.interaction_type = "CustomerInteraction"
+          o.roles = Array(query_el(graph, s.q, USDL.hasInteractingEntity, service_system.id, Role))
+          o.received_resources = Array(query_el(graph, s.q, USDL.receives, service_system.id, Resource))
+          o.returned_resources = Array(query_el(graph, s.q, USDL.yields, service_system.id, Resource))
 
-      #return service_system
-    #rescue
+          # Temporal entity
+          RDF::Query.new({q: {USDL.spansInterval => :te}}).execute(graph).each do |s2|
+            i_before = query_str(graph, s2.te, TIME.intervalBefore)
+            i_during = query_str(graph, s2.te, TIME.intervalDuring)
+            i_after = query_str(graph, s2.te, TIME.intervalAfter)
+            if i_before
+              before = Interaction.where("service_system_id = ? and sid = ?", service_system.id, i_before.gsub(/(^.*#)|(Time$)/, ''))
+              o.interaction_after = before.first if before.present?
+            end
+            if i_during
+              during = Interaction.where("service_system_id = ? and sid = ?", service_system.id, i_during.gsub(/(^.*#)|(Time$)/, ''))
+              o.interaction_during = during.first if during.present?
+            end
+            if i_after
+              after = Interaction.where("service_system_id = ? and sid = ?", service_system.id, i_after.gsub(/(^.*#)|(Time$)/, ''))
+              o.interaction_before = after.first if after.present?
+            end
+            # DateTimeDescription
+            RDF::Query.new({s2.te => {TIME.hasDateTimeDescription => :dtd}}).execute(graph).each do |s3|
+              o.time_year = query_num(graph, s3.dtd, TIME.year)
+              o.time_month = query_num(graph, s3.dtd, TIME.month)
+              o.time_week = query_num(graph, s3.dtd, TIME.week)
+              o.time_day = query_num(graph, s3.dtd, TIME.day)
+              o.time_hour = query_num(graph, s3.dtd, TIME.hour)
+              o.time_minute = query_num(graph, s3.dtd, TIME.minute)
+              o.time_second = query_num(graph, s3.dtd, TIME.second)
+            end
+            # DurationDescription
+            RDF::Query.new({s2.te => {TIME.hasDurationDescription => :dd}}).execute(graph).each do |s3|
+              o.duration_years = query_num(graph, s3.dd, TIME.years)
+              o.duration_months = query_num(graph, s3.dd, TIME.months)
+              o.duration_days = query_num(graph, s3.dd, TIME.days)
+              o.duration_hours = query_num(graph, s3.dd, TIME.hours)
+              o.duration_minutes = query_num(graph, s3.dd, TIME.minutes)
+              o.duration_seconds = query_num(graph, s3.dd, TIME.seconds)
+            end
+          end
+
+          o.save
+        end
+      end
+
+      return service_system
+    rescue
       service_system.destroy
       return nil
     end
