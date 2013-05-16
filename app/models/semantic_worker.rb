@@ -29,6 +29,30 @@ class SemanticWorker < ActiveRecord::Base
 
   ##########################################
   #
+  # Generic method that chooses between from_lss_usdl_to_db
+  # and from_linked_usdl_to_db based on file's data
+  #
+  ##########################################
+  def self.import_file(file, author)
+    graph = RDF::Graph.load(file.tempfile.path)
+    is_lss_usdl = false
+    is_linked_usdl = false
+    RDF::Query.new({q: {RDF.type  => LSS_USDL.ServiceSystem}}).execute(graph).each do |s|
+      is_lss_usdl = true
+    end
+    RDF::Query.new({q: {RDF.type => USDL.Service}}).execute(graph).each do |s|
+      is_linked_usdl = true
+    end
+    if is_lss_usdl and not is_linked_usdl
+      from_lss_usdl_to_db(file, author)
+    elsif not is_lss_usdl and is_linked_usdl
+      from_linked_usdl_to_db(file, author)
+    end
+  end
+
+
+  ##########################################
+  #
   # Imports an LSS-USDL file into the database
   #
   ##########################################

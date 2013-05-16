@@ -103,11 +103,12 @@ class ServiceSystemsController < ApplicationController
   end
 
   def import
-    if params[:type] == "LSS-USDL"
-      @service_system = SemanticWorker.from_lss_usdl_to_db(params[:file], current_user)
-    else
-      @service_system = SemanticWorker.from_linked_usdl_to_db(params[:file], current_user)
-    end
+    # if params[:type] == "LSS-USDL"
+    #   @service_system = SemanticWorker.from_lss_usdl_to_db(params[:file], current_user)
+    # else
+    #   @service_system = SemanticWorker.from_linked_usdl_to_db(params[:file], current_user)
+    # end
+    @service_system = SemanticWorker.import_file(params[:file], current_user)
 
     respond_to do |format|
       if @service_system
