@@ -13,6 +13,8 @@ class SemanticWorker < ActiveRecord::Base
     time: 'http://www.w3.org/2006/time#',
     gn: 'http://www.geonames.org/ontology#',
     s: 'http://schema.org/',
+    bpmn: 'http://www.scch.at/ontologies/bpmn20.owl#',
+    dbpedia: 'http://dbpedia.org/resource/',
     usdl: 'http://www.linked-usdl.org/ns/usdl#',
     'lss-usdl' => ONTOLOGY_URL
   }
@@ -23,6 +25,7 @@ class SemanticWorker < ActiveRecord::Base
   S    = RDF::Vocabulary.new 'http://schema.org/'
   GN   = RDF::Vocabulary.new 'http://sws.geonames.org/'
   TIME = RDF::Vocabulary.new 'http://www.w3.org/2006/time#'
+  DBP  = RDF::Vocabulary.new 'http://dbpedia.org/resource/'
 
   USDL = RDF::Vocabulary.new 'http://www.linked-usdl.org/ns/usdl#'
 
@@ -113,6 +116,7 @@ class SemanticWorker < ActiveRecord::Base
         o.service_system = service_system
         o.label = query_str(graph, s.q, RDFS.label)
         o.comment = query_str(graph, s.q, RDFS.comment)
+        o.bpmn_uri = query_str(graph, s.q, LSS_USDL.hasBPMN)
         o.save
       end
 
@@ -141,6 +145,7 @@ class SemanticWorker < ActiveRecord::Base
           o.label = query_str(graph, s.q, RDFS.label)
           o.comment = query_str(graph, s.q, RDFS.comment)
           o.resource_type = "#{subclass}Resource" if subclass.present?
+          o.dbpedia_resource = query_str(graph, s.q, LSS_USDL.hasDBpediaResource)
           # Quantitative Value
           RDF::Query.new({s.q => {LSS_USDL.hasQuantitativeValue => :qv}}).execute(graph).each do |s2|
             o.value = query_num(graph, s2.qv, GR.hasValue)
@@ -229,7 +234,7 @@ class SemanticWorker < ActiveRecord::Base
 
   ##########################################
   #
-  # Imports an LSS-USDL file into the database
+  # Imports a Linked-USDL file into the database
   #
   ##########################################
   def self.from_linked_usdl_to_db(file, author)
@@ -462,6 +467,7 @@ class SemanticWorker < ActiveRecord::Base
         else
           process_sid = add_entity data, graph, LSS_USDL.Process, process, sids
           used_entities << process
+          graph << [data[process_sid], LSS_USDL.hasBPMN, process.bpmn_uri] if process.bpmn_uri.present?
         end
         graph << [data[interaction.sid], LSS_USDL.belongsToProcess, data[process_sid]]
       end
@@ -502,6 +508,7 @@ class SemanticWorker < ActiveRecord::Base
         else
           resource_sid = add_entity data, graph, LSS_USDL[resource_type], resource, sids
           used_entities << resource
+          graph << [data[resource_sid], LSS_USDL.hasDBpediaResource, DBP[resource.dbpedia_resource.gsub(/.*\//, '')]] if resource.dbpedia_resource.present?
         end
         if interaction.received_resources.index(resource)
           resource_connection = 'receivesResource'
