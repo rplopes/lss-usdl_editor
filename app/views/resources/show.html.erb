@@ -1,5 +1,11 @@
 <h3><%= @resource.label %></h3>
 
+<% if @resource.dbpedia_resource.present? %>
+<p>
+  <strong>DBpedia resource:</strong>
+  <a href="<%= @resource.dbpedia_resource %>" target="_blank"><%= @resource.dbpedia_resource %></a>
+</p>
+<% end %>
 <% if @resource.value %>
 <p>
   <strong>Value:</strong>

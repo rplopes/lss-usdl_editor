@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130521195802) do
+ActiveRecord::Schema.define(:version => 20130521200933) do
 
   create_table "business_entities", :force => true do |t|
     t.string   "sid"
@@ -142,6 +142,7 @@ ActiveRecord::Schema.define(:version => 20130521195802) do
     t.text     "comment"
     t.datetime "created_at",          :null => false
     t.datetime "updated_at",          :null => false
+    t.string   "dbpedia_resource"
   end
 
   create_table "roles", :force => true do |t|

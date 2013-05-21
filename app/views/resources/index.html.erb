@@ -7,6 +7,12 @@
 <hr />
 <h4><%= link_to resource.label, service_system_resource_path(@service_system.id, resource.id) %></h4>
 
+<% if resource.dbpedia_resource.present? %>
+<p>
+  <strong>DBpedia resource:</strong>
+  <a href="<%= resource.dbpedia_resource %>" target="_blank"><%= resource.dbpedia_resource %></a>
+</p>
+<% end %>
 <% if resource.value %>
 <p>
   <strong>Value:</strong>
