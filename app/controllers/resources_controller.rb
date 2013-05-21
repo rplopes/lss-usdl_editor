@@ -1,8 +1,6 @@
 class ResourcesController < ApplicationController
   before_filter :select_tab
 
-  # GET /resources
-  # GET /resources.json
   def index
     if @service_system.present?
       @resources = Resource.where "service_system_id = ?", @service_system.id
@@ -11,40 +9,33 @@ class ResourcesController < ApplicationController
     end
 
     respond_to do |format|
-      format.html # index.html.erb
+      format.html
       format.json { render json: @resources }
     end
   end
 
-  # GET /resources/1
-  # GET /resources/1.json
   def show
     @resource = Resource.find(params[:id])
 
     respond_to do |format|
-      format.html # show.html.erb
+      format.html
       format.json { render json: @resource }
     end
   end
 
-  # GET /resources/new
-  # GET /resources/new.json
   def new
     @resource = @service_system.resources.build
 
     respond_to do |format|
-      format.html # new.html.erb
+      format.html
       format.json { render json: @resource }
     end
   end
 
-  # GET /resources/1/edit
   def edit
     @resource = Resource.find(params[:id])
   end
 
-  # POST /resources
-  # POST /resources.json
   def create
     @resource = Resource.new(params[:resource])
     @resource.sid = camel_case @resource.label
@@ -61,8 +52,6 @@ class ResourcesController < ApplicationController
     end
   end
 
-  # PUT /resources/1
-  # PUT /resources/1.json
   def update
     @resource = Resource.find(params[:id])
     params[:resource][:sid] = camel_case params[:resource][:label]
@@ -78,8 +67,6 @@ class ResourcesController < ApplicationController
     end
   end
 
-  # DELETE /resources/1
-  # DELETE /resources/1.json
   def destroy
     @resource = Resource.find(params[:id])
     @resource.destroy

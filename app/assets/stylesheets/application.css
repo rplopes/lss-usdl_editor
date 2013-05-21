@@ -44,3 +44,8 @@ form td a.btn {
 form select {
   margin-bottom: 0;
 }
+
+.brand img {
+  height: 25px;
+  margin: -7px 0 -5px 0;
+}

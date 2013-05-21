@@ -1,8 +1,6 @@
 class GoalsController < ApplicationController
   before_filter :select_tab
 
-  # GET /goals
-  # GET /goals.json
   def index
     if @service_system.present?
       @goals = Goal.where "service_system_id = ?", @service_system.id
@@ -11,40 +9,33 @@ class GoalsController < ApplicationController
     end
 
     respond_to do |format|
-      format.html # index.html.erb
+      format.html
       format.json { render json: @goals }
     end
   end
 
-  # GET /goals/1
-  # GET /goals/1.json
   def show
     @goal = Goal.find(params[:id])
 
     respond_to do |format|
-      format.html # show.html.erb
+      format.html
       format.json { render json: @goal }
     end
   end
 
-  # GET /goals/new
-  # GET /goals/new.json
   def new
     @goal = @service_system.goals.build
 
     respond_to do |format|
-      format.html # new.html.erb
+      format.html
       format.json { render json: @goal }
     end
   end
 
-  # GET /goals/1/edit
   def edit
     @goal = Goal.find(params[:id])
   end
 
-  # POST /goals
-  # POST /goals.json
   def create
     @goal = Goal.new(params[:goal])
     @goal.sid = camel_case @goal.label
@@ -61,8 +52,6 @@ class GoalsController < ApplicationController
     end
   end
 
-  # PUT /goals/1
-  # PUT /goals/1.json
   def update
     @goal = Goal.find(params[:id])
     params[:goal][:sid] = camel_case params[:goal][:label]
@@ -78,8 +67,6 @@ class GoalsController < ApplicationController
     end
   end
 
-  # DELETE /goals/1
-  # DELETE /goals/1.json
   def destroy
     @goal = Goal.find(params[:id])
     @goal.destroy

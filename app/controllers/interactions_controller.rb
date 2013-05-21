@@ -1,8 +1,6 @@
 class InteractionsController < ApplicationController
   before_filter :select_tab
 
-  # GET /interactions
-  # GET /interactions.json
   def index
     if params[:view_status] and ["esb", "list"].index(params[:view_status])
       @service_system.view_status = params[:view_status]
@@ -10,7 +8,6 @@ class InteractionsController < ApplicationController
     end
 
     @roles = Role.where "service_system_id = ?", @service_system.id
-    #@times = [{"name" => "Interval"}, {"name" => "Instant"}]
     @goals = Goal.where "service_system_id = ?", @service_system.id
     @locations = Location.where "service_system_id = ?", @service_system.id
     @processes = ProcessEntity.where "service_system_id = ?", @service_system.id
@@ -18,7 +15,6 @@ class InteractionsController < ApplicationController
     
     filter = {
       roles: params[:roles],
-      #time: params[:time],
       goals: params[:goals],
       locations: params[:locations],
       processes: params[:processes],
@@ -33,36 +29,31 @@ class InteractionsController < ApplicationController
     end
 
     respond_to do |format|
-      format.html # index.html.erb
+      format.html
       format.json { render json: @interactions }
     end
   end
 
-  # GET /interactions/1
-  # GET /interactions/1.json
   def show
     @interaction = Interaction.find(params[:id])
 
     respond_to do |format|
-      format.html # show.html.erb
+      format.html
       format.json { render json: @interaction }
     end
   end
 
-  # GET /interactions/new
-  # GET /interactions/new.json
   def new
     @interaction = @service_system.interactions.build
     @interactions_before_after = Interaction.where "service_system_id = ?", @service_system.id
     @interactions_during = @interactions_before_after
 
     respond_to do |format|
-      format.html # new.html.erb
+      format.html
       format.json { render json: @interaction }
     end
   end
 
-  # GET /interactions/1/edit
   def edit
     @interaction = Interaction.find(params[:id])
 
@@ -95,8 +86,6 @@ class InteractionsController < ApplicationController
     @interaction = Interaction.find(params[:interaction_id])
   end
 
-  # POST /interactions
-  # POST /interactions.json
   def create
     @interaction = Interaction.new(params[:interaction])
     @interaction.sid = camel_case @interaction.label
@@ -115,8 +104,6 @@ class InteractionsController < ApplicationController
     end
   end
 
-  # PUT /interactions/1
-  # PUT /interactions/1.json
   def update
     @interaction = Interaction.find(params[:id])
     params[:interaction][:sid] = camel_case params[:interaction][:label] if params[:interaction][:label].present?
@@ -162,8 +149,6 @@ class InteractionsController < ApplicationController
     end
   end
 
-  # DELETE /interactions/1
-  # DELETE /interactions/1.json
   def destroy
     @interaction = Interaction.find(params[:id])
     @interaction.destroy

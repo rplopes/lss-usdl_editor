@@ -1,48 +1,33 @@
 class ServiceSystemsController < ApplicationController
   before_filter :select_metadata_tab
 
-  # GET /service_systems
-  # GET /service_systems.json
   def index
     @service_systems = ServiceSystem.all
 
     respond_to do |format|
-      format.html # index.html.erb
+      format.html
       format.json { render json: @service_systems }
     end
   end
 
-  # GET /service_systems/1
-  # GET /service_systems/1.json
   def show
     redirect_to service_system_interactions_url(params[:id])
-    #@service_system = ServiceSystem.find(params[:id])
-
-    #respond_to do |format|
-    #  format.html # show.html.erb
-    #  format.json { render json: @service_system }
-    #end
   end
 
-  # GET /service_systems/new
-  # GET /service_systems/new.json
   def new
     @service_system = ServiceSystem.new
 
     respond_to do |format|
-      format.html # new.html.erb
+      format.html
       format.json { render json: @service_system }
     end
   end
 
-  # GET /service_systems/1/edit
   def edit
     @service_system = ServiceSystem.find(params[:id])
     redirect_to action: :show if current_user != @service_system.user
   end
 
-  # POST /service_systems
-  # POST /service_systems.json
   def create
     @service_system = ServiceSystem.new(params[:service_system])
     @service_system.user = current_user # add creator
@@ -58,8 +43,6 @@ class ServiceSystemsController < ApplicationController
     end
   end
 
-  # PUT /service_systems/1
-  # PUT /service_systems/1.json
   def update
     @service_system = ServiceSystem.find(params[:id])
 
@@ -74,8 +57,6 @@ class ServiceSystemsController < ApplicationController
     end
   end
 
-  # DELETE /service_systems/1
-  # DELETE /service_systems/1.json
   def destroy
     @service_system = ServiceSystem.find(params[:id])
     redirect_to action: :show and return if current_user != @service_system.user
@@ -103,11 +84,6 @@ class ServiceSystemsController < ApplicationController
   end
 
   def import
-    # if params[:type] == "LSS-USDL"
-    #   @service_system = SemanticWorker.from_lss_usdl_to_db(params[:file], current_user)
-    # else
-    #   @service_system = SemanticWorker.from_linked_usdl_to_db(params[:file], current_user)
-    # end
     @service_system = SemanticWorker.import_file(params[:file], current_user)
 
     respond_to do |format|

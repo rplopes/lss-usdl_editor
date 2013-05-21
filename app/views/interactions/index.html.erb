@@ -38,7 +38,6 @@
       <hr />
       <%= form_tag("/service_systems/#{@service_system.id}/interactions", method: :get, id: 'filter-form', class: "form-inline") do %>
         <%= select_tag :roles, options_from_collection_for_select(@roles, "id", "label"), prompt: "All roles", class: "span4" %>
-        <!--<%= select_tag :time, '<option value>All times</option><option value="interval">Interval</option><option value="instant">Instant</option>'.html_safe, class: "span4" %>-->
         <%= select_tag :goals, options_from_collection_for_select(@goals, "id", "label"), prompt: "All goals", class: "span4" %>
         <%= select_tag :locations, options_from_collection_for_select(@locations, "id", "label"), prompt: "All locations", class: "span4" %>
         <%= select_tag :processes, options_from_collection_for_select(@processes, "id", "label"), prompt: "All processes", class: "span4" %>

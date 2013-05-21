@@ -1,8 +1,6 @@
 class BusinessEntitiesController < ApplicationController
   before_filter :select_tab
 
-  # GET /business_entities
-  # GET /business_entities.json
   def index
     if @service_system.present?
       @business_entities = BusinessEntity.where "service_system_id = ?", @service_system.id
@@ -11,40 +9,33 @@ class BusinessEntitiesController < ApplicationController
     end
 
     respond_to do |format|
-      format.html # index.html.erb
+      format.html
       format.json { render json: @business_entities }
     end
   end
 
-  # GET /business_entities/1
-  # GET /business_entities/1.json
   def show
     @business_entity = BusinessEntity.find(params[:id])
 
     respond_to do |format|
-      format.html # show.html.erb
+      format.html
       format.json { render json: @business_entity }
     end
   end
 
-  # GET /business_entities/new
-  # GET /business_entities/new.json
   def new
     @business_entity = @service_system.business_entities.build
 
     respond_to do |format|
-      format.html # new.html.erb
+      format.html
       format.json { render json: @business_entity }
     end
   end
 
-  # GET /business_entities/1/edit
   def edit
     @business_entity = BusinessEntity.find(params[:id])
   end
 
-  # POST /business_entities
-  # POST /business_entities.json
   def create
     @business_entity = BusinessEntity.new(params[:business_entity])
     @business_entity.sid = camel_case @business_entity.foaf_name
@@ -61,8 +52,6 @@ class BusinessEntitiesController < ApplicationController
     end
   end
 
-  # PUT /business_entities/1
-  # PUT /business_entities/1.json
   def update
     @business_entity = BusinessEntity.find(params[:id])
     params[:business_entity][:sid] = camel_case params[:business_entity][:foaf_name]
@@ -78,8 +67,6 @@ class BusinessEntitiesController < ApplicationController
     end
   end
 
-  # DELETE /business_entities/1
-  # DELETE /business_entities/1.json
   def destroy
     @business_entity = BusinessEntity.find(params[:id])
     @business_entity.destroy
