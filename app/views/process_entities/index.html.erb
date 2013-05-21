@@ -7,6 +7,12 @@
 <hr />
 <h4><%= link_to process_entity.label, service_system_process_entity_path(@service_system.id, process_entity.id) %></h4>
 
+<% if process_entity.bpmn_uri.present? %>
+<p>
+  <strong>URI of BPMN description:</strong>
+  <%= process_entity.bpmn_uri %>
+</p>
+<% end %>
 <% if process_entity.comment.present? %>
 <p>
   <%= process_entity.comment %>
