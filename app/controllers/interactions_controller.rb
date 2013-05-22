@@ -13,7 +13,7 @@ class InteractionsController < ApplicationController
     @processes = ProcessEntity.where "service_system_id = ?", @service_system.id
     @resources = Resource.where "service_system_id = ?", @service_system.id
     
-    filter = {
+    @filter = {
       roles: params[:roles],
       goals: params[:goals],
       locations: params[:locations],
@@ -21,10 +21,10 @@ class InteractionsController < ApplicationController
       resources: params[:resources]
     }
     if @service_system.view_status == "list"
-      @interactions = Interaction.build_interactions_list(@service_system.id, filter)
+      @interactions = Interaction.build_interactions_list(@service_system.id, @filter)
       @full_width = false
     else
-      @interactions = Interaction.build_interactions_blueprint(@service_system.id, filter)
+      @interactions = Interaction.build_interactions_blueprint(@service_system.id, @filter)
       @full_width = true
     end
 

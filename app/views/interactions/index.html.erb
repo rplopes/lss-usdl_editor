@@ -40,11 +40,11 @@
       <div class="span12">
         <hr />
         <%= form_tag("/service_systems/#{@service_system.id}/interactions", method: :get, id: 'filter-form', class: "form-inline") do %>
-          <%= select_tag :roles, options_from_collection_for_select(@roles, "id", "label"), prompt: "All roles", class: "span4" %>
-          <%= select_tag :goals, options_from_collection_for_select(@goals, "id", "label"), prompt: "All goals", class: "span4" %>
-          <%= select_tag :locations, options_from_collection_for_select(@locations, "id", "label"), prompt: "All locations", class: "span4" %>
-          <%= select_tag :processes, options_from_collection_for_select(@processes, "id", "label"), prompt: "All processes", class: "span4" %>
-          <%= select_tag :resources, options_from_collection_for_select(@resources, "id", "label"), prompt: "All resources", class: "span4" %>
+          <%= select_tag :roles, options_from_collection_for_select(@roles, "id", "label", @filter[:roles]), prompt: "All roles", class: "span4" %>
+          <%= select_tag :goals, options_from_collection_for_select(@goals, "id", "label", @filter[:goals]), prompt: "All goals", class: "span4" %>
+          <%= select_tag :locations, options_from_collection_for_select(@locations, "id", "label", @filter[:locations]), prompt: "All locations", class: "span4" %>
+          <%= select_tag :processes, options_from_collection_for_select(@processes, "id", "label", @filter[:processes]), prompt: "All processes", class: "span4" %>
+          <%= select_tag :resources, options_from_collection_for_select(@resources, "id", "label", @filter[:resources]), prompt: "All resources", class: "span4" %>
           <%= submit_tag "Apply this filter", class: "btn btn-primary", style: "margin-left: 180px" %>
         <% end %>
       </div>
