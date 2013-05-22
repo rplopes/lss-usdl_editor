@@ -55,6 +55,18 @@ class Interaction < ActiveRecord::Base
     received_resources | created_resources | consumed_resources | returned_resources
   end
 
+  def locations_extended
+    new_locations = []
+    self.locations.each do |location|
+      broader_location = location.broader_location
+      while broader_location.present?
+        new_locations << broader_location unless new_locations.index(broader_location)
+        broader_location = broader_location.broader_location
+      end
+    end
+    return self.locations | new_locations
+  end
+
   def self.subclasses
     ["Customer", "Onstage", "Backstage", "Support"]
   end
@@ -107,7 +119,7 @@ class Interaction < ActiveRecord::Base
       if  (filter[:roles].present? and not interactions[i].roles.index(Role.find(filter[:roles]))) or
           (filter[:time].present? and not interactions[i].temporal_entity_type.downcase == filter[:time].downcase) or
           (filter[:goals].present? and not interactions[i].goals.index(Goal.find(filter[:goals]))) or
-          (filter[:locations].present? and not interactions[i].locations.index(Location.find(filter[:locations]))) or
+          (filter[:locations].present? and not interactions[i].locations_extended.index(Location.find(filter[:locations]))) or
           (filter[:processes].present? and not interactions[i].processes.index(ProcessEntity.find(filter[:processes]))) or
           (filter[:resources].present? and not interactions[i].resources.index(Resource.find(filter[:resources])))
         interactions.delete_at(i)
