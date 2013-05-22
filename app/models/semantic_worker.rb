@@ -71,7 +71,6 @@ class SemanticWorker < ActiveRecord::Base
         service_system.label = query_str(graph, s.q, RDFS.label)
         service_system.comment = query_str(graph, s.q, RDFS.comment)
         service_system.save!
-        puts service_system.inspect
       end
 
       # Business Entities
@@ -347,10 +346,126 @@ class SemanticWorker < ActiveRecord::Base
 
   ##########################################
   #
+  # Exports from the database to a Linked-USDL file
+  #
+  ##########################################
+  def self.from_db_to_linked_usdl(service_system, filter)
+    data = RDF::Vocabulary.new service_system.uri
+    graph = RDF::Graph.new
+
+    sids = []
+    used_entities = []
+
+    # Service system
+    service_sid = add_entity data, graph, USDL.Service, service_system, sids
+
+    # Interactions
+    service_system.interactions.each do |interaction|
+      next unless interaction.interaction_type == 'CustomerInteraction'
+      interaction_sid = add_entity data, graph, USDL.InteractionPoint, interaction, sids
+      graph << [data[service_sid], USDL.hasInteractionPoint, data[interaction.sid]]
+      used_entities << interaction
+    end
+
+    service_system.interactions.each do |interaction|
+      next unless interaction.interaction_type == 'CustomerInteraction'
+
+      # Roles
+      interaction.roles.each do |role|
+        if used_entities.index(role)
+          graph << [data[interaction.sid], USDL.hasInteractingEntity, data[role.sid]]
+          next
+        else
+          ie_sid = add_entity data, graph, USDL.InteractingEntity, role, sids
+          if ['Regulator', 'Producer', 'Provider', 'Intermediary', 'Consumer', 'Customer'].index(role.label)
+            usdl_role = RDF::Node.new "#{ie_sid}BusinessRole"
+            graph << [usdl_role, RDF.type, USDL[role.label]]
+            graph << [data[ie_sid], USDL.hasEntityType, usdl_role]
+          elsif ['Observer', 'Participant', 'Initiator', 'Mediator', 'Receiver'].index(role.label)
+            usdl_role = RDF::Node.new "#{ie_sid}InteractionRole"
+            graph << [usdl_role, RDF.type, USDL[role.label]]
+            graph << [data[ie_sid], USDL.hasEntityType, usdl_role]
+          end
+          used_entities << role
+          graph << [data[interaction.sid], USDL.hasInteractingEntity, data[role.sid]]
+        end
+      end
+
+      # Resources
+      (interaction.received_resources | interaction.returned_resources).each do |resource|
+        unless used_entities.index(resource)
+          resource_sid = add_entity data, graph, RDF['Resource'], resource, sids
+          used_entities << resource
+        end
+        property = interaction.received_resources.index(resource) ? USDL.receives : USDL.yields
+        graph << [data[interaction.sid], property, data[resource.sid]]
+      end
+
+      # Temporal entity
+      te_sid = "#{interaction.sid.to_s.gsub(service_system.uri, '')}Time"
+      te_type = interaction.time_description.present? ? "DateTimeInterval" : "ProperInterval"
+      graph << [data[interaction.sid], USDL.spansInterval, data[te_sid]]
+      graph << [data[te_sid], RDF.type, TIME[te_type]]
+      # DateTimeDescription
+      if interaction.time_description.present?
+        time_description = RDF::Node.new "#{interaction.sid}DateTimeDescription"
+        graph << [data[te_sid], TIME.hasDateTimeDescription, time_description]
+        graph << [time_description, RDF.type, TIME.DateTimeDescription]
+        graph << [time_description, TIME.year, interaction.time_year] if interaction.time_year
+        graph << [time_description, TIME.month, interaction.time_month] if interaction.time_month
+        graph << [time_description, TIME.week, interaction.time_week] if interaction.time_week
+        graph << [time_description, TIME.day, interaction.time_day] if interaction.time_day
+        graph << [time_description, TIME.hour, interaction.time_hour] if interaction.time_hour
+        graph << [time_description, TIME.minute, interaction.time_minute] if interaction.time_minute
+        graph << [time_description, TIME.second, interaction.time_second] if interaction.time_second
+      end
+      # DurationDescription
+      if interaction.duration_description.present?
+        duration_description = RDF::Node.new "#{interaction.sid}DurationDescription"
+        graph << [data[te_sid], TIME.hasDurationDescription, duration_description]
+        graph << [duration_description, RDF.type, TIME.DurationDescription]
+        graph << [duration_description, TIME.years, interaction.duration_years] if interaction.duration_years
+        graph << [duration_description, TIME.months, interaction.duration_months] if interaction.duration_months
+        graph << [duration_description, TIME.days, interaction.duration_days] if interaction.duration_days
+        graph << [duration_description, TIME.hours, interaction.duration_hours] if interaction.duration_hours
+        graph << [duration_description, TIME.minutes, interaction.duration_minutes] if interaction.duration_minutes
+        graph << [duration_description, TIME.seconds, interaction.duration_seconds] if interaction.duration_seconds
+      end
+      # Interactions flow
+      (interaction.interactions_before | [interaction.interaction_before]).each do |i|
+        graph << [data[te_sid], TIME.intervalAfter, data["#{i.sid}Time"]] if i and used_entities.index(i)
+      end
+      (interaction.interactions_during| [interaction.interaction_during]).each do |i|
+        graph << [data[te_sid], TIME.intervalDuring, data["#{i.sid}Time"]] if i and used_entities.index(i)
+      end
+      (interaction.interactions_after | [interaction.interaction_after]).each do |i|
+        graph << [data[te_sid], TIME.intervalBefore, data["#{i.sid}Time"]] if i and used_entities.index(i)
+      end
+
+    end
+
+    build_tll graph, service_system
+  end
+
+
+  ##########################################
+  #
   # Exports from the database to an LSS-USDL file
   #
   ##########################################
-  def self.from_db_to_lss_usdl(service_system)
+  def self.from_db_to_lss_usdl(service_system, filter)
+    build_tll from_db_to_semantic_graph(service_system), service_system
+  end
+
+
+  private
+
+  ##########################################
+  #
+  # Exports from the database to a semantic graph
+  #
+  ##########################################
+  def self.from_db_to_semantic_graph(service_system)
     data = RDF::Vocabulary.new service_system.uri
     graph = RDF::Graph.new
 
@@ -535,7 +650,6 @@ class SemanticWorker < ActiveRecord::Base
           # Quantitative value
           else
             quantitativeValue = RDF::Node.new "#{resource_sid}QuantitativeValue"
-            puts "#{resource_sid}QuantitativeValue"
             graph << [data[resource_sid], LSS_USDL.hasQuantitativeValue, quantitativeValue]
             graph << [quantitativeValue, RDF.type, GR.QuantitativeValue]
             graph << [quantitativeValue, GR.hasValue, resource.value_] if resource.value
@@ -548,116 +662,15 @@ class SemanticWorker < ActiveRecord::Base
 
     end
 
-    build_tll graph, service_system
+    return graph
   end
 
 
   ##########################################
   #
-  # Exports from the database to a Linked-USDL file
+  # Helpers to avoid repeating too much code
   #
   ##########################################
-  def self.from_db_to_linked_usdl(service_system)
-    data = RDF::Vocabulary.new service_system.uri
-    graph = RDF::Graph.new
-
-    sids = []
-    used_entities = []
-
-    # Service system
-    service_sid = add_entity data, graph, USDL.Service, service_system, sids
-
-    # Interactions
-    service_system.interactions.each do |interaction|
-      next unless interaction.interaction_type == 'CustomerInteraction'
-      interaction_sid = add_entity data, graph, USDL.InteractionPoint, interaction, sids
-      graph << [data[service_sid], USDL.hasInteractionPoint, data[interaction.sid]]
-      used_entities << interaction
-    end
-
-    service_system.interactions.each do |interaction|
-      next unless interaction.interaction_type == 'CustomerInteraction'
-
-      # Roles
-      interaction.roles.each do |role|
-        if used_entities.index(role)
-          graph << [data[interaction.sid], USDL.hasInteractingEntity, data[role.sid]]
-          next
-        else
-          ie_sid = add_entity data, graph, USDL.InteractingEntity, role, sids
-          if ['Regulator', 'Producer', 'Provider', 'Intermediary', 'Consumer', 'Customer'].index(role.label)
-            usdl_role = RDF::Node.new "#{ie_sid}BusinessRole"
-            graph << [usdl_role, RDF.type, USDL[role.label]]
-            graph << [data[ie_sid], USDL.hasEntityType, usdl_role]
-          elsif ['Observer', 'Participant', 'Initiator', 'Mediator', 'Receiver'].index(role.label)
-            usdl_role = RDF::Node.new "#{ie_sid}InteractionRole"
-            graph << [usdl_role, RDF.type, USDL[role.label]]
-            graph << [data[ie_sid], USDL.hasEntityType, usdl_role]
-          end
-          used_entities << role
-          graph << [data[interaction.sid], USDL.hasInteractingEntity, data[role.sid]]
-        end
-      end
-
-      # Resources
-      (interaction.received_resources | interaction.returned_resources).each do |resource|
-        unless used_entities.index(resource)
-          resource_sid = add_entity data, graph, RDF['Resource'], resource, sids
-          used_entities << resource
-        end
-        property = interaction.received_resources.index(resource) ? USDL.receives : USDL.yields
-        graph << [data[interaction.sid], property, data[resource.sid]]
-      end
-
-      # Temporal entity
-      te_sid = "#{interaction.sid.to_s.gsub(service_system.uri, '')}Time"
-      te_type = interaction.time_description.present? ? "DateTimeInterval" : "ProperInterval"
-      graph << [data[interaction.sid], USDL.spansInterval, data[te_sid]]
-      graph << [data[te_sid], RDF.type, TIME[te_type]]
-      # DateTimeDescription
-      if interaction.time_description.present?
-        time_description = RDF::Node.new "#{interaction.sid}DateTimeDescription"
-        graph << [data[te_sid], TIME.hasDateTimeDescription, time_description]
-        graph << [time_description, RDF.type, TIME.DateTimeDescription]
-        graph << [time_description, TIME.year, interaction.time_year] if interaction.time_year
-        graph << [time_description, TIME.month, interaction.time_month] if interaction.time_month
-        graph << [time_description, TIME.week, interaction.time_week] if interaction.time_week
-        graph << [time_description, TIME.day, interaction.time_day] if interaction.time_day
-        graph << [time_description, TIME.hour, interaction.time_hour] if interaction.time_hour
-        graph << [time_description, TIME.minute, interaction.time_minute] if interaction.time_minute
-        graph << [time_description, TIME.second, interaction.time_second] if interaction.time_second
-      end
-      # DurationDescription
-      if interaction.duration_description.present?
-        duration_description = RDF::Node.new "#{interaction.sid}DurationDescription"
-        graph << [data[te_sid], TIME.hasDurationDescription, duration_description]
-        graph << [duration_description, RDF.type, TIME.DurationDescription]
-        graph << [duration_description, TIME.years, interaction.duration_years] if interaction.duration_years
-        graph << [duration_description, TIME.months, interaction.duration_months] if interaction.duration_months
-        graph << [duration_description, TIME.days, interaction.duration_days] if interaction.duration_days
-        graph << [duration_description, TIME.hours, interaction.duration_hours] if interaction.duration_hours
-        graph << [duration_description, TIME.minutes, interaction.duration_minutes] if interaction.duration_minutes
-        graph << [duration_description, TIME.seconds, interaction.duration_seconds] if interaction.duration_seconds
-      end
-      # Interactions flow
-      (interaction.interactions_before | [interaction.interaction_before]).each do |i|
-        graph << [data[te_sid], TIME.intervalAfter, data["#{i.sid}Time"]] if i and used_entities.index(i)
-      end
-      (interaction.interactions_during| [interaction.interaction_during]).each do |i|
-        graph << [data[te_sid], TIME.intervalDuring, data["#{i.sid}Time"]] if i and used_entities.index(i)
-      end
-      (interaction.interactions_after | [interaction.interaction_after]).each do |i|
-        graph << [data[te_sid], TIME.intervalBefore, data["#{i.sid}Time"]] if i and used_entities.index(i)
-      end
-
-    end
-
-    build_tll graph, service_system
-  end
-
-
-  private
-
   def self.query_str(graph, element, attribute)
     RDF::Query.new({q: {attribute => :attribute}}).execute(graph).each do |s|
       return s.attribute.to_s if element == s.q

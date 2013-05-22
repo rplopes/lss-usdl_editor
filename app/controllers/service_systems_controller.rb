@@ -77,12 +77,6 @@ class ServiceSystemsController < ApplicationController
     end
   end
 
-  def export_to_lss_usdl
-    @service_system = ServiceSystem.find(params[:service_system_id])
-    send_data SemanticWorker.from_db_to_lss_usdl(@service_system),
-          :disposition => "attachment; filename=#{@service_system.label}.ttl"
-  end
-
   def import
     @service_system = SemanticWorker.import_file(params[:file], current_user)
 
@@ -97,9 +91,13 @@ class ServiceSystemsController < ApplicationController
     end
   end
 
+  def export_to_lss_usdl
+    send_data SemanticWorker.from_db_to_lss_usdl(ServiceSystem.find(params[:service_system_id]), params[:filter]),
+          :disposition => "attachment; filename=#{@service_system.label}.ttl"
+  end
+
   def export_to_linked_usdl
-    @service_system = ServiceSystem.find(params[:service_system_id])
-    send_data SemanticWorker.from_db_to_linked_usdl(@service_system),
+    send_data SemanticWorker.from_db_to_linked_usdl(ServiceSystem.find(params[:service_system_id]), params[:filter]),
           :disposition => "attachment; filename=#{@service_system.label} - Linked USDL.ttl"
   end
 
