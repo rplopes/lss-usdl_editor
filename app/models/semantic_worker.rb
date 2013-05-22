@@ -360,14 +360,15 @@ class SemanticWorker < ActiveRecord::Base
     service_sid = add_entity data, graph, USDL.Service, service_system, sids
 
     # Interactions
-    service_system.interactions.each do |interaction|
+    interactions = Interaction.build_interactions_list(service_system.id, filter)
+    interactions.each do |interaction|
       next unless interaction.interaction_type == 'CustomerInteraction'
       interaction_sid = add_entity data, graph, USDL.InteractionPoint, interaction, sids
       graph << [data[service_sid], USDL.hasInteractionPoint, data[interaction.sid]]
       used_entities << interaction
     end
 
-    service_system.interactions.each do |interaction|
+    interactions.each do |interaction|
       next unless interaction.interaction_type == 'CustomerInteraction'
 
       # Roles
@@ -454,7 +455,7 @@ class SemanticWorker < ActiveRecord::Base
   #
   ##########################################
   def self.from_db_to_lss_usdl(service_system, filter)
-    build_tll from_db_to_semantic_graph(service_system), service_system
+    build_tll from_db_to_semantic_graph(service_system, filter), service_system
   end
 
 
@@ -465,7 +466,7 @@ class SemanticWorker < ActiveRecord::Base
   # Exports from the database to a semantic graph
   #
   ##########################################
-  def self.from_db_to_semantic_graph(service_system)
+  def self.from_db_to_semantic_graph(service_system, filter)
     data = RDF::Vocabulary.new service_system.uri
     graph = RDF::Graph.new
 
@@ -476,13 +477,14 @@ class SemanticWorker < ActiveRecord::Base
     service_sid = add_entity data, graph, LSS_USDL.ServiceSystem, service_system, sids
 
     # Interactions
-    service_system.interactions.each do |interaction|
+    interactions = Interaction.build_interactions_list(service_system.id, filter)
+    interactions.each do |interaction|
       interaction_type = interaction.interaction_type.present? ? interaction.interaction_type : 'Interaction'
       interaction_sid = add_entity data, graph, LSS_USDL[interaction_type], interaction, sids
       graph << [data[service_sid], LSS_USDL.hasInteraction, data[interaction.sid]]
     end
 
-    service_system.interactions.each do |interaction|
+    interactions.each do |interaction|
 
       # Roles
       interaction.roles.each do |role|
@@ -555,13 +557,13 @@ class SemanticWorker < ActiveRecord::Base
       end
       # Interactions flow
       (interaction.interactions_before | [interaction.interaction_before]).each do |i|
-        graph << [data[te_sid], TIME.intervalAfter, data["#{i.sid}Time"]] if i
+        graph << [data[te_sid], TIME.intervalAfter, data["#{i.sid}Time"]] if i and interactions.index(i)
       end
       (interaction.interactions_during| [interaction.interaction_during]).each do |i|
-        graph << [data[te_sid], TIME.intervalDuring, data["#{i.sid}Time"]] if i
+        graph << [data[te_sid], TIME.intervalDuring, data["#{i.sid}Time"]] if i and interactions.index(i)
       end
       (interaction.interactions_after | [interaction.interaction_after]).each do |i|
-        graph << [data[te_sid], TIME.intervalBefore, data["#{i.sid}Time"]] if i
+        graph << [data[te_sid], TIME.intervalBefore, data["#{i.sid}Time"]] if i and interactions.index(i)
       end
 
       # Goals
