@@ -455,18 +455,6 @@ class SemanticWorker < ActiveRecord::Base
   #
   ##########################################
   def self.from_db_to_lss_usdl(service_system, filter)
-    build_tll from_db_to_semantic_graph(service_system, filter), service_system
-  end
-
-
-  private
-
-  ##########################################
-  #
-  # Exports from the database to a semantic graph
-  #
-  ##########################################
-  def self.from_db_to_semantic_graph(service_system, filter)
     data = RDF::Vocabulary.new service_system.uri
     graph = RDF::Graph.new
 
@@ -664,8 +652,11 @@ class SemanticWorker < ActiveRecord::Base
 
     end
 
-    return graph
+    build_tll graph, service_system
   end
+
+
+  private
 
 
   ##########################################
