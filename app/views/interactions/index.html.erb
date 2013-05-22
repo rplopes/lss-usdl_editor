@@ -27,7 +27,7 @@
         </div>
         <div class="btn-group">
           <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-            <i class="icon-download-alt"></i> Export data to <span class="caret"></span>
+            <i class="icon-download-alt"></i> Export <% if @filter.select { |k,v| v.present? }.present? %> filtered <% end %>data to <span class="caret"></span>
           </a>
           <ul class="dropdown-menu">
             <li><%= link_to 'LSS-USDL file', service_system_export_to_lss_usdl_path(@service_system, :filter => @filter), target: "_blank" %></li>
@@ -45,7 +45,8 @@
           <%= select_tag :locations, options_from_collection_for_select(@locations, "id", "label", @filter[:locations]), prompt: "All locations", class: "span4" %>
           <%= select_tag :processes, options_from_collection_for_select(@processes, "id", "label", @filter[:processes]), prompt: "All processes", class: "span4" %>
           <%= select_tag :resources, options_from_collection_for_select(@resources, "id", "label", @filter[:resources]), prompt: "All resources", class: "span4" %>
-          <%= submit_tag "Apply this filter", class: "btn btn-primary", style: "margin-left: 180px" %>
+          <%= link_to 'Clear filters', service_system_interactions_path(@service_system), class: "btn", style: "margin: -10px 0 0 105px" %>
+          <%= submit_tag "Apply filter", class: "btn btn-primary", style: "margin-top: -10px" %>
         <% end %>
       </div>
     </div>
