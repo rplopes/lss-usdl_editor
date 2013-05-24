@@ -21,6 +21,7 @@ $(document).ready( function() {
 
   $('.toggle-interactions-menu').click(function() {
     $('#service-metadata .slide-menu').slideToggle();
+    $('.service-data').toggleClass('expanded');
   });
 
   $('a').tooltip({container: 'body'})
