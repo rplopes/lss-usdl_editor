@@ -37,7 +37,11 @@ class SemanticWorker < ActiveRecord::Base
   #
   ##########################################
   def self.import_file(file, author)
-    graph = RDF::Graph.load(file.tempfile.path)
+    begin
+      graph = RDF::Graph.load(file.tempfile.path)
+    rescue
+      return nil
+    end
     is_lss_usdl = false
     is_linked_usdl = false
     RDF::Query.new({q: {RDF.type  => LSS_USDL.ServiceSystem}}).execute(graph).each do |s|
