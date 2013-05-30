@@ -114,6 +114,31 @@ class Interaction < ActiveRecord::Base
   end
 
   def self.build_interactions_list(ss_id, filter={})
+    interactions = get_filtered_interactions(ss_id, filter)
+    sorted_interactions = []
+
+    build_timeline_cols(interactions).each do |col|
+      col.each { |i| sorted_interactions.append i }
+    end
+
+    return sorted_interactions
+  end
+
+  def self.build_interactions_blueprint(ss_id, filter={})
+    interactions = get_filtered_interactions(ss_id, filter)
+    blueprint = Array.new(4) { Array.new }
+    return blueprint if interactions.blank?
+
+    build_blueprint_cols(interactions).each do |col|
+      (0..3).each { |i| blueprint[i].append col[i] }
+    end
+
+    return blueprint
+  end
+
+  private
+
+  def self.get_filtered_interactions(ss_id, filter)
     interactions = Interaction.where "service_system_id = ?", ss_id
     (interactions.size-1).downto(0).each do |i|
       if  (filter[:roles].present? and not interactions[i].roles.index(Role.find(filter[:roles]))) or
@@ -128,21 +153,22 @@ class Interaction < ActiveRecord::Base
     return interactions
   end
 
-  def self.build_interactions_blueprint(ss_id, filter={})
-    interactions = build_interactions_list(ss_id, filter)
-    blueprint = Array.new(4) { Array.new }
-    return blueprint if interactions.blank?
+  def self.build_timeline_cols(interactions)
+    timeline = []
 
-    build_blueprint_cols(interactions).each do |col|
-      (0..3).each do |i|
-        blueprint[i].append col[i]
+    begin
+      sametime = []
+      interactions.first.all_same_time_interactions.each do |interaction|
+        if interactions.index(interaction)
+          sametime.append interaction
+          interactions.delete_at(interactions.index(interaction))
+        end
       end
-    end
+      timeline.append sametime
+    end while interactions.present?
 
-    return blueprint
+    return sort_cols(timeline)
   end
-
-  private
 
   def self.build_blueprint_cols(interactions)
     cols = []
@@ -158,10 +184,10 @@ class Interaction < ActiveRecord::Base
       cols.append col
     end while interactions.present?
 
-    return sort_blueprint_cols(cols)
+    return sort_cols(cols)
   end
 
-  def self.sort_blueprint_cols(cols)
+  def self.sort_cols(cols)
     new_cols = []
 
     begin
