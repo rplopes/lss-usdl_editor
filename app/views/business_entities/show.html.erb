@@ -1,34 +1,36 @@
-<h3><%= @business_entity.foaf_name %></h3>
+<div class="well">
+  <h3><%= @business_entity.foaf_name %></h3>
 
-<% if @business_entity.foaf_page.present? %>
-<p>
-  <strong>Webpage:</strong>
-  <%= @business_entity.foaf_page %>
-</p>
-<% end %>
-<% if @business_entity.foaf_logo.present? %>
-<p>
-  <strong>Logo:</strong>
-  <%= @business_entity.foaf_logo %>
-</p>
-<% end %>
-<% if @business_entity.s_telephone.present?%>
-<p>
-  <strong>Telephone:</strong>
-  <%= @business_entity.s_telephone %>
-</p>
-<% end %>
-<% if @business_entity.s_email.present? %>
-<p>
-  <strong>Email:</strong>
-  <%= @business_entity.s_email %>
-</p>
-<% end %>
-<% if @business_entity.gr_description.present? %>
-<p>
-  <%= @business_entity.gr_description %>
-</p>
-<% end %>
+  <% if @business_entity.foaf_page.present? %>
+  <p>
+    <strong>Webpage:</strong>
+    <a href="<%= @business_entity.foaf_page %>" target="_blank"><%= @business_entity.foaf_page %></a>
+  </p>
+  <% end %>
+  <% if @business_entity.foaf_logo.present? %>
+  <p>
+    <strong>Logo:</strong>
+    <a href="<%= @business_entity.foaf_logo %>" target="_blank"><%= @business_entity.foaf_logo %></a>
+  </p>
+  <% end %>
+  <% if @business_entity.s_telephone.present?%>
+  <p>
+    <strong>Telephone:</strong>
+    <%= @business_entity.s_telephone %>
+  </p>
+  <% end %>
+  <% if @business_entity.s_email.present? %>
+  <p>
+    <strong>Email:</strong>
+    <a href="mailto:<%= @business_entity.s_email %>"><%= @business_entity.s_email %></a>
+  </p>
+  <% end %>
+  <% if @business_entity.gr_description.present? %>
+  <p>
+    <%= @business_entity.gr_description %>
+  </p>
+  <% end %>
+</div>
 
 <p>
   <%= link_to 'Back to list', service_system_business_entities_path, class: "btn btn-link" %>

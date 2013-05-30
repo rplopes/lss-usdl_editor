@@ -1,14 +1,16 @@
-<h3><%= @process_entity.label %></h3>
+<div class="well">
+  <h3><%= @process_entity.label %></h3>
 
-<p>
-  <strong>URI of BPMN description:</strong>
-  <%= @process_entity.bpmn_uri %>
-</p>
-<% if @process_entity.comment.present? %>
-<p>
-  <%= @process_entity.comment %>
-</p>
-<% end %>
+  <p>
+    <strong>URI of BPMN description:</strong>
+    <%= @process_entity.bpmn_uri %>
+  </p>
+  <% if @process_entity.comment.present? %>
+  <p>
+    <%= @process_entity.comment %>
+  </p>
+  <% end %>
+</div>
 
 <p>
   <%= link_to 'Back to list', service_system_process_entities_path, class: "btn btn-link" %>

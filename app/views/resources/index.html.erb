@@ -2,50 +2,53 @@
 
 <%= link_to "New Resource", new_service_system_resource_path, class: "btn btn-success" %>
 
+<hr />
+
 <% @resources.each do |resource| %>
 
-<hr />
-<h4><%= link_to resource.label, service_system_resource_path(@service_system.id, resource.id) %></h4>
+<div class="well">
+  <h4><%= link_to resource.label, service_system_resource_path(@service_system.id, resource.id) %></h4>
 
-<% if resource.dbpedia_resource.present? %>
-<p>
-  <strong>DBpedia resource:</strong>
-  <a href="<%= resource.dbpedia_resource %>" target="_blank"><%= resource.dbpedia_resource.gsub(/^.*\//, '') %></a>
-</p>
-<% end %>
-<% if resource.value %>
-<p>
-  <strong>Value:</strong>
-  <%= resource.value_ %> <%= resource.unit_of_measurement %>
-</p>
-<% end %>
-<% if resource.max_value %>
-<p>
-  <strong>Max value:</strong>
-  <%= resource.max_value_ %> <%= resource.unit_of_measurement %>
-</p>
-<% end %>
-<% if resource.min_value %>
-<p>
-  <strong>Min value:</strong>
-  <%= resource.min_value_ %> <%= resource.unit_of_measurement %>
-</p>
-<% end %>
-<% if resource.resource_type.present? %>
-<p>
-  <strong>Resource type:</strong>
-  <%= resource.resource_type.gsub(/Resource/, " resource") %>
-</p>
-<% end %>
-<% if resource.comment %>
-<p>
-  <%= resource.comment %>
-</p>
-<% end %>
+  <% if resource.dbpedia_resource.present? %>
+  <p>
+    <strong>DBpedia resource:</strong>
+    <a href="<%= resource.dbpedia_resource %>" target="_blank"><%= resource.dbpedia_resource.gsub(/^.*\//, '') %></a>
+  </p>
+  <% end %>
+  <% if resource.value %>
+  <p>
+    <strong>Value:</strong>
+    <%= resource.value_ %> <%= resource.unit_of_measurement %>
+  </p>
+  <% end %>
+  <% if resource.max_value %>
+  <p>
+    <strong>Max value:</strong>
+    <%= resource.max_value_ %> <%= resource.unit_of_measurement %>
+  </p>
+  <% end %>
+  <% if resource.min_value %>
+  <p>
+    <strong>Min value:</strong>
+    <%= resource.min_value_ %> <%= resource.unit_of_measurement %>
+  </p>
+  <% end %>
+  <% if resource.resource_type.present? %>
+  <p>
+    <strong>Resource type:</strong>
+    <%= resource.resource_type.gsub(/Resource/, " resource") %>
+  </p>
+  <% end %>
+  <% if resource.comment %>
+  <p>
+    <%= resource.comment %>
+  </p>
+  <% end %>
 
-<p>
-  <%= link_to "Edit", edit_service_system_resource_path(@service_system.id, resource.id) %> |
-  <%= link_to "Delete", service_system_resource_path(@service_system.id, resource.id), method: :delete, data: { confirm: "Are you sure you want to delete this?" } %>
-</p>
+  <p>
+    <%= link_to "Edit", edit_service_system_resource_path(@service_system.id, resource.id) %> |
+    <%= link_to "Delete", service_system_resource_path(@service_system.id, resource.id), method: :delete, data: { confirm: "Are you sure you want to delete this?" } %>
+  </p>
+</div>
 
 <% end %>

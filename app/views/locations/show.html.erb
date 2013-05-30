@@ -1,22 +1,24 @@
-<h3><%= @location.label %></h3>
+<div class="well">
+  <h3><%= @location.label %></h3>
 
-<% if @location.broader_location %>
-<p>
-  <strong>Belongs to:</strong>
-  <%= @location.broader_location %>
-</p>
-<% end %>
-<% if @location.gn_feature.present?%>
-<p>
-  <strong>Is location from:</strong>
-  <span class="gn-id"><%= @location.gn_feature %></span>
-</p>
-<% end %>
-<% if @location.comment.present? %>
-<p>
-  <%= @location.comment %>
-</p>
-<% end %>
+  <% if @location.broader_location %>
+  <p>
+    <strong>Belongs to:</strong>
+    <%= @location.broader_location %>
+  </p>
+  <% end %>
+  <% if @location.gn_feature.present?%>
+  <p>
+    <strong>Is location from:</strong>
+    <span class="gn-id"><%= @location.gn_feature %></span>
+  </p>
+  <% end %>
+  <% if @location.comment.present? %>
+  <p>
+    <%= @location.comment %>
+  </p>
+  <% end %>
+</div>
 
 <p>
   <%= link_to 'Back to list', service_system_locations_path, class: "btn btn-link" %>

@@ -2,32 +2,35 @@
 
 <%= link_to "New Location", new_service_system_location_path, class: "btn btn-success" %>
 
+<hr />
+
 <% @locations.each do |location| %>
 
-<hr />
-<h4><%= link_to location.label, service_system_location_path(@service_system.id, location.id) %></h4>
+<div class="well">
+  <h4><%= link_to location.label, service_system_location_path(@service_system.id, location.id) %></h4>
 
-<% if location.broader_location %>
-<p>
-  <strong>Belongs to:</strong>
-  <%= location.broader_location %>
-</p>
-<% end %>
-<% if location.gn_feature.present? %>
-<p>
-  <strong>Is location from:</strong>
-  <span class="gn-id"><%= location.gn_feature %></span>
-</p>
-<% end %>
-<% if location.comment.present? %>
-<p>
-  <%= location.comment %>
-</p>
-<% end %>
+  <% if location.broader_location %>
+  <p>
+    <strong>Belongs to:</strong>
+    <%= location.broader_location %>
+  </p>
+  <% end %>
+  <% if location.gn_feature.present? %>
+  <p>
+    <strong>Is location from:</strong>
+    <span class="gn-id"><%= location.gn_feature %></span>
+  </p>
+  <% end %>
+  <% if location.comment.present? %>
+  <p>
+    <%= location.comment %>
+  </p>
+  <% end %>
 
-<p>
-  <%= link_to "Edit", edit_service_system_location_path(@service_system.id, location.id) %> |
-  <%= link_to "Delete", service_system_location_path(@service_system.id, location.id), method: :delete, data: { confirm: "Are you sure you want to delete this?" } %>
-</p>
+  <p>
+    <%= link_to "Edit", edit_service_system_location_path(@service_system.id, location.id) %> |
+    <%= link_to "Delete", service_system_location_path(@service_system.id, location.id), method: :delete, data: { confirm: "Are you sure you want to delete this?" } %>
+  </p>
+</div>
 
 <% end %>

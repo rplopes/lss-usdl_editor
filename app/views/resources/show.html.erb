@@ -1,41 +1,43 @@
-<h3><%= @resource.label %></h3>
+<div class="well">
+  <h3><%= @resource.label %></h3>
 
-<% if @resource.dbpedia_resource.present? %>
-<p>
-  <strong>DBpedia resource:</strong>
-  <a href="<%= @resource.dbpedia_resource %>" target="_blank"><%= @resource.dbpedia_resource.gsub(/^.*\//, '') %></a>
-</p>
-<% end %>
-<% if @resource.value %>
-<p>
-  <strong>Value:</strong>
-  <%= @resource.value_ %> <%= @resource.unit_of_measurement %>
-</p>
-<% end %>
-<% if @resource.max_value %>
-<p>
-  <strong>Max value:</strong>
-  <%= @resource.max_value_ %> <%= @resource.unit_of_measurement %>
-</p>
-<% end %>
-<% if @resource.min_value %>
-<p>
-  <strong>Min value:</strong>
-  <%= @resource.min_value_ %> <%= @resource.unit_of_measurement %>
-</p>
-<% end %>
-<% if @resource.resource_type.present? %>
-<p>
-  <strong>Resource type:</strong>
-  <%= @resource.resource_type.gsub(/Resource/, " resource") %>
-</p>
-<% end %>
-<% if @resource.comment.present? %>
-<p>
-  <strong>Comment:</strong><br />
-  <%= @resource.comment %>
-</p>
-<% end %>
+  <% if @resource.dbpedia_resource.present? %>
+  <p>
+    <strong>DBpedia resource:</strong>
+    <a href="<%= @resource.dbpedia_resource %>" target="_blank"><%= @resource.dbpedia_resource.gsub(/^.*\//, '') %></a>
+  </p>
+  <% end %>
+  <% if @resource.value %>
+  <p>
+    <strong>Value:</strong>
+    <%= @resource.value_ %> <%= @resource.unit_of_measurement %>
+  </p>
+  <% end %>
+  <% if @resource.max_value %>
+  <p>
+    <strong>Max value:</strong>
+    <%= @resource.max_value_ %> <%= @resource.unit_of_measurement %>
+  </p>
+  <% end %>
+  <% if @resource.min_value %>
+  <p>
+    <strong>Min value:</strong>
+    <%= @resource.min_value_ %> <%= @resource.unit_of_measurement %>
+  </p>
+  <% end %>
+  <% if @resource.resource_type.present? %>
+  <p>
+    <strong>Resource type:</strong>
+    <%= @resource.resource_type.gsub(/Resource/, " resource") %>
+  </p>
+  <% end %>
+  <% if @resource.comment.present? %>
+  <p>
+    <strong>Comment:</strong><br />
+    <%= @resource.comment %>
+  </p>
+  <% end %>
+</div>
 
 <p>
   <%= link_to 'Back to list', service_system_resources_path, class: "btn btn-link" %>
