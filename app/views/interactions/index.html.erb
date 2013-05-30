@@ -92,7 +92,7 @@
 
   <% @interactions.each do |interaction| %>
 
-    <hr />
+    <div class="well">
     <h4><%= link_to interaction.label, service_system_interaction_path(@service_system.id, interaction.id) %></h4>
 
     <% if interaction.interaction_type.present? %>
@@ -104,37 +104,120 @@
     <% if interaction.roles.present? %>
     <p>
       <strong>Roles:</strong>
-      <%= interaction.roles.join(", ") %>
+      <% interaction.roles.each do |role| %>
+        <span class="label">
+          <a href="<%= service_system_role_path(@service_system.id, role.id) %>">
+            <i class="icon-user icon-white"></i>
+            <%= role %>
+          </a>
+        </span>
+      <% end %>
     </p>
     <% end %>
     <% if interaction.time_string.present? %>
     <p>
       <strong>Time:</strong>
-      <%= interaction.time_string %>
+      <span class="label">
+        <a href="<%= service_system_interaction_path(@service_system.id, interaction.id) %>">
+          <i class="icon-time icon-white"></i>
+          <%= interaction.time_string %>
+        </a>
+      </span>
     </p>
     <% end %>
     <% if interaction.goals.present? %>
     <p>
       <strong>Goals:</strong>
-      <%= interaction.goals.join(", ") %>
+      <% interaction.goals.each do |goal| %>
+        <span class="label label-info">
+          <a href="<%= service_system_goal_path(@service_system.id, goal.id) %>">
+            <i class="icon-screenshot icon-white"></i>
+            <%= goal %>
+          </a>
+        </span>
+      <% end %>
     </p>
     <% end %>
     <% if interaction.locations.present? %>
     <p>
       <strong>Locations:</strong>
-      <%= interaction.locations.join(", ") %>
+      <% interaction.locations.each do |location| %>
+        <span class="label">
+          <a href="<%= service_system_location_path(@service_system.id, location.id) %>">
+            <i class="icon-globe icon-white"></i>
+            <%= location %>
+          </a>
+        </span>
+      <% end %>
     </p>
     <% end %>
     <% if interaction.processes.present? %>
     <p>
       <strong>Processes:</strong>
-      <%= interaction.processes.join(", ") %>
+      <% interaction.processes.each do |process| %>
+        <span class="label">
+          <a href="<%= service_system_process_entity_path(@service_system.id, process.id) %>">
+            <i class="icon-tasks icon-white"></i>
+            <%= process %>
+          </a>
+        </span>
+      <% end %>
     </p>
     <% end %>
-    <% if interaction.resources.present? %>
+    <% if interaction.received_resources.present? %>
     <p>
-      <strong>Resources:</strong>
-      <%= interaction.resources.join(", ") %>
+      <strong>Received resources:</strong>
+      <% interaction.received_resources.each do |resource| %>
+        <span class="label label-warning">
+          <a href="<%= service_system_resource_path(@service_system.id, resource.id) %>">
+            <i class="icon-arrow-down icon-white"></i>
+            <i class="icon-book icon-white"></i>
+            <%= resource %>
+          </a>
+        </span>
+      <% end %>
+    </p>
+    <% end %>
+    <% if interaction.created_resources.present? %>
+    <p>
+      <strong>Created resources:</strong>
+      <% interaction.created_resources.each do |resource| %>
+        <span class="label label-success">
+          <a href="<%= service_system_resource_path(@service_system.id, resource.id) %>" data-toggle="tooltip" title="Creates resource: <%= resource %>">
+            <i class="icon-arrow-down icon-white"></i>
+            <i class="icon-book icon-white"></i>
+            <%= resource %>
+          </a>
+        </span>
+      <% end %>
+    </p>
+    <% end %>
+    <% if interaction.consumed_resources.present? %>
+    <p>
+      <strong>Consumed resources:</strong>
+      <% interaction.consumed_resources.each do |resource| %>
+        <span class="label label-important">
+          <a href="<%= service_system_resource_path(@service_system.id, resource.id) %>" data-toggle="tooltip" title="Consumes resource: <%= resource %>">
+            <i class="icon-arrow-up icon-white"></i>
+            <i class="icon-book icon-white"></i>
+            <%= resource %>
+          </a>
+        </span>
+      <% end %>
+    </p>
+    <% end %>
+    <% if interaction.returned_resources.present? %>
+    <p>
+      <strong>Returned resources:</strong>
+      <% interaction.returned_resources.each do |resource| %>
+        <span class="label label-warning">
+          <a href="<%= service_system_resource_path(@service_system.id, resource.id) %>" data-toggle="tooltip" title="Returns resource: <%= resource %>">
+            <i class="icon-arrow-up icon-white"></i>
+            <i class="icon-book icon-white"></i>
+            <%= resource %>
+          </a>
+        </span>
+      <% end %>
     </p>
     <% end %>
     <% if interaction.comment.present? %>
@@ -147,6 +230,7 @@
       <%= link_to "Edit", edit_service_system_interaction_path(@service_system.id, interaction.id) %> |
       <%= link_to "Delete", service_system_interaction_path(@service_system.id, interaction.id), method: :delete, data: { confirm: "Are you sure you want to delete this?" } %>
     </p>
+  </div>
 
   <% end %>
 

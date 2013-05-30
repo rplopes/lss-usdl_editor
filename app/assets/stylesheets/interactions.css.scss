@@ -2,17 +2,18 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
-.label {
-  opacity: 0.8;
+#blueprint .label {
   overflow: hidden;
   text-overflow: ellipsis;
   -o-text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 90px;
+}
+.label {
+  opacity: 0.8;
   &:hover {
     opacity: 1;
   }
-
   a {
     color: white;
     &:hover {
@@ -140,5 +141,5 @@ table#interactions-table tr td:first-child {
 }
 
 .interactions-list {
-  margin-top: 45px;
+  margin-top: 65px;
 }
