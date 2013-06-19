@@ -184,11 +184,17 @@ class SemanticWorker < ActiveRecord::Base
           o.created_resources = Array(query_el(graph, s.q, LSS_USDL.createsResource, service_system.id, Resource))
           o.consumed_resources = Array(query_el(graph, s.q, LSS_USDL.consumesResource, service_system.id, Resource))
           o.returned_resources = Array(query_el(graph, s.q, LSS_USDL.returnsResource, service_system.id, Resource))
+          o.save
+        end
+      end
 
+      ([""] | Interaction.subclasses).each do |subclass|
+        RDF::Query.new({q: {RDF.type => LSS_USDL["#{subclass}Interaction"]}}).execute(graph).each do |s|
+          o = Interaction.where("service_system_id = ? and sid = ?", service_system.id, s.q.to_s.gsub(/^.*#/, '')).first
           # Time
           RDF::Query.new({s.q => {LSS_USDL.hasTime => :time}, time: {LSS_USDL.hasTemporalEntity => :te}}).execute(graph).each do |s2|
             i_before = query_str(graph, s2.te, TIME.intervalBefore)
-            i_during = query_str(graph, s2.te, TIME.intervalDuring)
+            i_during = query_str(graph, s2.te, TIME.intervalEquals)
             i_after = query_str(graph, s2.te, TIME.intervalAfter)
             if i_before
               before = Interaction.where("service_system_id = ? and sid = ?", service_system.id, i_before.gsub(/(^.*#)|(Time$)/, ''))
@@ -229,6 +235,7 @@ class SemanticWorker < ActiveRecord::Base
 
       return service_system
     rescue
+      puts $!.backtrace
       service_system.destroy
       return nil
     end
@@ -301,7 +308,7 @@ class SemanticWorker < ActiveRecord::Base
           # Temporal entity
           RDF::Query.new({q: {USDL.spansInterval => :te}}).execute(graph).each do |s2|
             i_before = query_str(graph, s2.te, TIME.intervalBefore)
-            i_during = query_str(graph, s2.te, TIME.intervalDuring)
+            i_during = query_str(graph, s2.te, TIME.intervalEquals)
             i_after = query_str(graph, s2.te, TIME.intervalAfter)
             if i_before
               before = Interaction.where("service_system_id = ? and sid = ?", service_system.id, i_before.gsub(/(^.*#)|(Time$)/, ''))
@@ -441,7 +448,7 @@ class SemanticWorker < ActiveRecord::Base
         graph << [data[te_sid], TIME.intervalAfter, data["#{i.sid}Time"]] if i and used_entities.index(i)
       end
       (interaction.interactions_during| [interaction.interaction_during]).each do |i|
-        graph << [data[te_sid], TIME.intervalDuring, data["#{i.sid}Time"]] if i and used_entities.index(i)
+        graph << [data[te_sid], TIME.intervalEquals, data["#{i.sid}Time"]] if i and used_entities.index(i)
       end
       (interaction.interactions_after | [interaction.interaction_after]).each do |i|
         graph << [data[te_sid], TIME.intervalBefore, data["#{i.sid}Time"]] if i and used_entities.index(i)
@@ -552,7 +559,7 @@ class SemanticWorker < ActiveRecord::Base
         graph << [data[te_sid], TIME.intervalAfter, data["#{i.sid}Time"]] if i and interactions.index(i)
       end
       (interaction.interactions_during| [interaction.interaction_during]).each do |i|
-        graph << [data[te_sid], TIME.intervalDuring, data["#{i.sid}Time"]] if i and interactions.index(i)
+        graph << [data[te_sid], TIME.intervalEquals, data["#{i.sid}Time"]] if i and interactions.index(i)
       end
       (interaction.interactions_after | [interaction.interaction_after]).each do |i|
         graph << [data[te_sid], TIME.intervalBefore, data["#{i.sid}Time"]] if i and interactions.index(i)
