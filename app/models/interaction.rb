@@ -177,9 +177,9 @@ class Interaction < ActiveRecord::Base
       col = Array.new(4)
       interactions.first.all_same_time_interactions.each do |interaction|
         if interactions.index(interaction)
-          index = interaction.interaction_type.gsub(/Interaction/, ""))
+          index = interaction.interaction_type.gsub(/Interaction/, "")
           index = 0 if index.nil?
-          col[subclasses.index(interaction.interaction_type.gsub(/Interaction/, ""))] = interaction
+          col[subclasses.index(index)] = interaction
           interactions.delete_at(interactions.index(interaction))
         end
       end
