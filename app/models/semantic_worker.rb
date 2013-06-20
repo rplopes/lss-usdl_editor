@@ -1,6 +1,6 @@
 class SemanticWorker < ActiveRecord::Base
 
-  ONTOLOGY_URL = 'http://rdf.genssiz.dei.uc.pt/lss-usdl#'
+  ONTOLOGY_URL = 'http://genssiz.dei.uc.pt/lss-usdl#'
 
   LSS_USDL = RDF::Vocabulary.new ONTOLOGY_URL
   PREFIXES = {
